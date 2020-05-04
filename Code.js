@@ -547,6 +547,14 @@ function buildFilters(items, start, numItems) {
         }
       } else if (VALID_OPERANDS.includes(rule)) {
         // at the last level, add the rule
+
+        // first, ensure we're actually at a leaf node
+        // if not, add us to the children array
+        if (Object.keys(node).length > 0) {
+          node.children.push({});
+          node = node.children[node.children.length - 1];
+        }
+
         node.rule = rule;
         node.operator = validateOperator(operator);
         node.value = String(value);
@@ -1082,7 +1090,7 @@ function test() {
 
 //  let output = MBCUSTOMQUERYTEMPLATE();
 
-  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2, null, null, 100);
+  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
 
   console.log('output: ' + output);
 }
