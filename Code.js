@@ -494,10 +494,11 @@ function buildFilters(items, start, numItems) {
       // if we're on a children array, search for a child matching this rule
       if (Array.isArray(node)) {
         // find the one that matches this rule
-        for (var k in node.children) {
-          let matchedChild = false;
-          if (node.children[k].rule == rule) {
-            node = node.children[k];
+        let matchedChild = false;
+        for (var k in node) {
+          if (node[k].rule == rule) {
+            // node 'array' becomes an 'object' again
+            node = node[k];
             matchedChild = true;
             break;
           }
@@ -506,7 +507,11 @@ function buildFilters(items, start, numItems) {
         // no match for this rule so add a new child
         if (!matchedChild) {
           node.push({});
-          node = node[node.children.length - 1];
+          // node 'array' becomes an 'object' again
+          node = node[node.length - 1];
+        } else {
+          // otherwise, we matched, so next rule
+          continue;
         }
       }
 
@@ -521,6 +526,7 @@ function buildFilters(items, start, numItems) {
         } else {
           // existing child node
 
+          // node 'object' becomes a 'array'
           node = node.children;
 
           // find the one that matches this rule
@@ -1067,7 +1073,7 @@ function test() {
 
   let customQuery2 = [
     ["eventName", "alias", "index", "aggregator", "alias", "index", "aggregator", "alias", "index", "aggregator", "rule", "operator", "value", "rule", "operator", "value", "rule", "operator", "value"],
-    ["ResponseReceived", "answer", "0", "", "round", "1", "", "round", "2", "", "and:addresses.label", "Equal", "ethusd", "and:or:input1", "Equal", "844", "and:or:input1", "Equal", "845"]
+    ["ResponseReceived", "answer", "0", "", "round", "1", "", "sender", "2", "", "and:addresses.label", "Equal", "ethusd", "and:or:input1", "Equal", "844", "and:or:input1", "Equal", "845"]
   ];
 
 //  let output = MBCUSTOMQUERY(deployment, apiKey, customQuery, "account");
@@ -1076,7 +1082,7 @@ function test() {
 
 //  let output = MBCUSTOMQUERYTEMPLATE();
 
-  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
+  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2, null, null, 100);
 
   console.log('output: ' + output);
 }
