@@ -486,7 +486,7 @@ function buildFilters(items, start, numItems) {
       if (ruleParts == null || ruleParts.length < 2) {
         throw("invalid rule '" + rulePath[j] + "' in '" + rules + "'");
       }
-      let rule = ruleParts[1];
+      let rule = ruleParts[1].toLowerCase();
       if (rule == '') {
         throw("sub-rule is empty in '" + rules + "'");
       }
@@ -516,8 +516,7 @@ function buildFilters(items, start, numItems) {
       }
 
       // add a rule or descend to the next level down as appropriate
-      if (VALID_BOOLEANS.includes(rule.toLowerCase())) {
-        rule = rule.toLowerCase();
+      if (VALID_BOOLEANS.includes(rule)) {
         if (Object.keys(node).length == 0) {
           // new child node
           node.rule = rule;
@@ -528,22 +527,6 @@ function buildFilters(items, start, numItems) {
 
           // node 'object' becomes a 'array'
           node = node.children;
-
-          // find the one that matches this rule
-          //let matchedChild = false;
-          //for (var k in node.children) {
-          //  if (node.children[k].rule == rule) {
-          //    node = node.children[k];
-          //    matchedChild = true;
-          //    break;
-          //  }
-          //}
-
-          // no match for this rule so add a new child
-          //if (!matchedChild) {
-          //  node.children.push({});
-          //  node = node.children[node.children.length - 1];
-          //}
         }
       } else if (VALID_OPERANDS.includes(rule)) {
         // at the last level, add the rule
