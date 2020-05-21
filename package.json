@@ -1,7 +1,7 @@
 {
-  "name": "multibaas-spreadsheet",
+  "name": "multibaas-sheets-add-on",
   "version": "1.0.0",
-  "description": "MultiBaas Spreadsheet",
+  "description": "MultiBaas Sheets Add-On",
   "repository": "https://github.com/curvegrid/hackathon-sunset-supreme",
   "author": "Curvegrid Inc.",
   "license": "UNLICENSED",
