@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "private": false,
   "scripts": {
-    "lint": "eslint ./*.js",
+    "lint": "eslint src/*.js test/*.js",
     "test": ""
   },
   "keywords": [
@@ -33,7 +33,7 @@
   },
   "lint-staged": {
     "./**/*.{js,}": [
-      "yanr lint"
+      "yarn lint"
     ]
   }
 }
