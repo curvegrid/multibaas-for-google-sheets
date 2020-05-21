@@ -6,6 +6,8 @@
   },
   "extends": ["eslint:recommended", "airbnb/base"],
   "globals": {
+    "SpreadsheetApp": false,
+    "UrlFetchApp": false,
     "before": false,
     "beforeEach": false,
     "it": false,
