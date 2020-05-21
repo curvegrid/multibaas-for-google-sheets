@@ -98,6 +98,60 @@ function MBPOSTTEMPLATE(numberOfArgs) {
 }
 
 /**
+ * Retrieve a detailed list of a smart contract's events.
+ *
+ * @param {deployment} deployment MultiBaas deployment ID.
+ * @param {apiKey} apiKey MultiBaas API Key.
+ * @param {contract} contract Smart contract label, must be associated with the address.
+ * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
+ * @return Array of smart contract functions and their inputs and outputs.
+ * @customfunction
+ */
+function MBEVENTLIST(deployment, apiKey, contract, filter) {
+  if (contract == undefined || contract == "") {
+    throw("must provide a smart contract label");
+  }
+
+  let queryPath = 'contracts/' + contract;
+
+  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+
+  // turn the block structure into a flat array
+  let includeOutputs = false;
+  let output = functionsToArray(results.result.abi.events, 'event', filter, includeOutputs);
+  console.log('Results: ' + JSON.stringify(output));
+
+  return output;
+}
+
+/**
+ * Retrieve a detailed list of a smart contract's functions.
+ *
+ * @param {deployment} deployment MultiBaas deployment ID.
+ * @param {apiKey} apiKey MultiBaas API Key.
+ * @param {contract} contract Smart contract label, must be associated with the address.
+ * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
+ * @return Array of smart contract functions and their inputs and outputs.
+ * @customfunction
+ */
+function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
+  if (contract == undefined || contract == "") {
+    throw("must provide a smart contract label");
+  }
+
+  let queryPath = 'contracts/' + contract;
+
+  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+
+  // turn the block structure into a flat array
+  let includeOutputs = true;
+  let output = functionsToArray(results.result.abi.methods, 'function', filter, includeOutputs);
+  console.log('Results: ' + JSON.stringify(output));
+
+  return output;
+}
+
+/**
  * Retrieve the details of a blockchain transaction.
  *
  * @param {deployment} deployment MultiBaas deployment ID.
@@ -651,7 +705,8 @@ function clampBool(value, def) {
 
 function buildMethodArgs(args, from, signer, signAndSubmit) {
   let payload = {
-    args: args
+    args: args,
+    contractOverride: true
   };
 
   // optional from and signer for "write" transactions
@@ -876,6 +931,108 @@ function buildAssociations(associations) {
   return summary.join(',');
 }
 
+function functionsToArray(entries, entryLabel, filter, includeOutputs) {
+  let rows = [];
+
+  // header row
+  // entryLabel is 'function' or 'event'
+  let header = [entryLabel, 'description'];
+  if (includeOutputs) {
+    header.push('read/write');
+  }
+  header.push('inputs');
+  if (includeOutputs) {
+    header = header.concat(['outputs']);
+  }
+  rows.push(header);
+
+  filterRe = new RegExp(filter, 'i');
+
+  // data rows
+  for (var i in entries) {
+    let entry = entries[i];
+
+    if (filter != '' && filter != undefined && !filterRe.test(entry.name)) {
+      continue;
+    }
+
+    // build description/notes (docs) for this function/event
+    let description = '';
+    if (entry.notes != undefined) {
+      description += entry.notes;
+    }
+    if (entry.description != undefined && entry.description != '') {
+      if (description != '') {
+        description += ' / ';
+      }
+      description += entry.description;
+    }
+
+    let row = [entry.name, description];
+
+    if (includeOutputs) {
+      let rw = 'read';
+      if (!entry.const) {
+        rw = 'write';
+      }
+      row.push(rw);
+    }
+
+    let numInputs = buildNumInputsOrOutputs('input', entry.inputs.length);
+    let inputs = buildFunctionInputsOrOutputs(entry.inputs);
+    row.push(numInputs + inputs.join("\n"));
+
+    if (includeOutputs) {
+      // in this case we're dealing with a function, not an event, which only has inputs
+      let numOutputs = buildNumInputsOrOutputs('output', entry.outputs.length);
+      let outputs = buildFunctionInputsOrOutputs(entry.outputs);
+      row.push(numOutputs + outputs.join("\n"));
+    }
+
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function buildNumInputsOrOutputs(label, length) {
+  let inputsOutputs = '';
+  if (length == 0) {
+    return 'no ' + label + 's';
+  } else if (length == 1) {
+    return "1 " + label + ":\n";
+  }
+  return length + " " + label + "s:\n";
+}
+
+function buildFunctionInputsOrOutputs(entries) {
+  let params = [];
+
+  for (var i in entries) {
+    let entry = entries[i];
+    let param = entry.name;
+    if (param != '') {
+      param += ' ';
+    }
+    param += buildType(entry.type);
+    if (entry.notes != '') {
+      param += ' (' + entry.notes + ')';
+    }
+    params.push(param);
+  }
+
+  return params;
+}
+
+function buildType(paramType) {
+  let builtType = paramType.type;
+  if (paramType.type != "address" && paramType.type != "string" && paramType.size != undefined && paramType.size > 0) {
+    builtType += paramType.size;
+  }
+
+  return builtType;
+}
+
 function eventsToArray(entries) {
   let rows = [];
 
@@ -958,7 +1115,7 @@ function buildInputs(inputs, maxInputs) {
   let values = [];
   for (let i = 0; i < maxInputs; i++) {
     let input = undefined;
-    if (i < inputs.length) {
+    if (inputs != undefined && i < inputs.length) {
       input = inputs[i].value;
     }
     values.push(input);
@@ -1073,7 +1230,9 @@ function test() {
 
 //  let output = MBCUSTOMQUERYTEMPLATE();
 
-  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
+//  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
+
+  let output = MBFUNCTIONLIST(mainnetDeployment, mainnetAPIKey, "lendingpoolcore","reserve");
 
   console.log('output: ' + output);
 }
