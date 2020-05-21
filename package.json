@@ -1,0 +1,39 @@
+{
+  "name": "multibaas-spreadsheet",
+  "version": "1.0.0",
+  "description": "MultiBaas Spreadsheet",
+  "repository": "https://github.com/curvegrid/hackathon-sunset-supreme",
+  "author": "Curvegrid Inc.",
+  "license": "UNLICENSED",
+  "private": false,
+  "scripts": {
+    "lint": "eslint ./*.js",
+    "test": ""
+  },
+  "keywords": [
+    "multibaas",
+    "ethereum",
+    "spreadsheet"
+  ],
+  "devDependencies": {},
+  "dependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "googleapis": "^51.0.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.4",
+    "mocha": "^7.1.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./**/*.{js,}": [
+      "yanr lint"
+    ]
+  }
+}
