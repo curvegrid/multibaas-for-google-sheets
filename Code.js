@@ -1015,7 +1015,7 @@ function buildFunctionInputsOrOutputs(entries) {
       param += ' ';
     }
     param += buildType(entry.type);
-    if (entry.notes != '') {
+    if (entry.notes != undefined && entry.notes != '') {
       param += ' (' + entry.notes + ')';
     }
     params.push(param);
