@@ -8,6 +8,8 @@
   "globals": {
     "SpreadsheetApp": false,
     "UrlFetchApp": false,
+    "GasTap": false,
+    "MBQUERY": false,
     "before": false,
     "beforeEach": false,
     "it": false,
