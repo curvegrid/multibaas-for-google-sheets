@@ -40,6 +40,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run MB Sheets Add-On Tests
         run: |
+          yarn global add @google/clasp
           yarn install
           export CLASPRC_ACCESS_TOKEN="$env:CLASPRC_ACCESS_TOKEN"
           export CLASPRC_REFRESH_TOKEN="$env:CLASPRC_REFRESH_TOKEN"
