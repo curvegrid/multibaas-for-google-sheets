@@ -2,8 +2,6 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const { authenticate } = require('./auth');
 
-const SCRIPT_ID = '../.clasp.json';
-
 /**
  * Call the gastTestRunner test function on the deployed script.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
@@ -11,8 +9,7 @@ const SCRIPT_ID = '../.clasp.json';
  */
 function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
-  const { scriptId } = JSON.parse(fs.readFileSync(SCRIPT_ID));
-  // const scriptId = 'MtDr1UdkQnLhMy25WAaFVSuct06epg9QC';
+  const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
 
   // TODO: Do we need to wait for a while to update apps script api
   // because it fails (entity not found) after clasp push
@@ -48,6 +45,12 @@ function callAppsScript(auth) {
       process.exit(1);
     } else {
       console.log(resp.data);
+      // error case
+      // {
+      //   done: true,
+      //   error: { code: 3, message: 'ScriptError', details: [ [Object] ] }
+      // }
+
       // const data = resp.data.response.result;
       // const { log } = data;
       // console.log(log);
