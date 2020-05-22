@@ -53,3 +53,5 @@ jobs:
           export CLIENT_EXPIRY_DATE="$env:CLIENT_EXPIRY_DATE"
           node generateCredentials.js
           ls *.json
+          clasp push
+          yarn test
