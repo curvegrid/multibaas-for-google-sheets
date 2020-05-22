@@ -90,7 +90,6 @@ module.exports.authenticate = (scopes = SCOPES) => {
         reject(err);
       }
 
-      console.log(credentials);
       // Authorize a client with credentials, then call the Google Drive API.
       authorize(scopes, JSON.parse(credentials), resolve);
     });
