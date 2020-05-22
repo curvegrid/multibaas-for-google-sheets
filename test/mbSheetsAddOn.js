@@ -16,7 +16,7 @@ function callAppsScript(auth) {
   const request = {
     function: 'TestRunner',
     parameters: [],
-    devMode: false,
+    devMode: true,
   };
 
   script.scripts.run({ auth, scriptId, resource: request }, (err, resp) => {
