@@ -4,7 +4,7 @@
   "description": "MultiBaas Sheets Add-On",
   "repository": "https://github.com/curvegrid/hackathon-sunset-supreme",
   "author": "Curvegrid Inc.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": false,
   "scripts": {
     "lint": "eslint src/*.js test/*.js",
