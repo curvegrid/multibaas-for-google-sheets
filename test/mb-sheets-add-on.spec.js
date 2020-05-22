@@ -17,7 +17,7 @@ function callAppsScript(auth) {
   // TODO: Do we need to wait for a while to update apps script api
   // because it fails (entity not found) after clasp push
   const request = {
-    function: 'mbTestRunner',
+    function: 'TestRunner',
     parameters: [],
     devMode: false,
   };
