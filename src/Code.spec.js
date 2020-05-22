@@ -171,40 +171,7 @@ function TestRunner() {
   ];
 
   // TODO: cover internal functions
-  // mbRefresh
-  // mbPost
-  // extractSelectFilterCounts
-  // buildCustomQuery
-  // buildFilters
-  // buildSelects
-  // validateOperator
-  // validateAggregator
-  // validateBlockNumOrHash
-  // validateBlockTxHash
-  // clampBool
-  // buildMethodArgs
-  // limitQuery
-  // normalizeCreds
-  // buildLimitOffset
-  // query
-  // txToArray
-  // parseHexToNum
-  // blockToArray
-  // buildTxHashes
-  // addressToArray
-  // buildAssociations
-  // eventsToArray
-  // buildInputs
-  // buildSigDef
-  // buildSeqHeader
-  // objectArrayToArray
-  // keysFromObj
-  // valuesFromKeys
-  // isNaturalNumber
-  // functionsToArray
-  // buildNumInputsOrOutputs
-  // buildFunctionInputsOrOutputs
-  // buildType
+  // https://github.com/curvegrid/hackathon-sunset-supreme/issues/5
 
   // eslint-disable-next-line no-restricted-syntax
   for (const testCase of testCases) {
