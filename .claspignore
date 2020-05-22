@@ -2,4 +2,3 @@
 # Only push the files from the src directory :
 !appsscript.json
 !src/*.js
-!test/*.js
