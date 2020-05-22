@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened            # opened
+      - reopened          # reopened
+      - synchronize       # new commit(s) pushed
+      - ready_for_review  # for draft support
+
+jobs:
+  eslint:
+    name: eslint
+    if: |
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false)
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Eslint
+        run: |
+          yarn install
+          yarn lint
+  tests:
+    name: tests
+    if: |
+      (github.event_name == 'push') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false)
+    runs-on: ubuntu-18.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run MB Sheets Add-On Tests
+        run: |
+          yarn install
+          export CLASPRC_ACCESS_TOKEN="$env:CLASPRC_ACCESS_TOKEN"
+          export CLASPRC_REFRESH_TOKEN="$env:CLASPRC_REFRESH_TOKEN"
+          export CLASPRC_EXPIRY_DATE="$env:CLASPRC_EXPIRY_DATE"
+          export SCRIPT_ID="$env:SCRIPT_ID"
+          export CLIENT_ID="$env:CLIENT_ID"
+          export PROJECT_ID="$env:PROJECT_ID"
+          export CLIENT_SECRET="$env:CLIENT_SECRET"
+          export CLIENT_ACCESS_TOKEN="$env:CLIENT_ACCESS_TOKEN"
+          export CLIENT_REFRESH_TOKEN="$env:CLIENT_REFRESH_TOKEN"
+          export CLIENT_EXPIRY_DATE="$env:CLIENT_EXPIRY_DATE"
+          node generateCredentials.js
+          ls *.json
