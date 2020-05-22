@@ -14,3 +14,6 @@
 # Others
 node_modules
 yarn-error.log
+client-secret.json
+credentials.json
+.clasp.json
