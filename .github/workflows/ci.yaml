@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Run MB Sheets Add-On Tests
+      - name: Run Tests
         run: |
           yarn global add @google/clasp
           yarn install
@@ -54,5 +54,6 @@ jobs:
           export CLIENT_EXPIRY_DATE="$env:CLIENT_EXPIRY_DATE"
           node generateCredentials.js
           ls *.json
+          PATH=$PATH:"$(yarn global bin)"
           clasp push
           yarn test
