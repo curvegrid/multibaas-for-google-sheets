@@ -3,7 +3,7 @@ const { google } = require('googleapis');
 const { authenticate } = require('./auth');
 
 /**
- * Call the gastTestRunner test function on the deployed script.
+ * Call the "testRunner" to test function on the deployed script.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  * @return [Number] Exit with the number of failed tests
  */
