@@ -4,18 +4,8 @@ const { google } = require('googleapis');
 
 // If modifying these scopes, delete credentials.json.
 const SCOPES = [
-  'https://www.googleapis.com/auth/script.processes',
-  'https://www.googleapis.com/auth/script.projects',
-  'https://www.googleapis.com/auth/script.deployments',
-  'https://www.googleapis.com/auth/script.container.ui',
   'https://www.googleapis.com/auth/script.external_request',
   'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/drive.metadata.readonly',
-  'https://www.googleapis.com/auth/script.webapp.deploy',
-  'https://www.googleapis.com/auth/cloud-platform.read-only',
-  'https://www.googleapis.com/auth/logging.read',
-  'https://www.googleapis.com/auth/drive',
-  'https://www.googleapis.com/auth/drive.scripts',
 ];
 const CREDENTIALS_PATH = '../.credentials.json';
 const CLIENT_SECRET_PATH = '../.client-secret.json';
