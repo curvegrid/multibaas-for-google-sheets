@@ -69,5 +69,6 @@ jobs:
           cat $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
+          echo $HOME
           clasp push
           yarn test
