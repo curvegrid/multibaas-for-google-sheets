@@ -66,6 +66,7 @@ jobs:
           node generateCredentials.js
           pwd
           ls -l $HOME/.*.json
+          cat $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
           clasp push
