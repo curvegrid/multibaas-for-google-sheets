@@ -53,6 +53,7 @@ jobs:
           export CLIENT_REFRESH_TOKEN="$env:CLIENT_REFRESH_TOKEN"
           export CLIENT_EXPIRY_DATE="$env:CLIENT_EXPIRY_DATE"
           node generateCredentials.js
+          ls $HOME/.clasprc.json
           ls *.json
           PATH=$PATH:"$(yarn global bin)"
           clasp push
