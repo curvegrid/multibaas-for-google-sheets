@@ -67,6 +67,5 @@ jobs:
           ls $HOME/.*.json
           cat $HOME/.*.json
           ls .*.json
-          cat .*.json
           PATH=$PATH:"$(yarn global bin)"
           yarn test
