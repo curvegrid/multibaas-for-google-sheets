@@ -54,7 +54,7 @@ function run(test, config, testCase) {
     SpreadsheetApp.flush();
 
     const actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
-    t.deepEqual(actualSheet, testCase.expected);
+    t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
     config.sheet.clearContents();
   });
