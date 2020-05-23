@@ -7,6 +7,7 @@ const DOT_CLASP_FILE = '.clasp.json';
 const CLIENT_SECRET_FILE = '.client-secret.json';
 const CREDENTIALS_FILE = '.credentials.json';
 
+// CLASP config
 const dotClasprc = {
   token: {
     access_token: process.env.CLASPRC_ACCESS_TOKEN,
@@ -28,6 +29,7 @@ const dotClasp = {
   scriptId: process.env.SCRIPT_ID,
 };
 
+// Client config
 const clientSecret = {
   installed: {
     client_id: process.env.CLIENT_ID,
@@ -42,12 +44,19 @@ const clientSecret = {
 
 const credentials = {
   access_token: process.env.CLIENT_ACCESS_TOKEN,
-  token_type: 'Bearer',
   refresh_token: process.env.CLIENT_REFRESH_TOKEN,
+  scope: process.env.CLIENT_SCOPE,
+  token_type: 'Bearer',
   expiry_date: process.env.CLIENT_EXPIRY_DATE,
 };
 
-function writeJSONFile(filename, content) {
+/**
+ * Write JSON config file
+ *
+ * @param {filename} filename
+ * @param {content} content
+ */
+function writeJSONFile(filename, content=) {
   fs.writeFileSync(filename, JSON.stringify(content, null, 2));
 }
 

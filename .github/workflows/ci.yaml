@@ -54,6 +54,7 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           CLIENT_ACCESS_TOKEN: ${{ secrets.CLIENT_ACCESS_TOKEN }}
           CLIENT_REFRESH_TOKEN: ${{ secrets.CLIENT_REFRESH_TOKEN }}
+          CLIENT_SCOPE: ${{ secrets.CLIENT_SCOPE }}
           CLIENT_EXPIRY_DATE: ${{ secrets.CLIENT_EXPIRY_DATE }}
         run: |
           yarn global add @google/clasp
@@ -72,9 +73,11 @@ jobs:
           export CLIENT_SECRET="$CLIENT_SECRET"
           export CLIENT_ACCESS_TOKEN="$CLIENT_ACCESS_TOKEN"
           export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
+          export CLIENT_SCOPE="$CLIENT_SCOPE"
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           node generateCredentials.js
           ls -l $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
+          clasp push
           yarn test
