@@ -51,6 +51,7 @@ jobs:
           CLIENT_REFRESH_TOKEN: ${{ secrets.CLIENT_REFRESH_TOKEN }}
           CLIENT_EXPIRY_DATE: ${{ secrets.CLIENT_EXPIRY_DATE }}
         run: |
+          yarn global add clasp
           yarn install
           export CLASPRC_ACCESS_TOKEN="$CLASPRC_ACCESS_TOKEN"
           export CLASPRC_REFRESH_TOKEN="$CLASPRC_REFRESH_TOKEN"
