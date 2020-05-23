@@ -39,24 +39,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Tests
+        env:
+          CLASPRC_ACCESS_TOKEN: ${{ secrets.CLASPRC_ACCESS_TOKEN }}
+          CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+          CLASPRC_EXPIRY_DATE: ${{ secrets.CLASPRC_EXPIRY_DATE }}
+          SCRIPT_ID: ${{ secrets.SCRIPT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CLIENT_ACCESS_TOKEN: ${{ secrets.CLIENT_ACCESS_TOKEN }}
+          CLIENT_REFRESH_TOKEN: ${{ secrets.CLIENT_REFRESH_TOKEN }}
+          CLIENT_EXPIRY_DATE: ${{ secrets.CLIENT_EXPIRY_DATE }}
         run: |
           yarn global add @google/clasp
           yarn install
-          export CLASPRC_ACCESS_TOKEN="$env:CLASPRC_ACCESS_TOKEN"
-          export CLASPRC_REFRESH_TOKEN="$env:CLASPRC_REFRESH_TOKEN"
-          export CLASPRC_EXPIRY_DATE="$env:CLASPRC_EXPIRY_DATE"
-          export SCRIPT_ID="$env:SCRIPT_ID"
-          export CLIENT_ID="$env:CLIENT_ID"
-          export PROJECT_ID="$env:PROJECT_ID"
-          export CLIENT_SECRET="$env:CLIENT_SECRET"
-          export CLIENT_ACCESS_TOKEN="$env:CLIENT_ACCESS_TOKEN"
-          export CLIENT_REFRESH_TOKEN="$env:CLIENT_REFRESH_TOKEN"
-          export CLIENT_EXPIRY_DATE="$env:CLIENT_EXPIRY_DATE"
+          export CLASPRC_ACCESS_TOKEN="$CLASPRC_ACCESS_TOKEN"
+          export CLASPRC_REFRESH_TOKEN="$CLASPRC_REFRESH_TOKEN"
+          export CLASPRC_EXPIRY_DATE="$CLASPRC_EXPIRY_DATE"
+          export SCRIPT_ID="$SCRIPT_ID"
+          export CLIENT_ID="$CLIENT_ID"
+          export PROJECT_ID="$PROJECT_ID"
+          export CLIENT_SECRET="$CLIENT_SECRET"
+          export CLIENT_ACCESS_TOKEN="$CLIENT_ACCESS_TOKEN"
+          export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
+          export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           node generateCredentials.js
           ls $HOME/.*.json
-          cat $HOME/.clasprc.json
           ls .*.json
-          cat .*.json
           PATH=$PATH:"$(yarn global bin)"
           clasp push
           yarn test
