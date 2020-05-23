@@ -64,6 +64,7 @@ jobs:
           export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           node generateCredentials.js
+          pwd
           ls -l $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
