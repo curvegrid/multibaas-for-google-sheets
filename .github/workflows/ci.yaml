@@ -41,8 +41,13 @@ jobs:
       - name: Run Tests
         env:
           CLASPRC_ACCESS_TOKEN: ${{ secrets.CLASPRC_ACCESS_TOKEN }}
-          CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+          CLASPRC_SCOPE: ${{ secrets.CLASPRC_SCOPE }}
+          CLASPRC_ID_TOKEN: ${{ secrets.CLASPRC_ID_TOKEN }}
           CLASPRC_EXPIRY_DATE: ${{ secrets.CLASPRC_EXPIRY_DATE }}
+          CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+          CLASPRC_CLIENT_ID: ${{ secrets.CLASPRC_CLIENT_ID }}
+          CLASPRC_CLIENT_SECRET: ${{ secrets.CLASPRC_CLIENT_SECRET }}
+          CLASPRC_REDIRECT_URI: ${{ secrets.CLASPRC_REDIRECT_URI }}
           SCRIPT_ID: ${{ secrets.SCRIPT_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -54,8 +59,13 @@ jobs:
           yarn global add @google/clasp
           yarn install
           export CLASPRC_ACCESS_TOKEN="$CLASPRC_ACCESS_TOKEN"
+          export CLASPRC_SCOPE="$CLASPRC_SCOPE"
+          export CLASPRC_ID_TOKEN="CLASPRC_ID_TOKEN"
           export CLASPRC_REFRESH_TOKEN="$CLASPRC_REFRESH_TOKEN"
           export CLASPRC_EXPIRY_DATE="$CLASPRC_EXPIRY_DATE"
+          export CLASPRC_CLIENT_ID="$CLASPRC_CLIENT_ID"
+          export CLASPRC_CLIENT_SECRET="$CLASPRC_CLIENT_SECRET"
+          export CLASPRC_REDIRECT_URI="CLASPRC_REDIRECT_URI"
           export SCRIPT_ID="$SCRIPT_ID"
           export CLIENT_ID="$CLIENT_ID"
           export PROJECT_ID="$PROJECT_ID"
@@ -64,11 +74,9 @@ jobs:
           export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           node generateCredentials.js
-          pwd
           ls -l $HOME/.*.json
           cat $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
-          echo $HOME
-          clasp push
+          yarn clasp push
           yarn test

@@ -8,10 +8,20 @@ const CLIENT_SECRET_FILE = '.client-secret.json';
 const CREDENTIALS_FILE = '.credentials.json';
 
 const dotClasprc = {
-  access_token: process.env.CLASPRC_ACCESS_TOKEN,
-  token_type: 'Bearer',
-  refresh_token: process.env.CLASPRC_REFRESH_TOKEN,
-  expiry_date: process.env.CLASPRC_EXPIRY_DATE,
+  token: {
+    access_token: process.env.CLASPRC_ACCESS_TOKEN,
+    scope: process.env.CLASPRC_SCOPE,
+    token_type: 'Bearer',
+    id_token: process.env.CLASPRC_ID_TOKEN,
+    expiry_date: process.env.CLASPRC_EXPIRY_DATE,
+    refresh_token: process.env.CLASPRC_REFRESH_TOKEN,
+  },
+  oauth2ClientSettings: {
+    clientId: process.env.CLASPRC_CLIENT_ID,
+    clientSecret: process.env.CLASPRC_CLIENT_SECRET,
+    redirectUri: process.env.CLASPRC_REDIRECT_URI,
+  },
+  isLocalCreds: false,
 };
 
 const dotClasp = {
