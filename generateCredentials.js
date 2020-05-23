@@ -56,7 +56,7 @@ const credentials = {
  * @param {filename} filename
  * @param {content} content
  */
-function writeJSONFile(filename, content=) {
+function writeJSONFile(filename, content) {
   fs.writeFileSync(filename, JSON.stringify(content, null, 2));
 }
 
