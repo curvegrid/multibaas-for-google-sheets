@@ -25,13 +25,13 @@ function callAppsScript(auth) {
       console.error(`api returned an error: ${err}`);
       process.exit(1);
     }
-    if (resp.error) {
+    if (resp.data.error) {
       // The API executed, but the script returned an error.
 
       // Extract the first (and only) set of error details. The values of this
       // object are the script's 'errorMessage' and 'errorType', and an array
       // of stack trace elements.
-      const [errorDetail] = resp.error.details;
+      const [errorDetail] = resp.data.error.details;
       console.error(`script error message: ${errorDetail.errorMessage}`);
       console.error('script error stacktrace:');
 
@@ -45,17 +45,13 @@ function callAppsScript(auth) {
       process.exit(1);
     } else {
       console.log(resp.data);
-      // error case
-      // {
-      //   done: true,
-      //   error: { code: 3, message: 'ScriptError', details: [ [Object] ] }
-      // }
-
-      // const data = resp.data.response.result;
-      // const { log } = data;
-      // console.log(log);
-      // const failureCount = data.failures;
-      // process.exit(failureCount);
+      if (resp.data.response) {
+        const { log, failures } = resp.data.response.result.data;
+        console.log(log);
+        process.exit(failures);
+      } else {
+        process.exit(1);
+      }
     }
   });
 }
