@@ -4,7 +4,7 @@ const path = require('path');
 
 const DOT_CLASPRC_FILE = path.join(process.env.HOME, '.clasprc.json');
 const DOT_CLASP_FILE = '.clasp.json';
-const CLIENT_SECRET_FILE = 'client_secret.json';
+const CLIENT_SECRET_FILE = 'client-secret.json';
 const CREDENTIALS_FILE = 'credentials.json';
 
 const dotClasprc = {
