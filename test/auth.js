@@ -17,8 +17,8 @@ const SCOPES = [
   'https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.scripts',
 ];
-const CREDENTIALS_PATH = '../credentials.json';
-const CLIENT_SECRET_PATH = '../client-secret.json';
+const CREDENTIALS_PATH = '../.credentials.json';
+const CLIENT_SECRET_PATH = '../.client-secret.json';
 
 /**
  * Get and store new token after prompting for user authorization, and then
