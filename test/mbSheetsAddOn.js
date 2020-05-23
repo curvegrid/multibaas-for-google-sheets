@@ -46,7 +46,7 @@ function callAppsScript(auth) {
     } else {
       console.log(resp.data);
       if (resp.data.response) {
-        const { log, failures } = resp.data.response.result.data;
+        const { log, failures } = resp.data.response.result;
         console.log(log);
         process.exit(failures);
       } else {
