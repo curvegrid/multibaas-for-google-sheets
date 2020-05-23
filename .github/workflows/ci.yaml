@@ -75,7 +75,6 @@ jobs:
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           node generateCredentials.js
           ls -l $HOME/.*.json
-          cat $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
           clasp push
