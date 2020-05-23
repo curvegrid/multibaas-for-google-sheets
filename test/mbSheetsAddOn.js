@@ -11,12 +11,10 @@ function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
   const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
 
-  // TODO: Do we need to wait for a while to update apps script api
-  // because it fails (entity not found) after clasp push
   const request = {
     function: 'testRunner',
     parameters: [],
-    devMode: true,
+    devMode: true, // Sue always the latest pushed codes
   };
 
   script.scripts.run({ auth, scriptId, resource: request }, (err, resp) => {
