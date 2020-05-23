@@ -89,7 +89,7 @@ function testRunner() {
     },
     {
       name: 'TestMBBLOCK',
-      skip: true,
+      skip: false,
       func: MBBLOCK,
       args: [1],
       expected: [
