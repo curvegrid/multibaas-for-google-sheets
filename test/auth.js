@@ -14,9 +14,11 @@ const SCOPES = [
   'https://www.googleapis.com/auth/script.webapp.deploy',
   'https://www.googleapis.com/auth/cloud-platform.read-only',
   'https://www.googleapis.com/auth/logging.read',
+  'https://www.googleapis.com/auth/drive',
+  'https://www.googleapis.com/auth/drive.scripts',
 ];
-const TOKEN_PATH = '../token_id.json';
-const CLIENT_SECRET_PATH = '../client_secret.json';
+const CREDENTIALS_PATH = '../credentials.json';
+const CLIENT_SECRET_PATH = '../client-secret.json';
 
 /**
  * Get and store new token after prompting for user authorization, and then
@@ -44,11 +46,11 @@ function getAccessToken(scopes, oAuth2Client, callback) {
 
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (fileError) => {
+      fs.writeFile(CREDENTIALS_PATH, JSON.stringify(token), (fileError) => {
         if (fileError) {
           console.error(fileError);
         }
-        console.log(`token stored to ${TOKEN_PATH}`);
+        console.log(`token stored to ${CREDENTIALS_PATH}`);
       });
       callback(oAuth2Client);
       return undefined;
@@ -68,7 +70,7 @@ function authorize(scopes, credentials, callback) {
   const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
+  fs.readFile(CREDENTIALS_PATH, (err, token) => {
     if (err) {
       return getAccessToken(scopes, oAuth2Client, callback);
     }
