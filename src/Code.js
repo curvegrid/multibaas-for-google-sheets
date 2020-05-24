@@ -1,7 +1,3 @@
-/**
- * @OnlyCurrentDoc
- */
-
 // Copyright (c) 2020 Curvegrid Inc.
 
 const URL_SCHEME = 'https://';

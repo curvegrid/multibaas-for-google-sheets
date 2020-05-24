@@ -1,0 +1,37 @@
+{
+  "name": "multibaas-sheets-add-on",
+  "version": "1.0.0",
+  "description": "MultiBaas Sheets Add-On",
+  "repository": "https://github.com/curvegrid/hackathon-sunset-supreme",
+  "author": "Curvegrid Inc.",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "lint": "eslint ./*.js src/*.js test/*.js",
+    "test": "cd test && node mbSheetsAddOn.js"
+  },
+  "keywords": [
+    "multibaas",
+    "ethereum",
+    "spreadsheet"
+  ],
+  "devDependencies": {},
+  "dependencies": {
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "googleapis": "^51.0.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/**/*.{js,}": [
+      "yarn lint"
+    ]
+  }
+}
