@@ -528,6 +528,7 @@ function buildFilters(items, start, numItems) {
 
     // loop through 'and' and 'or', creating children if they don't exist
     let node = filter;
+    // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const j in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
       const ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
@@ -543,6 +544,7 @@ function buildFilters(items, start, numItems) {
       if (Array.isArray(node)) {
         // find the one that matches this rule
         let matchedChild = false;
+        // eslint-disable-next-line no-restricted-syntax, guard-for-in
         for (const k in node) {
           if (node[k].rule === rule) {
             // node 'array' becomes an 'object' again
@@ -559,6 +561,7 @@ function buildFilters(items, start, numItems) {
           node = node[node.length - 1];
         } else {
           // otherwise, we matched, so next rule
+          // eslint-disable-next-line no-continue
           continue;
         }
       }
@@ -943,10 +946,12 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   filterRe = new RegExp(filter, 'i');
 
   // data rows
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const i in entries) {
     const entry = entries[i];
 
     if (filter !== '' && filter !== undefined && !filterRe.test(entry.name)) {
+      // eslint-disable-next-line no-continue
       continue;
     }
 
@@ -1002,6 +1007,7 @@ function buildNumInputsOrOutputs(label, length) {
 function buildFunctionInputsOrOutputs(entries) {
   const params = [];
 
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const i in entries) {
     const entry = entries[i];
     let param = entry.name;
@@ -1058,7 +1064,8 @@ function eventsToArray(entries) {
   // determine the maximum number of event and method inputs
   let maxEventInputs = 0;
   let maxMethodInputs = 0;
-  for (var i in entries) {
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const i in entries) {
     const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
@@ -1073,7 +1080,8 @@ function eventsToArray(entries) {
   rows.push(header);
 
   // body rows
-  for (var i in entries) {
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const i in entries) {
     const entry = entries[i];
     const { event } = entry;
     const tx = entry.transaction;
@@ -1085,7 +1093,12 @@ function eventsToArray(entries) {
     const eventDef = buildSigDef(event);
     const eventInputs = buildInputs(event.inputs, maxEventInputs);
 
-    row = row.concat([event.name, eventDef]).concat(eventInputs).concat([event.indexInLog, event.contract.label, event.contract.address, event.contract.name]);
+    row = row
+      .concat([event.name, eventDef])
+      .concat(eventInputs)
+      .concat([
+        event.indexInLog, event.contract.label, event.contract.address, event.contract.name
+      ]);
 
     // tx fields
     let fxnDef = '';
@@ -1095,7 +1108,21 @@ function eventsToArray(entries) {
       fxnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
     }
 
-    row = row.concat([tx.from, tx.txData, tx.txHash, tx.txIndexInBlock, tx.blockHash, tx.blockNumber, tx.contract.label, tx.contract.address, tx.contract.name, tx.method.name, fxnDef]).concat(fxnInputs);
+    row = row
+      .concat([
+        tx.from,
+        tx.txData,
+        tx.txHash,
+        tx.txIndexInBlock,
+        tx.blockHash,
+        tx.blockNumber,
+        tx.contract.label,
+        tx.contract.address,
+        tx.contract.name,
+        tx.method.name,
+        fxnDef,
+      ])
+      .concat(fxnInputs);
 
     rows.push(row);
   }
@@ -1121,6 +1148,7 @@ function buildInputs(inputs, maxInputs) {
 function buildSigDef(event) {
   // insert name (if any) after each type in the event signature
   const parts = String(event.signature).split(',');
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const i in event.inputs) {
     const input = event.inputs[i];
     if (input.name !== '') {
@@ -1152,6 +1180,7 @@ function objectArrayToArray(objArr) {
   rows.push(headers);
 
   // body rows
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const i in objArr) {
     const obj = objArr[i];
     const row = valuesFromKeys(headers, obj);
@@ -1163,6 +1192,7 @@ function objectArrayToArray(objArr) {
 
 function keysFromObj(obj, sort) {
   const keys = [];
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const key in obj) {
     keys.push(key);
   }
@@ -1175,6 +1205,7 @@ function keysFromObj(obj, sort) {
 
 function valuesFromKeys(keys, valueObj) {
   const values = [];
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const i in keys) {
     const key = keys[i];
     values.push(valueObj[key]);
