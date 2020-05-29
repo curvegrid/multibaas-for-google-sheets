@@ -79,10 +79,13 @@ function mbPost() {
 }
 
 /**
- * Create a template to be used with calling a smart contract method (function) that will write to the blockchain.
+ * Create a template to be used with calling a smart contract method (function)
+ * that will write to the blockchain.
  *
- * @param {numberOfArgs} numberOfArgs (Optional) Number of arguments (parameters) to pass to the method (function). Default is 0.
- * @return A two dimensional array that can be used as the starting point for calling a smart contract method.
+ * @param {numberOfArgs} numberOfArgs (Optional) Number of arguments (parameters)
+ * to pass to the method (function). Default is 0.
+ * @return A two dimensional array that can be used as the starting point for calling
+ * a smart contract method.
  * @customfunction
  */
 function MBPOSTTEMPLATE(numberOfArgs) {
@@ -189,7 +192,8 @@ function MBTX(deployment, apiKey, hash, headers) {
  * @param {apiKey} apiKey MultiBaas API Key.
  * @param {numberOrHash} numberOrHash Block number or hash.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
- * @param {txHashes} txHashes (Optional) Include the transaction hashes. TRUE/FALSE, defaults to TRUE.
+ * @param {txHashes} txHashes (Optional) Include the transaction hashes. TRUE/FALSE,
+ * defaults to TRUE.
  * @return Block details.
  * @customfunction
  */
@@ -217,7 +221,8 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
- * @param {code} code (Optional) Include the smart contract bytecode deployed at the address, if any. TRUE/FALSE, defaults to FALSE.
+ * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
+ * if any. TRUE/FALSE, defaults to FALSE.
  * @return Address details.
  * @customfunction
  */
@@ -299,8 +304,10 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
 /**
  * Create a template to be used with a custom MultiBaas Event Query.
  *
- * @param {numberOfSelects} numberOfSelects (Optional) Number of 'select' groups to create. Default is 1.
- * @param {numberOfFilters} numberOfFilters (Optional) Number of 'filter' groups to create. Default is 1.
+ * @param {numberOfSelects} numberOfSelects (Optional) Number of 'select' groups
+ * to create. Default is 1.
+ * @param {numberOfFilters} numberOfFilters (Optional) Number of 'filter' groups
+ * to create. Default is 1.
  * @return A two dimensional array that can be used as the starting point for a custom Event Query.
  * @customfunction
  */
