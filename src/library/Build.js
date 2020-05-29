@@ -1,5 +1,7 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
+/* eslint-disable no-unused-vars, no-undef */
+
 function buildSelects(items, start, numItems) {
   const triplets = [];
   for (let i = start; i < numItems * 3; i += 3) {
@@ -50,7 +52,7 @@ function buildFilters(items, start, numItems) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const j in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
-      const ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
+      const ruleParts = RegExp('^([A-Za-z.]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts === null || ruleParts.length < 2) {
         throw new Error(`invalid rule '${rulePath[j]}' in '${rules}'`);
       }
@@ -91,7 +93,7 @@ function buildFilters(items, start, numItems) {
           // new child node
           node.rule = rule;
           node.children = [{}];
-          node = node.children[0];
+          [node] = node.children;
         } else {
           // existing child node
 
@@ -121,7 +123,7 @@ function buildFilters(items, start, numItems) {
           if (!isNaturalNumber(inputIndex)) {
             throw new Error(`invalid input index '${inputIndex}', must be a positive number`);
           }
-          node.inputIndex = parseInt(inputIndex);
+          node.inputIndex = parseInt(inputIndex, 10);
         }
       }
     }
@@ -186,11 +188,12 @@ function buildMethodArgs(args, from, signer, signAndSubmit) {
 
   // optional from and signer for "write" transactions
   if (from !== undefined) {
-    if (signer === undefined || signer === '') {
-      signer = from;
-    }
     payload.from = from;
     payload.signer = signer;
+
+    if (signer === undefined || signer === '') {
+      payload.signer = from;
+    }
 
     // optional "sign and submit" for HSM addresses
     if (signAndSubmit !== undefined) {
