@@ -5,10 +5,10 @@ function buildSelects(items, start, numItems) {
   for (let i = start; i < numItems * 3; i += 3) {
     // not all rows will have the same number of triplets
     if (items[i] === '') {
-      triplets.push(triplet);
       break;
     }
-    let triplet = {
+
+    const triplet = {
       alias: items[i],
       inputIndex: parseInt(items[i + 1], 10),
     };
