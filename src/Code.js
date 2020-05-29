@@ -38,7 +38,7 @@ function mbPost() {
   const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    throw (`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    throw new Error(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
   }
 
   const values = range.getValues();
@@ -81,7 +81,7 @@ function MBPOSTTEMPLATE(numberOfArgs) {
   if (numberOfArgs == undefined || numberOfArgs == '') {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
-    throw ('number of arguments must be a valid positive integer');
+    throw new Error('number of arguments must be a valid positive integer');
   }
 
   const header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
@@ -105,7 +105,7 @@ function MBPOSTTEMPLATE(numberOfArgs) {
  */
 function MBEVENTLIST(deployment, apiKey, contract, filter) {
   if (contract == undefined || contract == '') {
-    throw ('must provide a smart contract label');
+    throw new Error('must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -132,7 +132,7 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
  */
 function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
   if (contract == undefined || contract == '') {
-    throw ('must provide a smart contract label');
+    throw new Error('must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -214,7 +214,7 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  */
 function MBADDRESS(deployment, apiKey, address, headers, code) {
   if (address == undefined || address == '') {
-    throw ('must provide an address or address label');
+    throw new Error('must provide an address or address label');
   }
 
   headers = clampBool(headers, true);
@@ -244,7 +244,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
  */
 function MBQUERY(deployment, apiKey, query, limit, offset) {
   if (query == undefined || query == '') {
-    throw ('must provide an Event Query name');
+    throw new Error('must provide an Event Query name');
   }
 
   const queryPath = `queries/${query}/results`;
@@ -272,7 +272,7 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  */
 function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
   if (events == undefined || events == '') {
-    throw ('must provide an events definition');
+    throw new Error('must provide an events definition');
   }
 
   const queryPath = 'queries';
@@ -300,12 +300,12 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
   if (numberOfSelects == undefined || numberOfSelects == '') {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
-    throw ("number of 'select' groups must be a valid positive integer");
+    throw new Error("number of 'select' groups must be a valid positive integer");
   }
   if (numberOfFilters == undefined || numberOfFilters == '') {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
-    throw ("number of 'filter' groups must be a valid positive integer");
+    throw new Error("number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
@@ -332,7 +332,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
  */
 function MBEVENTS(deployment, apiKey, address, limit, offset) {
   if (address == undefined || address == '') {
-    throw ('must provide an address or address label');
+    throw new Error('must provide an address or address label');
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/events`;
@@ -359,13 +359,13 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  */
 function MBGET(deployment, apiKey, address, contract, method, ...args) {
   if (address == undefined || address == '') {
-    throw ('must provide an address or address label');
+    throw new Error('must provide an address or address label');
   }
   if (contract == undefined || contract == '') {
-    throw ('must provide a smart contract label');
+    throw new Error('must provide a smart contract label');
   }
   if (method == undefined || method == '') {
-    throw ('must provide a method (function) name');
+    throw new Error('must provide a method (function) name');
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -422,13 +422,13 @@ function extractSelectFilterCounts(header) {
         selectHalf = false;
       } else {
         if (aliasRule != 'alias') {
-          throw (`expecting 'alias' in position ${i}, found '${aliasRule}'`);
+          throw new Error(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
         if (indexOperator != 'index') {
-          throw (`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+          throw new Error(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
         }
         if (aggregatorValue != 'aggregator') {
-          throw (`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+          throw new Error(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
         }
 
         numSelect++;
@@ -436,13 +436,13 @@ function extractSelectFilterCounts(header) {
     }
     if (!selectHalf) {
       if (aliasRule != 'rule') {
-        throw (`expecting 'rule' in position ${i}, found '${aliasRule}'`);
+        throw new Error(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
       if (indexOperator != 'operator') {
-        throw (`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        throw new Error(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
       }
       if (aggregatorValue != 'value') {
-        throw (`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
+        throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
       }
 
       numFilter++;
@@ -466,17 +466,17 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
 
   // parse and validate header row
   if (events.length < 2) {
-    throw (`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
+    throw new Error(`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
   }
   const header = events[0];
   if (header.length < 4) {
-    throw (`expecting to have at least four columns, found ${header.length} columns total`);
+    throw new Error(`expecting to have at least four columns, found ${header.length} columns total`);
   }
   if ((header.length - 1) % 3 != 0) {
-    throw (`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
+    throw new Error(`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
   }
   if (header[0].toLowerCase() != 'eventname') {
-    throw (`expecting first column in header row to be 'eventName', found '${header[0]}'`);
+    throw new Error(`expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
   // extract the number of select and filter triplets
@@ -518,7 +518,7 @@ function buildFilters(items, start, numItems) {
     }
 
     if (value == '') {
-      throw (`value is empty for rule '${rules}'`);
+      throw new Error(`value is empty for rule '${rules}'`);
     }
 
     // split by colons
@@ -534,11 +534,11 @@ function buildFilters(items, start, numItems) {
       // parse out rule and optional numeric portions (e.g., input0)
       const ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts == null || ruleParts.length < 2) {
-        throw (`invalid rule '${rulePath[j]}' in '${rules}'`);
+        throw new Error(`invalid rule '${rulePath[j]}' in '${rules}'`);
       }
       const rule = ruleParts[1].toLowerCase();
       if (rule == '') {
-        throw (`sub-rule is empty in '${rules}'`);
+        throw new Error(`sub-rule is empty in '${rules}'`);
       }
 
       // if we're on a children array, search for a child matching this rule
@@ -595,11 +595,11 @@ function buildFilters(items, start, numItems) {
         // special case for an input
         if (rule == 'input') {
           if (ruleParts.length != 3) {
-            throw ("no input index provided, just 'input'");
+            throw new Error("no input index provided, just 'input'");
           }
           const inputIndex = ruleParts[2];
           if (!isNaturalNumber(inputIndex)) {
-            throw (`invalid input index '${inputIndex}', must be a positive number`);
+            throw new Error(`invalid input index '${inputIndex}', must be a positive number`);
           }
           node.inputIndex = parseInt(inputIndex);
         }
@@ -635,7 +635,7 @@ function buildSelects(items, start, numItems) {
 function validateOperator(operator) {
   operator = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operator)) {
-    throw (`'${operator}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
+    throw new Error(`'${operator}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
   }
 
   return operator;
@@ -645,7 +645,7 @@ function validateOperator(operator) {
 function validateAggregator(aggregator) {
   aggregator = String(aggregator).toLowerCase();
   if (!VALID_AGGREGATORS.includes(aggregator)) {
-    throw (`'${aggregator}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
+    throw new Error(`'${aggregator}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
   }
 
   return aggregator;
@@ -653,7 +653,7 @@ function validateAggregator(aggregator) {
 
 function validateBlockNumOrHash(numOrHash) {
   if (numOrHash == undefined || numOrHash == '') {
-    throw ('must provide a block number or hash');
+    throw new Error('must provide a block number or hash');
   }
 
   // fast return if it's a valid positive integer
@@ -668,19 +668,19 @@ function validateBlockTxHash(hash) {
   hash = String(hash);
 
   if (hash == undefined || hash == '' || hash.length < 2) {
-    throw ('must provide a hash');
+    throw new Error('must provide a hash');
   }
 
   if (hash.substring(0, 2).toLowerCase() != '0x') {
-    throw ("hash must start with '0x'");
+    throw new Error("hash must start with '0x'");
   }
 
   if (hash.length != 66) {
-    throw (`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
+    throw new Error(`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
   }
 
   if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hash)) {
-    throw ('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
+    throw new Error('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
   }
 }
 
@@ -735,13 +735,13 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
 function normalizeCreds(deployment, apiKey) {
   // validate deployment ID
   if (!RegExp('^[a-z0-9]+$', 'i').test(deployment)) {
-    throw ('invalid deployment ID');
+    throw new Error('invalid deployment ID');
   }
 
   // validate API key
   // based on: https://www.regextester.com/105777
   if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw ('invalid API key');
+    throw new Error('invalid API key');
   }
 
   return deployment, apiKey;
@@ -750,12 +750,12 @@ function normalizeCreds(deployment, apiKey) {
 function buildLimitOffset(limit, offset) {
   // validate limit
   if (limit != undefined && !isNaturalNumber(limit)) {
-    throw ('invalid limit, must be a positive integer');
+    throw new Error('invalid limit, must be a positive integer');
   }
 
   // validate offset
   if (offset != undefined && !isNaturalNumber(offset)) {
-    throw ('invalid offset, must be a positive integer');
+    throw new Error('invalid offset, must be a positive integer');
   }
 
   // generate a clean URL query param
