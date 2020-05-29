@@ -21,6 +21,7 @@
     "MBPOSTTEMPLATE": false,
     "MBQUERY": false,
     "MBTX": false,
+    "BigInt": false,
     "before": false,
     "beforeEach": false,
     "it": false,
@@ -30,5 +31,6 @@
     "ecmaVersion": 2018
   },
   "rules": {
+    "no-plusplus": "off"
   }
 }
