@@ -8,19 +8,19 @@ const HTTP_POST = 'POST';
 // TODO: comments
 
 function onOpen() {
-  var ui = SpreadsheetApp.getUi();
+  const ui = SpreadsheetApp.getUi();
 
   ui.createMenu('MultiBaas')
-      .addItem('Post to the blockchain', 'mbPost')
-      .addItem('Refresh current cell', 'mbRefresh')
-      .addToUi();
+    .addItem('Post to the blockchain', 'mbPost')
+    .addItem('Refresh current cell', 'mbRefresh')
+    .addToUi();
 }
 
 function mbRefresh() {
-  let range = SpreadsheetApp.getActiveRange();
-  let cell = range.getCell(1, 1);
-  let value = cell.getValue();
-  let formula = cell.getFormula();
+  const range = SpreadsheetApp.getActiveRange();
+  const cell = range.getCell(1, 1);
+  const value = cell.getValue();
+  const formula = cell.getFormula();
   cell.setValue('');
   SpreadsheetApp.flush();
   if (formula != '') {
@@ -34,37 +34,37 @@ function mbRefresh() {
 function mbPost() {
   const MIN_COLUMNS = 7;
 
-  let sheet = SpreadsheetApp.getActiveSheet();
-  let range = SpreadsheetApp.getActiveRange();
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    throw(range.getNumColumns() + " selected column(s) is fewer than the minimum of " + MIN_COLUMNS + " columns");
+    throw (`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
   }
 
-  let values = range.getValues();
+  const values = range.getValues();
 
   for (let i = 0; i < values.length; i++) {
-    let row = values[i];
+    const row = values[i];
 
-    let [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
+    const [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
 
     let args = [];
     if (row.length > MIN_COLUMNS) {
       args = row.slice(7);
     }
 
-    let queryPath = 'chains/ethereum/addresses/' + address + '/contracts/' + contract + '/methods/' + method;
+    const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
     // build args
-    let signAndSubmit = true;
-    let payload = buildMethodArgs(args, from, signer, signAndSubmit);
+    const signAndSubmit = true;
+    const payload = buildMethodArgs(args, from, signer, signAndSubmit);
 
-    let results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
-    let output = JSON.stringify(results.result.tx)
-    console.log('Results: ' + output);
+    const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+    const output = JSON.stringify(results.result.tx);
+    console.log(`Results: ${output}`);
 
     // output tx hash
-    sheet.getRange(range.getRow()+i, range.getColumn()+range.getNumColumns(), 1, 1).setValue(results.result.tx.hash);
+    sheet.getRange(range.getRow() + i, range.getColumn() + range.getNumColumns(), 1, 1).setValue(results.result.tx.hash);
     SpreadsheetApp.flush();
   }
 }
@@ -81,12 +81,12 @@ function MBPOSTTEMPLATE(numberOfArgs) {
   if (numberOfArgs == undefined || numberOfArgs == '') {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
-    throw("number of arguments must be a valid positive integer");
+    throw ('number of arguments must be a valid positive integer');
   }
 
-  let header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
+  const header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
   for (let i = 0; i < numberOfArgs; i++) {
-    header.push('input' + String(i));
+    header.push(`input${String(i)}`);
   }
   header.push('txHash (output)');
 
@@ -104,18 +104,18 @@ function MBPOSTTEMPLATE(numberOfArgs) {
  * @customfunction
  */
 function MBEVENTLIST(deployment, apiKey, contract, filter) {
-  if (contract == undefined || contract == "") {
-    throw("must provide a smart contract label");
+  if (contract == undefined || contract == '') {
+    throw ('must provide a smart contract label');
   }
 
-  let queryPath = 'contracts/' + contract;
+  const queryPath = `contracts/${contract}`;
 
-  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+  const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  let includeOutputs = false;
-  let output = functionsToArray(results.result.abi.events, 'event', filter, includeOutputs);
-  console.log('Results: ' + JSON.stringify(output));
+  const includeOutputs = false;
+  const output = functionsToArray(results.result.abi.events, 'event', filter, includeOutputs);
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -131,18 +131,18 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
  * @customfunction
  */
 function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
-  if (contract == undefined || contract == "") {
-    throw("must provide a smart contract label");
+  if (contract == undefined || contract == '') {
+    throw ('must provide a smart contract label');
   }
 
-  let queryPath = 'contracts/' + contract;
+  const queryPath = `contracts/${contract}`;
 
-  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+  const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  let includeOutputs = true;
-  let output = functionsToArray(results.result.abi.methods, 'function', filter, includeOutputs);
-  console.log('Results: ' + JSON.stringify(output));
+  const includeOutputs = true;
+  const output = functionsToArray(results.result.abi.methods, 'function', filter, includeOutputs);
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -162,13 +162,13 @@ function MBTX(deployment, apiKey, hash, headers) {
 
   headers = clampBool(headers, true);
 
-  let queryPath = 'chains/ethereum/transactions/' + hash;
+  const queryPath = `chains/ethereum/transactions/${hash}`;
 
-  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+  const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  let output = txToArray(results.result, headers);
-  console.log('Results: ' + JSON.stringify(output));
+  const output = txToArray(results.result, headers);
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -190,13 +190,13 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
   headers = clampBool(headers, true);
   txHashes = clampBool(txHashes, true);
 
-  let queryPath = 'chains/ethereum/blocks/' + numberOrHash;
+  const queryPath = `chains/ethereum/blocks/${numberOrHash}`;
 
-  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+  const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  let output = blockToArray(results.result, headers, txHashes);
-  console.log('Results: ' + JSON.stringify(output));
+  const output = blockToArray(results.result, headers, txHashes);
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -213,20 +213,20 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  * @customfunction
  */
 function MBADDRESS(deployment, apiKey, address, headers, code) {
-  if (address == undefined || address == "") {
-    throw("must provide an address or address label");
+  if (address == undefined || address == '') {
+    throw ('must provide an address or address label');
   }
 
   headers = clampBool(headers, true);
   code = clampBool(code, false);
 
-  let queryPath = 'chains/ethereum/addresses/' + address;
+  const queryPath = `chains/ethereum/addresses/${address}`;
 
-  let results = query(HTTP_GET, deployment, apiKey, queryPath);
+  const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the address structure into a flat array
-  let output = addressToArray(results.result, headers, code);
-  console.log('Results: ' + JSON.stringify(output));
+  const output = addressToArray(results.result, headers, code);
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -243,17 +243,17 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
  * @customfunction
  */
 function MBQUERY(deployment, apiKey, query, limit, offset) {
-  if (query == undefined || query == "") {
-    throw("must provide an Event Query name");
+  if (query == undefined || query == '') {
+    throw ('must provide an Event Query name');
   }
 
-  let queryPath = 'queries/' + query + '/results';
+  const queryPath = `queries/${query}/results`;
 
-  let results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
-  console.log('Results: ' + JSON.stringify(results));
+  const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+  console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the array of objects into a flat array
-  let objArr = results.result.rows;
+  const objArr = results.result.rows;
   return objectArrayToArray(objArr);
 }
 
@@ -271,19 +271,19 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  * @customfunction
  */
 function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
-  if (events == undefined || events == "") {
-    throw("must provide an events definition");
+  if (events == undefined || events == '') {
+    throw ('must provide an events definition');
   }
 
-  let queryPath = 'queries';
+  const queryPath = 'queries';
 
-  let payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
+  const payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
 
-  let results = limitQuery(HTTP_POST, deployment, apiKey, queryPath, limit, offset, payload);
-  console.log('Results: ' + JSON.stringify(results));
+  const results = limitQuery(HTTP_POST, deployment, apiKey, queryPath, limit, offset, payload);
+  console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the array of objects into a flat array
-  let objArr = results.result.rows;
+  const objArr = results.result.rows;
   return objectArrayToArray(objArr);
 }
 
@@ -300,12 +300,12 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
   if (numberOfSelects == undefined || numberOfSelects == '') {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
-    throw("number of 'select' groups must be a valid positive integer");
+    throw ("number of 'select' groups must be a valid positive integer");
   }
   if (numberOfFilters == undefined || numberOfFilters == '') {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
-    throw("number of 'filter' groups must be a valid positive integer");
+    throw ("number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
@@ -331,17 +331,17 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
  * @customfunction
  */
 function MBEVENTS(deployment, apiKey, address, limit, offset) {
-  if (address == undefined || address == "") {
-    throw("must provide an address or address label");
+  if (address == undefined || address == '') {
+    throw ('must provide an address or address label');
   }
 
-  let queryPath = 'chains/ethereum/addresses/' + address + '/events';
+  const queryPath = `chains/ethereum/addresses/${address}/events`;
 
-  let results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
-  console.log('Results: ' + JSON.stringify(results));
+  const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+  console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the events structure into a flat array
-  let events = results.result;
+  const events = results.result;
   return eventsToArray(events);
 }
 
@@ -358,24 +358,24 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  * @customfunction
  */
 function MBGET(deployment, apiKey, address, contract, method, ...args) {
-  if (address == undefined || address == "") {
-    throw("must provide an address or address label");
+  if (address == undefined || address == '') {
+    throw ('must provide an address or address label');
   }
-  if (contract == undefined || contract == "") {
-    throw("must provide a smart contract label");
+  if (contract == undefined || contract == '') {
+    throw ('must provide a smart contract label');
   }
-  if (method == undefined || method == "") {
-    throw("must provide a method (function) name");
+  if (method == undefined || method == '') {
+    throw ('must provide a method (function) name');
   }
 
-  let queryPath = 'chains/ethereum/addresses/' + address + '/contracts/' + contract + '/methods/' + method;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
-  let payload = buildMethodArgs(args);
+  const payload = buildMethodArgs(args);
 
-  let results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
-  let output = results.result.output;
-  console.log('Results: ' + JSON.stringify(output));
+  const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+  const { output } = results.result;
+  console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
 }
@@ -395,16 +395,16 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
  * @customfunction
  */
 function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, ...args) {
-  let queryPath = 'chains/ethereum/addresses/' + address + '/contracts/' + contract + '/methods/' + method;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
-  let payload = buildMethodArgs(args, from, signer);
+  const payload = buildMethodArgs(args, from, signer);
 
-  let results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
-  let output = JSON.stringify(results.result.tx)
-  console.log('Results: ' + output);
+  const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+  const output = JSON.stringify(results.result.tx);
+  console.log(`Results: ${output}`);
 
-  return output
+  return output;
 }
 
 function extractSelectFilterCounts(header) {
@@ -412,23 +412,23 @@ function extractSelectFilterCounts(header) {
   let numFilter = 0;
 
   let selectHalf = true;
-  for (let i = 1; i < header.length; i+=3) {
-    let aliasRule = header[i].toLowerCase();
-    let indexOperator = header[i+1].toLowerCase();
-    let aggregatorValue = header[i+2].toLowerCase();
+  for (let i = 1; i < header.length; i += 3) {
+    const aliasRule = header[i].toLowerCase();
+    const indexOperator = header[i + 1].toLowerCase();
+    const aggregatorValue = header[i + 2].toLowerCase();
 
     if (selectHalf) {
       if (aliasRule == 'rule') {
         selectHalf = false;
       } else {
         if (aliasRule != 'alias') {
-          throw("expecting 'alias' in position " + i + ", found '" + aliasRule + "'");
+          throw (`expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
         if (indexOperator != 'index') {
-          throw("expecting 'index' in position " + (i+1) + ", found '" + indexOperator + "'");
+          throw (`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
         }
         if (aggregatorValue != 'aggregator') {
-          throw("expecting 'aggregator' in position " + (i+2) + ", found '" + aggregatorValue + "'");
+          throw (`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
         }
 
         numSelect++;
@@ -436,13 +436,13 @@ function extractSelectFilterCounts(header) {
     }
     if (!selectHalf) {
       if (aliasRule != 'rule') {
-        throw("expecting 'rule' in position " + i + ", found '" + aliasRule + "'");
+        throw (`expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
       if (indexOperator != 'operator') {
-        throw("expecting 'operator' in position " + (i+1) + ", found '" + indexOperator + "'");
+        throw (`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
       }
       if (aggregatorValue != 'value') {
-        throw("expecting 'value' in position " + (i+2) + ", found '" + aggregatorValue + "'");
+        throw (`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
       }
 
       numFilter++;
@@ -453,9 +453,9 @@ function extractSelectFilterCounts(header) {
 }
 
 function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
-  let query = {
-    events: []
-  }
+  const query = {
+    events: [],
+  };
 
   if (groupBy != undefined && groupBy != '') {
     query.groupBy = groupBy;
@@ -466,34 +466,34 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
 
   // parse and validate header row
   if (events.length < 2) {
-    throw("expecting a header row followed by one or more data rows, found " + events.length + " rows total");
+    throw (`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
   }
-  let header = events[0];
+  const header = events[0];
   if (header.length < 4) {
-    throw("expecting to have at least four columns, found " + header.length + " columns total");
+    throw (`expecting to have at least four columns, found ${header.length} columns total`);
   }
   if ((header.length - 1) % 3 != 0) {
-    throw("expecting number of columns to be divisible by 3 plus 1, found " + header.length + " columns total");
+    throw (`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
   }
-  if (header[0].toLowerCase() != "eventname") {
-    throw("expecting first column in header row to be 'eventName', found '" + header[0] + "'");
+  if (header[0].toLowerCase() != 'eventname') {
+    throw (`expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
   // extract the number of select and filter triplets
-  let [numSelect, numFilter] = extractSelectFilterCounts(header);
+  const [numSelect, numFilter] = extractSelectFilterCounts(header);
 
   // build the event query
   for (let i = 1; i < events.length; i++) {
-    let event = events[i];
+    const event = events[i];
 
     // build selects and filters
-    let selects = buildSelects(event, 1, numSelect);
-    let filters = buildFilters(event, 1+numSelect*3, numFilter);
+    const selects = buildSelects(event, 1, numSelect);
+    const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
 
     query.events.push({
       eventName: event[0],
       select: selects,
-      filter: filters
+      filter: filters,
     });
   }
 
@@ -506,11 +506,11 @@ const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
 const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
 
 function buildFilters(items, start, numItems) {
-  let filter = {};
-  for (var i = start; i < start + numItems*3; i+=3) {
-    let rules = items[i];
-    let operator = items[i+1];
-    let value = items[i+2];
+  const filter = {};
+  for (let i = start; i < start + numItems * 3; i += 3) {
+    const rules = items[i];
+    const operator = items[i + 1];
+    const value = items[i + 2];
 
     // not all rows will have the same number of filters
     if (rules == '') {
@@ -518,11 +518,11 @@ function buildFilters(items, start, numItems) {
     }
 
     if (value == '') {
-      throw("value is empty for rule '" + rules + "'");
+      throw (`value is empty for rule '${rules}'`);
     }
 
     // split by colons
-    let rulePath = rules.split(':');
+    const rulePath = rules.split(':');
     if (rulePath.length == 1) {
       // special case for a single rule
       rulePath.unshift('And');
@@ -530,22 +530,22 @@ function buildFilters(items, start, numItems) {
 
     // loop through 'and' and 'or', creating children if they don't exist
     let node = filter;
-    for(var j in rulePath) {
+    for (const j in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
-      let ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
+      const ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts == null || ruleParts.length < 2) {
-        throw("invalid rule '" + rulePath[j] + "' in '" + rules + "'");
+        throw (`invalid rule '${rulePath[j]}' in '${rules}'`);
       }
-      let rule = ruleParts[1].toLowerCase();
+      const rule = ruleParts[1].toLowerCase();
       if (rule == '') {
-        throw("sub-rule is empty in '" + rules + "'");
+        throw (`sub-rule is empty in '${rules}'`);
       }
 
       // if we're on a children array, search for a child matching this rule
       if (Array.isArray(node)) {
         // find the one that matches this rule
         let matchedChild = false;
-        for (var k in node) {
+        for (const k in node) {
           if (node[k].rule == rule) {
             // node 'array' becomes an 'object' again
             node = node[k];
@@ -595,11 +595,11 @@ function buildFilters(items, start, numItems) {
         // special case for an input
         if (rule == 'input') {
           if (ruleParts.length != 3) {
-            throw("no input index provided, just 'input'");
+            throw ("no input index provided, just 'input'");
           }
-          let inputIndex = ruleParts[2];
+          const inputIndex = ruleParts[2];
           if (!isNaturalNumber(inputIndex)) {
-            throw("invalid input index '" + inputIndex + "', must be a positive number");
+            throw (`invalid input index '${inputIndex}', must be a positive number`);
           }
           node.inputIndex = parseInt(inputIndex);
         }
@@ -611,8 +611,8 @@ function buildFilters(items, start, numItems) {
 }
 
 function buildSelects(items, start, numItems) {
-  let triplets = [];
-  for (var i = start; i < numItems*3; i+=3) {
+  const triplets = [];
+  for (let i = start; i < numItems * 3; i += 3) {
     // not all rows will have the same number of triplets
     if (items[i] == '') {
       triplets.push(triplet);
@@ -620,9 +620,9 @@ function buildSelects(items, start, numItems) {
     }
     let triplet = {
       alias: items[i],
-      inputIndex: parseInt(items[i+1], 10),
+      inputIndex: parseInt(items[i + 1], 10),
     };
-    let aggregator = validateAggregator(items[i+2]);
+    const aggregator = validateAggregator(items[i + 2]);
     if (aggregator != '') {
       triplet.aggregator = aggregator;
     }
@@ -635,7 +635,7 @@ function buildSelects(items, start, numItems) {
 function validateOperator(operator) {
   operator = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operator)) {
-    throw("'" + operator + "' is not a valid operator, must be one of " + VALID_OPERATORS.join(','));
+    throw (`'${operator}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
   }
 
   return operator;
@@ -645,15 +645,15 @@ function validateOperator(operator) {
 function validateAggregator(aggregator) {
   aggregator = String(aggregator).toLowerCase();
   if (!VALID_AGGREGATORS.includes(aggregator)) {
-    throw("'" + aggregator + "' is not a valid aggregator, must be one of " + VALID_AGGREGATORS.join(','));
+    throw (`'${aggregator}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
   }
 
   return aggregator;
 }
 
 function validateBlockNumOrHash(numOrHash) {
-  if (numOrHash == undefined || numOrHash == "") {
-    throw("must provide a block number or hash");
+  if (numOrHash == undefined || numOrHash == '') {
+    throw ('must provide a block number or hash');
   }
 
   // fast return if it's a valid positive integer
@@ -667,20 +667,20 @@ function validateBlockNumOrHash(numOrHash) {
 function validateBlockTxHash(hash) {
   hash = String(hash);
 
-  if (hash == undefined || hash == "" || hash.length < 2) {
-    throw("must provide a hash");
+  if (hash == undefined || hash == '' || hash.length < 2) {
+    throw ('must provide a hash');
   }
 
   if (hash.substring(0, 2).toLowerCase() != '0x') {
-    throw("hash must start with '0x'");
+    throw ("hash must start with '0x'");
   }
 
   if (hash.length != 66) {
-    throw("invalid hash length of " + hash.length + ", should be 64 hex characters long excluding the '0x' prefix");
+    throw (`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
   }
 
   if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hash)) {
-    throw("hash contains non-hexidecimal digits (outside of 0-9 and a-f)");
+    throw ('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
   }
 }
 
@@ -700,9 +700,9 @@ function clampBool(value, def) {
 }
 
 function buildMethodArgs(args, from, signer, signAndSubmit) {
-  let payload = {
-    args: args,
-    contractOverride: true
+  const payload = {
+    args,
+    contractOverride: true,
   };
 
   // optional from and signer for "write" transactions
@@ -724,10 +724,10 @@ function buildMethodArgs(args, from, signer, signAndSubmit) {
 
 function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload) {
   // validate and normalize limit and offset
-  let limitOffset = buildLimitOffset(limit, offset);
+  const limitOffset = buildLimitOffset(limit, offset);
 
   // query
-  let results = query(httpMethod, deployment, apiKey, queryPath+limitOffset, payload);
+  const results = query(httpMethod, deployment, apiKey, queryPath + limitOffset, payload);
 
   return results;
 }
@@ -735,13 +735,13 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
 function normalizeCreds(deployment, apiKey) {
   // validate deployment ID
   if (!RegExp('^[a-z0-9]+$', 'i').test(deployment)) {
-    throw('invalid deployment ID');
+    throw ('invalid deployment ID');
   }
 
   // validate API key
   // based on: https://www.regextester.com/105777
   if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw('invalid API key');
+    throw ('invalid API key');
   }
 
   return deployment, apiKey;
@@ -750,18 +750,18 @@ function normalizeCreds(deployment, apiKey) {
 function buildLimitOffset(limit, offset) {
   // validate limit
   if (limit != undefined && !isNaturalNumber(limit)) {
-    throw('invalid limit, must be a positive integer');
+    throw ('invalid limit, must be a positive integer');
   }
 
   // validate offset
   if (offset != undefined && !isNaturalNumber(offset)) {
-    throw('invalid offset, must be a positive integer');
+    throw ('invalid offset, must be a positive integer');
   }
 
   // generate a clean URL query param
   let limitOffset = '';
   if (limit != undefined) {
-    limitOffset += '?limit='+limit;
+    limitOffset += `?limit=${limit}`;
   }
   if (offset != undefined) {
     if (limitOffset == '') {
@@ -769,7 +769,7 @@ function buildLimitOffset(limit, offset) {
     } else {
       limitOffset += '&';
     }
-    limitOffset += 'offset='+offset;
+    limitOffset += `offset=${offset}`;
   }
 
   return limitOffset;
@@ -780,13 +780,13 @@ function query(httpMethod, deployment, apiKey, query, payload) {
   deployment, apiKey = normalizeCreds(deployment, apiKey);
 
   // query options
-  let options = {
-    'method' : httpMethod,
-    'contentType': 'application/json',
-    'headers': {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer '+apiKey,
-    }
+  const options = {
+    method: httpMethod,
+    contentType: 'application/json',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
   };
 
   if (payload != undefined && payload != '{}') {
@@ -794,22 +794,22 @@ function query(httpMethod, deployment, apiKey, query, payload) {
   }
 
   // call the MultiBaas API
-  let url = URL_SCHEME+deployment+URL_BASE+query;
-  console.log('URL: ' + url);
-  console.log('Payload: ' + JSON.stringify(payload));
-  let response = UrlFetchApp.fetch(url, options);
+  const url = URL_SCHEME + deployment + URL_BASE + query;
+  console.log(`URL: ${url}`);
+  console.log(`Payload: ${JSON.stringify(payload)}`);
+  const response = UrlFetchApp.fetch(url, options);
 
 
   // pre-process the results
-  let results = JSON.parse(response.getContentText());
+  const results = JSON.parse(response.getContentText());
 
-  return results
+  return results;
 }
 
 function txToArray(tx, headers) {
-  let rows = [];
+  const rows = [];
 
-  let dataKeys = keysFromObj(tx.data, false);
+  const dataKeys = keysFromObj(tx.data, false);
 
   // optional header row
   if (headers) {
@@ -828,8 +828,8 @@ function txToArray(tx, headers) {
 }
 
 function parseHexToNum(hex) {
-  let big = BigInt(hex).toString();
-  let int = parseInt(hex, 16);
+  const big = BigInt(hex).toString();
+  const int = parseInt(hex, 16);
 
   if (String(int) !== big) {
     return big;
@@ -839,18 +839,18 @@ function parseHexToNum(hex) {
 }
 
 function blockToArray(block, headers, txHashes) {
-  let rows = [];
+  const rows = [];
 
   // optional header row
   if (headers) {
-    let header = [
+    const header = [
       'blockchain',
       'hash',
       'difficulty',
       'gasLimit',
       'number',
       'timestamp',
-      'receipt'
+      'receipt',
     ];
     if (txHashes) {
       header.push('txHashes');
@@ -859,8 +859,8 @@ function blockToArray(block, headers, txHashes) {
   }
 
   // block body
-  let timestamp = new Date(block.timestamp * 1000);
-  let row = [block.blockchain, block.hash, block.difficulty, block.gasLimit, block.number, timestamp, block.receipt];
+  const timestamp = new Date(block.timestamp * 1000);
+  const row = [block.blockchain, block.hash, block.difficulty, block.gasLimit, block.number, timestamp, block.receipt];
 
   if (txHashes) {
     row.push(buildTxHashes(block.transactions));
@@ -872,25 +872,25 @@ function blockToArray(block, headers, txHashes) {
 }
 
 function buildTxHashes(txs) {
-  let hashes = txs.map(tx => tx.hash);
+  const hashes = txs.map((tx) => tx.hash);
 
   return hashes.join(',');
 }
 
 
 function addressToArray(address, headers, code) {
-  let rows = [];
+  const rows = [];
 
   // optional header row
   if (headers) {
-    let header = [
+    const header = [
       'label',
       'address',
       'balance',
       'chain',
       'isContract',
       'modules',
-      'contracts'
+      'contracts',
     ];
     if (code) {
       header.push('codeAt');
@@ -899,9 +899,9 @@ function addressToArray(address, headers, code) {
   }
 
   // address body
-  let modules = buildAssociations(address.modules);
-  let contracts = buildAssociations(address.contracts);
-  let row = [address.label, address.address, address.balance, address.chain, address.isContract, modules, contracts];
+  const modules = buildAssociations(address.modules);
+  const contracts = buildAssociations(address.contracts);
+  const row = [address.label, address.address, address.balance, address.chain, address.isContract, modules, contracts];
 
   if (code) {
     row.push(address.codeAt);
@@ -913,13 +913,13 @@ function addressToArray(address, headers, code) {
 }
 
 function buildAssociations(associations) {
-  let summary = associations.map(association => {
+  const summary = associations.map((association) => {
     let text = association.label;
     if (association.name != undefined && association.name != '') {
-      text += ' (' + association.version + ')';
+      text += ` (${association.version})`;
     }
     if (association.version != undefined && association.version != '') {
-      text += ' ' + association.version;
+      text += ` ${association.version}`;
     }
     return text;
   });
@@ -928,7 +928,7 @@ function buildAssociations(associations) {
 }
 
 function functionsToArray(entries, entryLabel, filter, includeOutputs) {
-  let rows = [];
+  const rows = [];
 
   // header row
   // entryLabel is 'function' or 'event'
@@ -945,8 +945,8 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   filterRe = new RegExp(filter, 'i');
 
   // data rows
-  for (var i in entries) {
-    let entry = entries[i];
+  for (const i in entries) {
+    const entry = entries[i];
 
     if (filter != '' && filter != undefined && !filterRe.test(entry.name)) {
       continue;
@@ -964,7 +964,7 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
       description += entry.description;
     }
 
-    let row = [entry.name, description];
+    const row = [entry.name, description];
 
     if (includeOutputs) {
       let rw = 'read';
@@ -974,15 +974,15 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
       row.push(rw);
     }
 
-    let numInputs = buildNumInputsOrOutputs('input', entry.inputs.length);
-    let inputs = buildFunctionInputsOrOutputs(entry.inputs);
-    row.push(numInputs + inputs.join("\n"));
+    const numInputs = buildNumInputsOrOutputs('input', entry.inputs.length);
+    const inputs = buildFunctionInputsOrOutputs(entry.inputs);
+    row.push(numInputs + inputs.join('\n'));
 
     if (includeOutputs) {
       // in this case we're dealing with a function, not an event, which only has inputs
-      let numOutputs = buildNumInputsOrOutputs('output', entry.outputs.length);
-      let outputs = buildFunctionInputsOrOutputs(entry.outputs);
-      row.push(numOutputs + outputs.join("\n"));
+      const numOutputs = buildNumInputsOrOutputs('output', entry.outputs.length);
+      const outputs = buildFunctionInputsOrOutputs(entry.outputs);
+      row.push(numOutputs + outputs.join('\n'));
     }
 
     rows.push(row);
@@ -992,27 +992,27 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
 }
 
 function buildNumInputsOrOutputs(label, length) {
-  let inputsOutputs = '';
+  const inputsOutputs = '';
   if (length == 0) {
-    return 'no ' + label + 's';
-  } else if (length == 1) {
-    return "1 " + label + ":\n";
+    return `no ${label}s`;
+  } if (length == 1) {
+    return `1 ${label}:\n`;
   }
-  return length + " " + label + "s:\n";
+  return `${length} ${label}s:\n`;
 }
 
 function buildFunctionInputsOrOutputs(entries) {
-  let params = [];
+  const params = [];
 
-  for (var i in entries) {
-    let entry = entries[i];
+  for (const i in entries) {
+    const entry = entries[i];
     let param = entry.name;
     if (param != '') {
       param += ' ';
     }
     param += buildType(entry.type);
     if (entry.notes != undefined && entry.notes != '') {
-      param += ' (' + entry.notes + ')';
+      param += ` (${entry.notes})`;
     }
     params.push(param);
   }
@@ -1022,7 +1022,7 @@ function buildFunctionInputsOrOutputs(entries) {
 
 function buildType(paramType) {
   let builtType = paramType.type;
-  if (paramType.type != "address" && paramType.type != "string" && paramType.size != undefined && paramType.size > 0) {
+  if (paramType.type != 'address' && paramType.type != 'string' && paramType.size != undefined && paramType.size > 0) {
     builtType += paramType.size;
   }
 
@@ -1030,16 +1030,16 @@ function buildType(paramType) {
 }
 
 function eventsToArray(entries) {
-  let rows = [];
+  const rows = [];
 
   // header row: top-level triggeredAt, plus selected/calculated event and tx fields
   // divided by variable number of event and method inputs
-  let header0 = [
+  const header0 = [
     'triggeredAt',
     'eventName',
-    'eventDef'
+    'eventDef',
   ];
-  let header1 = [
+  const header1 = [
     'eventIndexInLog',
     'eventContractAddressLabel',
     'eventContractAddress',
@@ -1054,38 +1054,38 @@ function eventsToArray(entries) {
     'txContractAddress',
     'txContractName',
     'fxnName',
-    'fxnDef'
+    'fxnDef',
   ];
 
   // determine the maximum number of event and method inputs
   let maxEventInputs = 0;
   let maxMethodInputs = 0;
   for (var i in entries) {
-    let entry = entries[i];
+    const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
     if (entry.transaction.method.inputs != undefined) {
       maxMethodInputs = Math.max(maxMethodInputs, entry.transaction.method.inputs.length);
     }
   }
-  let eventInputsHeader = buildSeqHeader('eventInput', maxEventInputs);
-  let methodInputsHeader = buildSeqHeader('methodInput', maxMethodInputs);
+  const eventInputsHeader = buildSeqHeader('eventInput', maxEventInputs);
+  const methodInputsHeader = buildSeqHeader('methodInput', maxMethodInputs);
 
-  let header = header0.concat(eventInputsHeader).concat(header1).concat(methodInputsHeader);
+  const header = header0.concat(eventInputsHeader).concat(header1).concat(methodInputsHeader);
   rows.push(header);
 
   // body rows
   for (var i in entries) {
-    let entry = entries[i];
-    let event = entry.event;
-    let tx = entry.transaction;
+    const entry = entries[i];
+    const { event } = entry;
+    const tx = entry.transaction;
 
     // triggeredAt
     let row = [new Date(entry.triggeredAt)];
 
     // event fields
-    let eventDef = buildSigDef(event);
-    let eventInputs = buildInputs(event.inputs, maxEventInputs);
+    const eventDef = buildSigDef(event);
+    const eventInputs = buildInputs(event.inputs, maxEventInputs);
 
     row = row.concat([event.name, eventDef]).concat(eventInputs).concat([event.indexInLog, event.contract.label, event.contract.address, event.contract.name]);
 
@@ -1108,9 +1108,9 @@ function eventsToArray(entries) {
 function buildInputs(inputs, maxInputs) {
   // can't use inputs.map() here because we want to pad the array with empty entries
   // up to maxInputs length
-  let values = [];
+  const values = [];
   for (let i = 0; i < maxInputs; i++) {
-    let input = undefined;
+    let input;
     if (inputs != undefined && i < inputs.length) {
       input = inputs[i].value;
     }
@@ -1122,15 +1122,15 @@ function buildInputs(inputs, maxInputs) {
 
 function buildSigDef(event) {
   // insert name (if any) after each type in the event signature
-  let parts = String(event.signature).split(',');
-  for (var i in event.inputs) {
-    let input = event.inputs[i];
+  const parts = String(event.signature).split(',');
+  for (const i in event.inputs) {
+    const input = event.inputs[i];
     if (input.name != '') {
       if (i == event.inputs.length - 1) {
         // special case for the last input
-        parts[i] = parts[i].substring(0, parts[i].length-1) + ' ' + input.name + ')';
+        parts[i] = `${parts[i].substring(0, parts[i].length - 1)} ${input.name})`;
       } else {
-        parts[i] += ' ' + input.name;
+        parts[i] += ` ${input.name}`;
       }
     }
   }
@@ -1139,7 +1139,7 @@ function buildSigDef(event) {
 }
 
 function buildSeqHeader(prefix, numHeaders) {
-  let headers = [];
+  const headers = [];
   for (let i = 0; i < numHeaders; i++) {
     headers.push(prefix + String(i));
   }
@@ -1147,16 +1147,16 @@ function buildSeqHeader(prefix, numHeaders) {
 }
 
 function objectArrayToArray(objArr) {
-  let rows = [];
+  const rows = [];
 
   // header row: just take the keys from the first row
-  let headers = keysFromObj(objArr[0], true);
+  const headers = keysFromObj(objArr[0], true);
   rows.push(headers);
 
   // body rows
-  for (var i in objArr) {
-    let obj = objArr[i];
-    let row = valuesFromKeys(headers, obj);
+  for (const i in objArr) {
+    const obj = objArr[i];
+    const row = valuesFromKeys(headers, obj);
     rows.push(row);
   }
 
@@ -1164,8 +1164,8 @@ function objectArrayToArray(objArr) {
 }
 
 function keysFromObj(obj, sort) {
-  let keys = [];
-  for (var key in obj) {
+  const keys = [];
+  for (const key in obj) {
     keys.push(key);
   }
   if (sort) {
@@ -1176,9 +1176,9 @@ function keysFromObj(obj, sort) {
 }
 
 function valuesFromKeys(keys, valueObj) {
-  let values = [];
-  for (var i in keys) {
-    let key = keys[i];
+  const values = [];
+  for (const i in keys) {
+    const key = keys[i];
     values.push(valueObj[key]);
   }
 
@@ -1190,45 +1190,45 @@ function isNaturalNumber(number) {
 }
 
 function test() {
-  let deployment = 'cywnwu73p5fxjjou6saz7o7gsm';
-  let apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODg0MjUyODQsInN1YiI6IjEifQ.cb2PJIWqMxDWgHClBRZJkgeaV8Xf13bJYx1TKE-0-Go';
+  const deployment = 'cywnwu73p5fxjjou6saz7o7gsm';
+  const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODg0MjUyODQsInN1YiI6IjEifQ.cb2PJIWqMxDWgHClBRZJkgeaV8Xf13bJYx1TKE-0-Go';
 
-  let mainnetDeployment = 'y4vwjhsibfflresppyzrckdmue';
-  let mainnetAPIKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODg1MTQ2OTcsInN1YiI6IjEifQ.XvppCv5XoldbI-7xwQDvmmW7agcWmS1rIMKTNBjtVuc';
+  const mainnetDeployment = 'y4vwjhsibfflresppyzrckdmue';
+  const mainnetAPIKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODg1MTQ2OTcsInN1YiI6IjEifQ.XvppCv5XoldbI-7xwQDvmmW7agcWmS1rIMKTNBjtVuc';
 
-//  let output = MBQUERY(deployment, apiKey, "Queued Exits", 5);
+  //  let output = MBQUERY(deployment, apiKey, "Queued Exits", 5);
 
-//  let output = MBCOMPOSE(deployment, apiKey, "grid_token","mltitoken","mint", "0xBaC1Cd4051c378bF900087CCc445d7e7d02ad745", undefined, 123);
+  //  let output = MBCOMPOSE(deployment, apiKey, "grid_token","mltitoken","mint", "0xBaC1Cd4051c378bF900087CCc445d7e7d02ad745", undefined, 123);
 
-//  let output = MBEVENTS(deployment, apiKey, "grid_token", 50);
+  //  let output = MBEVENTS(deployment, apiKey, "grid_token", 50);
 
-//  let output = MBADDRESS(deployment, apiKey, "grid_token", false);
+  //  let output = MBADDRESS(deployment, apiKey, "grid_token", false);
 
-//  let output = MBBLOCK(deployment, apiKey, "0x2ed5d0a8be85eb2cec8af41bb60ad6d492caedc1472db10a967f3c43b72c8c53");
-//  output = MBBLOCK(deployment, apiKey, 7832128);
+  //  let output = MBBLOCK(deployment, apiKey, "0x2ed5d0a8be85eb2cec8af41bb60ad6d492caedc1472db10a967f3c43b72c8c53");
+  //  output = MBBLOCK(deployment, apiKey, 7832128);
 
-//  let output = MBTX(deployment, apiKey, "0x8554fef684b45ec405cc4cca47e72018db5745a9456f395c31efc67fdaf24cd9");
+  //  let output = MBTX(deployment, apiKey, "0x8554fef684b45ec405cc4cca47e72018db5745a9456f395c31efc67fdaf24cd9");
 
-  let customQuery = [
-    ["eventName", "alias", "index", "aggregator", "alias", "index", "aggregator", "rule", "operator", "value", "rule", "operator", "value"],
-    ["Transfer", "account", "0", "", "balance", "2", "subtract", "And:And:addresses.label", "Equal", "grid_token", "And:And:addresses.label", "Equal", "grid_token"],
-    ["Transfer", "account", "1", "", "balance", "2", "add", "addresses.label", "Equal", "grid_token", "", "", ""]
+  const customQuery = [
+    ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value'],
+    ['Transfer', 'account', '0', '', 'balance', '2', 'subtract', 'And:And:addresses.label', 'Equal', 'grid_token', 'And:And:addresses.label', 'Equal', 'grid_token'],
+    ['Transfer', 'account', '1', '', 'balance', '2', 'add', 'addresses.label', 'Equal', 'grid_token', '', '', ''],
   ];
 
-  let customQuery2 = [
-    ["eventName", "alias", "index", "aggregator", "alias", "index", "aggregator", "alias", "index", "aggregator", "rule", "operator", "value", "rule", "operator", "value", "rule", "operator", "value"],
-    ["ResponseReceived", "answer", "0", "", "round", "1", "", "sender", "2", "", "and:addresses.label", "Equal", "ethusd", "and:or:input1", "Equal", "844", "and:or:input1", "Equal", "845"]
+  const customQuery2 = [
+    ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value', 'rule', 'operator', 'value'],
+    ['ResponseReceived', 'answer', '0', '', 'round', '1', '', 'sender', '2', '', 'and:addresses.label', 'Equal', 'ethusd', 'and:or:input1', 'Equal', '844', 'and:or:input1', 'Equal', '845'],
   ];
 
-//  let output = MBCUSTOMQUERY(deployment, apiKey, customQuery, "account");
+  //  let output = MBCUSTOMQUERY(deployment, apiKey, customQuery, "account");
 
-//  let output = MBEVENTS(mainnetDeployment, mainnetAPIKey, "ethusd", 1, 0);
+  //  let output = MBEVENTS(mainnetDeployment, mainnetAPIKey, "ethusd", 1, 0);
 
-//  let output = MBCUSTOMQUERYTEMPLATE();
+  //  let output = MBCUSTOMQUERYTEMPLATE();
 
-//  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
+  //  let output = MBCUSTOMQUERY(mainnetDeployment, mainnetAPIKey, customQuery2);
 
-  let output = MBFUNCTIONLIST(mainnetDeployment, mainnetAPIKey, "lendingpoolcore","reserve");
+  const output = MBFUNCTIONLIST(mainnetDeployment, mainnetAPIKey, 'lendingpoolcore', 'reserve');
 
-  console.log('output: ' + output);
+  console.log(`output: ${output}`);
 }
