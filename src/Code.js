@@ -5,8 +5,6 @@ const URL_BASE = '.multibaas.com/api/v0/';
 const HTTP_GET = 'GET';
 const HTTP_POST = 'POST';
 
-// TODO: comments
-
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
 
@@ -23,7 +21,7 @@ function mbRefresh() {
   const formula = cell.getFormula();
   cell.setValue('');
   SpreadsheetApp.flush();
-  if (formula != '') {
+  if (formula !== '') {
     cell.setFormula(formula);
   } else {
     cell.setValue(value);
@@ -78,7 +76,7 @@ function mbPost() {
  */
 function MBPOSTTEMPLATE(numberOfArgs) {
   // validate and normalize parameters
-  if (numberOfArgs == undefined || numberOfArgs == '') {
+  if (numberOfArgs === undefined || numberOfArgs === '') {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
     throw new Error('number of arguments must be a valid positive integer');
@@ -104,7 +102,7 @@ function MBPOSTTEMPLATE(numberOfArgs) {
  * @customfunction
  */
 function MBEVENTLIST(deployment, apiKey, contract, filter) {
-  if (contract == undefined || contract == '') {
+  if (contract === undefined || contract === '') {
     throw new Error('must provide a smart contract label');
   }
 
@@ -131,7 +129,7 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
  * @customfunction
  */
 function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
-  if (contract == undefined || contract == '') {
+  if (contract === undefined || contract === '') {
     throw new Error('must provide a smart contract label');
   }
 
@@ -213,7 +211,7 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  * @customfunction
  */
 function MBADDRESS(deployment, apiKey, address, headers, code) {
-  if (address == undefined || address == '') {
+  if (address === undefined || address === '') {
     throw new Error('must provide an address or address label');
   }
 
@@ -243,7 +241,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
  * @customfunction
  */
 function MBQUERY(deployment, apiKey, query, limit, offset) {
-  if (query == undefined || query == '') {
+  if (query === undefined || query === '') {
     throw new Error('must provide an Event Query name');
   }
 
@@ -271,7 +269,7 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  * @customfunction
  */
 function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
-  if (events == undefined || events == '') {
+  if (events === undefined || events === '') {
     throw new Error('must provide an events definition');
   }
 
@@ -297,12 +295,12 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
  */
 function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
   // validate and normalize parameters
-  if (numberOfSelects == undefined || numberOfSelects == '') {
+  if (numberOfSelects === undefined || numberOfSelects === '') {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
     throw new Error("number of 'select' groups must be a valid positive integer");
   }
-  if (numberOfFilters == undefined || numberOfFilters == '') {
+  if (numberOfFilters === undefined || numberOfFilters === '') {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
     throw new Error("number of 'filter' groups must be a valid positive integer");
@@ -331,7 +329,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
  * @customfunction
  */
 function MBEVENTS(deployment, apiKey, address, limit, offset) {
-  if (address == undefined || address == '') {
+  if (address === undefined || address === '') {
     throw new Error('must provide an address or address label');
   }
 
@@ -358,13 +356,13 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  * @customfunction
  */
 function MBGET(deployment, apiKey, address, contract, method, ...args) {
-  if (address == undefined || address == '') {
+  if (address === undefined || address === '') {
     throw new Error('must provide an address or address label');
   }
-  if (contract == undefined || contract == '') {
+  if (contract === undefined || contract === '') {
     throw new Error('must provide a smart contract label');
   }
-  if (method == undefined || method == '') {
+  if (method === undefined || method === '') {
     throw new Error('must provide a method (function) name');
   }
 
@@ -418,16 +416,16 @@ function extractSelectFilterCounts(header) {
     const aggregatorValue = header[i + 2].toLowerCase();
 
     if (selectHalf) {
-      if (aliasRule == 'rule') {
+      if (aliasRule === 'rule') {
         selectHalf = false;
       } else {
-        if (aliasRule != 'alias') {
+        if (aliasRule !== 'alias') {
           throw new Error(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
-        if (indexOperator != 'index') {
+        if (indexOperator !== 'index') {
           throw new Error(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
         }
-        if (aggregatorValue != 'aggregator') {
+        if (aggregatorValue !== 'aggregator') {
           throw new Error(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
         }
 
@@ -435,13 +433,13 @@ function extractSelectFilterCounts(header) {
       }
     }
     if (!selectHalf) {
-      if (aliasRule != 'rule') {
+      if (aliasRule !== 'rule') {
         throw new Error(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
-      if (indexOperator != 'operator') {
+      if (indexOperator !== 'operator') {
         throw new Error(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
       }
-      if (aggregatorValue != 'value') {
+      if (aggregatorValue !== 'value') {
         throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
       }
 
@@ -457,10 +455,10 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
     events: [],
   };
 
-  if (groupBy != undefined && groupBy != '') {
+  if (groupBy !== undefined && groupBy !== '') {
     query.groupBy = groupBy;
   }
-  if (orderBy != undefined && orderBy != '') {
+  if (orderBy !== undefined && orderBy !== '') {
     query.orderBy = orderBy;
   }
 
@@ -472,10 +470,10 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   if (header.length < 4) {
     throw new Error(`expecting to have at least four columns, found ${header.length} columns total`);
   }
-  if ((header.length - 1) % 3 != 0) {
+  if ((header.length - 1) % 3 !== 0) {
     throw new Error(`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
   }
-  if (header[0].toLowerCase() != 'eventname') {
+  if (header[0].toLowerCase() !== 'eventname') {
     throw new Error(`expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
@@ -513,17 +511,17 @@ function buildFilters(items, start, numItems) {
     const value = items[i + 2];
 
     // not all rows will have the same number of filters
-    if (rules == '') {
+    if (rules === '') {
       break;
     }
 
-    if (value == '') {
+    if (value === '') {
       throw new Error(`value is empty for rule '${rules}'`);
     }
 
     // split by colons
     const rulePath = rules.split(':');
-    if (rulePath.length == 1) {
+    if (rulePath.length === 1) {
       // special case for a single rule
       rulePath.unshift('And');
     }
@@ -533,11 +531,11 @@ function buildFilters(items, start, numItems) {
     for (const j in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
       const ruleParts = RegExp('^([A-Za-z\.]+)([0-9]*)$').exec(rulePath[j]);
-      if (ruleParts == null || ruleParts.length < 2) {
+      if (ruleParts === null || ruleParts.length < 2) {
         throw new Error(`invalid rule '${rulePath[j]}' in '${rules}'`);
       }
       const rule = ruleParts[1].toLowerCase();
-      if (rule == '') {
+      if (rule === '') {
         throw new Error(`sub-rule is empty in '${rules}'`);
       }
 
@@ -546,7 +544,7 @@ function buildFilters(items, start, numItems) {
         // find the one that matches this rule
         let matchedChild = false;
         for (const k in node) {
-          if (node[k].rule == rule) {
+          if (node[k].rule === rule) {
             // node 'array' becomes an 'object' again
             node = node[k];
             matchedChild = true;
@@ -567,7 +565,7 @@ function buildFilters(items, start, numItems) {
 
       // add a rule or descend to the next level down as appropriate
       if (VALID_BOOLEANS.includes(rule)) {
-        if (Object.keys(node).length == 0) {
+        if (Object.keys(node).length === 0) {
           // new child node
           node.rule = rule;
           node.children = [{}];
@@ -593,8 +591,8 @@ function buildFilters(items, start, numItems) {
         node.value = String(value);
 
         // special case for an input
-        if (rule == 'input') {
-          if (ruleParts.length != 3) {
+        if (rule === 'input') {
+          if (ruleParts.length !== 3) {
             throw new Error("no input index provided, just 'input'");
           }
           const inputIndex = ruleParts[2];
@@ -614,7 +612,7 @@ function buildSelects(items, start, numItems) {
   const triplets = [];
   for (let i = start; i < numItems * 3; i += 3) {
     // not all rows will have the same number of triplets
-    if (items[i] == '') {
+    if (items[i] === '') {
       triplets.push(triplet);
       break;
     }
@@ -623,7 +621,7 @@ function buildSelects(items, start, numItems) {
       inputIndex: parseInt(items[i + 1], 10),
     };
     const aggregator = validateAggregator(items[i + 2]);
-    if (aggregator != '') {
+    if (aggregator !== '') {
       triplet.aggregator = aggregator;
     }
     triplets.push(triplet);
@@ -652,7 +650,7 @@ function validateAggregator(aggregator) {
 }
 
 function validateBlockNumOrHash(numOrHash) {
-  if (numOrHash == undefined || numOrHash == '') {
+  if (numOrHash === undefined || numOrHash === '') {
     throw new Error('must provide a block number or hash');
   }
 
@@ -667,15 +665,15 @@ function validateBlockNumOrHash(numOrHash) {
 function validateBlockTxHash(hash) {
   hash = String(hash);
 
-  if (hash == undefined || hash == '' || hash.length < 2) {
+  if (hash === undefined || hash === '' || hash.length < 2) {
     throw new Error('must provide a hash');
   }
 
-  if (hash.substring(0, 2).toLowerCase() != '0x') {
+  if (hash.substring(0, 2).toLowerCase() !== '0x') {
     throw new Error("hash must start with '0x'");
   }
 
-  if (hash.length != 66) {
+  if (hash.length !== 66) {
     throw new Error(`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
   }
 
@@ -688,9 +686,9 @@ function clampBool(value, def) {
   // clamp value to a valid bool with a default
   if (value === undefined || value === '') {
     value = def;
-  } else if (value == true) {
+  } else if (value === true) {
     value = true;
-  } else if (value == false) {
+  } else if (value === false) {
     value = false;
   } else {
     value = def;
@@ -706,15 +704,15 @@ function buildMethodArgs(args, from, signer, signAndSubmit) {
   };
 
   // optional from and signer for "write" transactions
-  if (from != undefined) {
-    if (signer == undefined || signer == '') {
+  if (from !== undefined) {
+    if (signer === undefined || signer === '') {
       signer = from;
     }
     payload.from = from;
     payload.signer = signer;
 
     // optional "sign and submit" for HSM addresses
-    if (signAndSubmit != undefined) {
+    if (signAndSubmit !== undefined) {
       payload.signAndSubmit = signAndSubmit;
     }
   }
@@ -749,22 +747,22 @@ function normalizeCreds(deployment, apiKey) {
 
 function buildLimitOffset(limit, offset) {
   // validate limit
-  if (limit != undefined && !isNaturalNumber(limit)) {
+  if (limit !== undefined && !isNaturalNumber(limit)) {
     throw new Error('invalid limit, must be a positive integer');
   }
 
   // validate offset
-  if (offset != undefined && !isNaturalNumber(offset)) {
+  if (offset !== undefined && !isNaturalNumber(offset)) {
     throw new Error('invalid offset, must be a positive integer');
   }
 
   // generate a clean URL query param
   let limitOffset = '';
-  if (limit != undefined) {
+  if (limit !== undefined) {
     limitOffset += `?limit=${limit}`;
   }
-  if (offset != undefined) {
-    if (limitOffset == '') {
+  if (offset !== undefined) {
+    if (limitOffset === '') {
       limitOffset += '?';
     } else {
       limitOffset += '&';
@@ -789,7 +787,7 @@ function query(httpMethod, deployment, apiKey, query, payload) {
     },
   };
 
-  if (payload != undefined && payload != '{}') {
+  if (payload !== undefined && payload !== '{}') {
     options.payload = JSON.stringify(payload);
   }
 
@@ -915,10 +913,10 @@ function addressToArray(address, headers, code) {
 function buildAssociations(associations) {
   const summary = associations.map((association) => {
     let text = association.label;
-    if (association.name != undefined && association.name != '') {
+    if (association.name !== undefined && association.name !== '') {
       text += ` (${association.version})`;
     }
-    if (association.version != undefined && association.version != '') {
+    if (association.version !== undefined && association.version !== '') {
       text += ` ${association.version}`;
     }
     return text;
@@ -948,17 +946,17 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   for (const i in entries) {
     const entry = entries[i];
 
-    if (filter != '' && filter != undefined && !filterRe.test(entry.name)) {
+    if (filter !== '' && filter !== undefined && !filterRe.test(entry.name)) {
       continue;
     }
 
     // build description/notes (docs) for this function/event
     let description = '';
-    if (entry.notes != undefined) {
+    if (entry.notes !== undefined) {
       description += entry.notes;
     }
-    if (entry.description != undefined && entry.description != '') {
-      if (description != '') {
+    if (entry.description !== undefined && entry.description !== '') {
+      if (description !== '') {
         description += ' / ';
       }
       description += entry.description;
@@ -993,9 +991,9 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
 
 function buildNumInputsOrOutputs(label, length) {
   const inputsOutputs = '';
-  if (length == 0) {
+  if (length === 0) {
     return `no ${label}s`;
-  } if (length == 1) {
+  } if (length === 1) {
     return `1 ${label}:\n`;
   }
   return `${length} ${label}s:\n`;
@@ -1007,11 +1005,11 @@ function buildFunctionInputsOrOutputs(entries) {
   for (const i in entries) {
     const entry = entries[i];
     let param = entry.name;
-    if (param != '') {
+    if (param !== '') {
       param += ' ';
     }
     param += buildType(entry.type);
-    if (entry.notes != undefined && entry.notes != '') {
+    if (entry.notes !== undefined && entry.notes !== '') {
       param += ` (${entry.notes})`;
     }
     params.push(param);
@@ -1022,7 +1020,7 @@ function buildFunctionInputsOrOutputs(entries) {
 
 function buildType(paramType) {
   let builtType = paramType.type;
-  if (paramType.type != 'address' && paramType.type != 'string' && paramType.size != undefined && paramType.size > 0) {
+  if (paramType.type !== 'address' && paramType.type !== 'string' && paramType.size !== undefined && paramType.size > 0) {
     builtType += paramType.size;
   }
 
@@ -1064,7 +1062,7 @@ function eventsToArray(entries) {
     const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
-    if (entry.transaction.method.inputs != undefined) {
+    if (entry.transaction.method.inputs !== undefined) {
       maxMethodInputs = Math.max(maxMethodInputs, entry.transaction.method.inputs.length);
     }
   }
@@ -1092,7 +1090,7 @@ function eventsToArray(entries) {
     // tx fields
     let fxnDef = '';
     let fxnInputs = [];
-    if (tx.method != undefined) {
+    if (tx.method !== undefined) {
       fxnDef = buildSigDef(tx.method);
       fxnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
     }
@@ -1111,7 +1109,7 @@ function buildInputs(inputs, maxInputs) {
   const values = [];
   for (let i = 0; i < maxInputs; i++) {
     let input;
-    if (inputs != undefined && i < inputs.length) {
+    if (inputs !== undefined && i < inputs.length) {
       input = inputs[i].value;
     }
     values.push(input);
@@ -1125,8 +1123,8 @@ function buildSigDef(event) {
   const parts = String(event.signature).split(',');
   for (const i in event.inputs) {
     const input = event.inputs[i];
-    if (input.name != '') {
-      if (i == event.inputs.length - 1) {
+    if (input.name !== '') {
+      if (i === event.inputs.length - 1) {
         // special case for the last input
         parts[i] = `${parts[i].substring(0, parts[i].length - 1)} ${input.name})`;
       } else {
