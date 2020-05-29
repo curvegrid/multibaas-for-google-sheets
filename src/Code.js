@@ -5,6 +5,9 @@ const URL_BASE = '.multibaas.com/api/v0/';
 const HTTP_GET = 'GET';
 const HTTP_POST = 'POST';
 
+/**
+ * Add menu
+ */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
 
@@ -12,6 +15,67 @@ function onOpen() {
     .addItem('Post to the blockchain', 'mbPost')
     .addItem('Refresh current cell', 'mbRefresh')
     .addToUi();
+}
+
+/**
+ * Menu 1
+ */
+function mbRefresh() {
+  const range = SpreadsheetApp.getActiveRange();
+  const cell = range.getCell(1, 1);
+  const value = cell.getValue();
+  const formula = cell.getFormula();
+  cell.setValue('');
+  SpreadsheetApp.flush();
+  if (formula !== '') {
+    cell.setFormula(formula);
+  } else {
+    cell.setValue(value);
+  }
+  SpreadsheetApp.flush();
+}
+
+/**
+ * Menu 2
+ */
+function mbPost() {
+  const MIN_COLUMNS = 7;
+
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const range = SpreadsheetApp.getActiveRange();
+
+  if (range.getNumColumns() < MIN_COLUMNS) {
+    throw new Error(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+  }
+
+  const values = range.getValues();
+
+  for (let i = 0; i < values.length; i++) {
+    const row = values[i];
+
+    const [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
+
+    let args = [];
+    if (row.length > MIN_COLUMNS) {
+      args = row.slice(7);
+    }
+
+    const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
+
+    // build args
+    const signAndSubmit = true;
+    const payload = buildMethodArgs(args, from, signer, signAndSubmit);
+
+    const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+    const output = JSON.stringify(results.result.tx);
+    console.log(`Results: ${output}`);
+
+    // output tx hash
+    sheet
+      .getRange(range.getRow() + i, range.getColumn() + range.getNumColumns(), 1, 1)
+      .setValue(results.result.tx.hash);
+    SpreadsheetApp.flush();
+  }
 }
 
 /**
