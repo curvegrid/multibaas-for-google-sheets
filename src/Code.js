@@ -88,7 +88,9 @@ function mbPost() {
  * a smart contract method.
  * @customfunction
  */
-function MBPOSTTEMPLATE(numberOfArgs) {
+function MBPOSTTEMPLATE(numArgs) {
+  let numberOfArgs = numArgs;
+
   // validate and normalize parameters
   if (numberOfArgs === undefined || numberOfArgs === '') {
     numberOfArgs = 0;
@@ -121,7 +123,6 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
   }
 
   const queryPath = `contracts/${contract}`;
-
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
@@ -148,7 +149,6 @@ function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
   }
 
   const queryPath = `contracts/${contract}`;
-
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
@@ -172,14 +172,13 @@ function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
 function MBTX(deployment, apiKey, hash, headers) {
   validateBlockTxHash(hash);
 
-  headers = clampBool(headers, true);
+  const isHeaders = clampBool(headers, true);
 
   const queryPath = `chains/ethereum/transactions/${hash}`;
-
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  const output = txToArray(results.result, headers);
+  const output = txToArray(results.result, isHeaders);
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
@@ -200,15 +199,14 @@ function MBTX(deployment, apiKey, hash, headers) {
 function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
   validateBlockNumOrHash(numberOrHash);
 
-  headers = clampBool(headers, true);
-  txHashes = clampBool(txHashes, true);
+  const isHeaders = clampBool(headers, true);
+  const isTxHashes = clampBool(txHashes, true);
 
   const queryPath = `chains/ethereum/blocks/${numberOrHash}`;
-
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the block structure into a flat array
-  const output = blockToArray(results.result, headers, txHashes);
+  const output = blockToArray(results.result, isHeaders, isTxHashes);
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
@@ -231,15 +229,14 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
     throw new Error('must provide an address or address label');
   }
 
-  headers = clampBool(headers, true);
-  code = clampBool(code, false);
+  const isHeaders = clampBool(headers, true);
+  const isCode = clampBool(code, false);
 
   const queryPath = `chains/ethereum/addresses/${address}`;
-
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the address structure into a flat array
-  const output = addressToArray(results.result, headers, code);
+  const output = addressToArray(results.result, isHeaders, isCode);
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
@@ -262,7 +259,6 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
   }
 
   const queryPath = `queries/${query}/results`;
-
   const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -290,7 +286,6 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
   }
 
   const queryPath = 'queries';
-
   const payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
 
   const results = limitQuery(HTTP_POST, deployment, apiKey, queryPath, limit, offset, payload);
@@ -311,7 +306,10 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
  * @return A two dimensional array that can be used as the starting point for a custom Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
+function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
+  let numberOfSelects = numSelects;
+  let numberOfFilters = numFilters;
+
   // validate and normalize parameters
   if (numberOfSelects === undefined || numberOfSelects === '') {
     numberOfSelects = 1;
@@ -352,7 +350,6 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/events`;
-
   const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
   console.log(`Results: ${JSON.stringify(results)}`);
 
