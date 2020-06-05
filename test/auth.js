@@ -9,6 +9,8 @@ const SCOPES = [
 ];
 const CREDENTIALS_PATH = '../.credentials.json';
 const CLIENT_SECRET_PATH = '../.client-secret.json';
+// const CREDENTIALS_PATH = '../.credentials-ci.json';
+// const CLIENT_SECRET_PATH = '../.client-secret-ci.json';
 
 /**
  * Get and store new token after prompting for user authorization, and then
@@ -65,7 +67,18 @@ function authorize(scopes, credentials, callback) {
       return getAccessToken(scopes, oAuth2Client, callback);
     }
 
-    oAuth2Client.setCredentials(JSON.parse(token));
+    console.log('==========================================');
+    console.log('Access Token from Local');
+    const test = JSON.parse(token);
+    console.log(test);
+    // oAuth2Client.setCredentials(JSON.parse(token));
+    oAuth2Client.setCredentials({ refresh_token: test.refresh_token });
+    oAuth2Client.getAccessToken((a, b, c, d, e) => {
+      console.log('==========================================');
+      console.log('Access Token from Google');
+      console.log(a, b, c, d, e);
+    });
+
     callback(oAuth2Client);
     return undefined;
   });
