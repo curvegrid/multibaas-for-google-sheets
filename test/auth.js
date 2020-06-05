@@ -65,7 +65,11 @@ function authorize(scopes, credentials, callback) {
       return getAccessToken(scopes, oAuth2Client, callback);
     }
 
-    oAuth2Client.setCredentials(JSON.parse(token));
+    console.log('!!!!!!!!!!!!!!!!!!!!');
+    const test = JSON.parse(token);
+    console.log(test);
+    // oAuth2Client.setCredentials(JSON.parse(token));
+    oAuth2Client.setCredentials({ refresh_token: test.refresh_token });
     callback(oAuth2Client);
     return undefined;
   });
