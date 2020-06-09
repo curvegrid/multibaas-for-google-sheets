@@ -56,6 +56,8 @@ function run(test, config, testCase) {
     SpreadsheetApp.flush();
 
     const actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
+    // loggerAPI(`BOTH VALUES:
+    //   ${JSON.stringify(actualSheet)}, ${JSON.stringify(testCase.expected)}`);
     t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
     config.sheet.clearContents();
@@ -188,12 +190,36 @@ function testRunner() {
     {
       // TODO: fix error
       name: 'TestMBTX',
-      skip: true,
+      skip: false,
       func: MBTX,
-      args: [],
+      args: ['0xf2dc2d5a7d758e8fc3170e407e7a4e7b86b89b02fc945191d403e4a78486e813'],
       expected: [
-        ['isPending', 'nonce', 'gasPrice', 'gas', 'to', 'value', 'input', 'v', 'r', 's', 'hash'],
-        [false, 1, 11000000000, 44058, '0x6b175474e89094c44da98b954eedeac495271d0f', 0, '0x095ea7b3000000000000000000000000775e90a06a3d908940ec326924262b37943aa140000000000000000000000000000000000000000000000002b5e3af16b1880000', '0x26', '0x1fb7f40f50154e7e4031dc4f907d20b86e223f6b0896f6cf7a7c5248785f444c', '0x729c238805a51a6c1a13ab7d1397539b8d5f2e3127a2e33cf61d32d78ec02dc', '0xb01683f3057c1ecb63524edeb1f138b9ec15ebd8c15e10fbac7e39f14f85a54f'],
+        [
+          'isPending',
+          'nonce',
+          'gasPrice',
+          'gas',
+          'to',
+          'value',
+          'input',
+          'v',
+          'r',
+          's',
+          'hash',
+        ],
+        [
+          'false',
+          0,
+          30000000000,
+          100000,
+          '0xea610b1153477720748dc13ed378003941d84fab',
+          0,
+          '0xa9059cbb000000000000000000000000075f7ffe1465e037fc8d1349018f87dad05d867500000000000000000000000000000000000000000000004de6618e729c540000',
+          '0x25',
+          '0x22e60119bbc06020571758c01f1cbdd2c4031bd490a98c2c4bf00cb19d4b5dcb',
+          '0x5b4b3170f4268a5ec86cbe2ca5fef2b0854af4a9c1aa85343b6be12ebd9b5839',
+          '0xf2dc2d5a7d758e8fc3170e407e7a4e7b86b89b02fc945191d403e4a78486e813',
+        ],
       ],
     },
   ];
