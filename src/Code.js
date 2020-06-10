@@ -1,6 +1,6 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
-/* eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars */
 
 const URL_SCHEME = 'https://';
 const URL_BASE = '.multibaas.com/api/v0/';
