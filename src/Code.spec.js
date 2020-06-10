@@ -181,8 +181,8 @@ function testRunner() {
         gas: 22774,
         gasPrice: '20000000000',
         data: '0xd0e30db0',
-        nonce: 1,
-        hash: '0x64f1968921d16ad654eb6d50e5fad3c7046fceca8f6b6985b56dfce09c4a960c',
+        nonce: 2,
+        hash: '0xcc4450ebca9db6bef6dba18731c438d914246fd75a536a6a7fb9f77c0d6beb6f',
       }),
     },
     {
