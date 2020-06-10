@@ -82,14 +82,13 @@ function testRunner() {
   };
   const testCases = [
     {
-      // TODO: fix failure
       name: 'TestMBADDRESS',
-      skip: true,
+      skip: false,
       func: MBADDRESS,
       args: ['0x0000000000000012340000000000000000000000'],
       expected: [
         ['label', 'address', 'balance', 'chain', 'isContract', 'modules', 'contracts'],
-        ['', '0x0000000000000012340000000000000000000000', '0', 'ethereum', false, '', ''],
+        ['', '0x0000000000000012340000000000000000000000', '0', 'ethereum', 'false', '', ''],
       ],
     },
     {
