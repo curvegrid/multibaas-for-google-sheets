@@ -93,15 +93,33 @@ function testRunner() {
       ],
     },
     {
-      // TODO: fix failure
       name: 'TestMBBLOCK',
-      skip: true,
+      skip: false,
       only: false,
       func: MBBLOCK,
       args: [1],
       expected: [
-        ['blockchain', 'hash', 'difficulty', 'gasLimit', 'number', 'timestamp', 'receipt', 'txHashes'],
-        ['ethereum', '0x8e38b4dbf6b11fcc3b9dee84fb7986e29ca0a02cecd8977c161ff7333329681e', 12549332509227, 3141592, 1000000, '2016-02-13T22:54:13.000Z', '0x20e3534540caf16378e6e86a2bf1236d9f876d3218fbc03958e6db1c634b2333', '0xea1093d492a1dcb1bef708f771a99a96ff05dcab81ca76c31940300177fcf49f,0xe9e91f1ee4b56c0df2e9f06c2b8c27c6076195a88a7b8537ba8313d80e6f124e'],
+        [
+          'blockchain',
+          'hash',
+          'difficulty',
+          'gasLimit',
+          'number',
+          'timestamp',
+          'receipt',
+          'txHashes',
+        ],
+        [
+          'ethereum',
+          '0x88e96d4537bea4d9c05d12549907b32561d3bf31f45aae734cdc119f13406cb6',
+          17171480576,
+          5000,
+          1,
+          // eslint-disable-next-line no-undef
+          formatDateTime('2015-07-30T15:26:28.000Z'),
+          '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+          '',
+        ],
       ],
     },
     {
