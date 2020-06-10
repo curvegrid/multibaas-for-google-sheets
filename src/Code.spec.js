@@ -84,6 +84,7 @@ function testRunner() {
     {
       name: 'TestMBADDRESS',
       skip: false,
+      only: false,
       func: MBADDRESS,
       args: ['0x0000000000000012340000000000000000000000'],
       expected: [
@@ -95,6 +96,7 @@ function testRunner() {
       // TODO: fix failure
       name: 'TestMBBLOCK',
       skip: true,
+      only: false,
       func: MBBLOCK,
       args: [1],
       expected: [
@@ -106,6 +108,7 @@ function testRunner() {
       // TODO: fix error
       name: 'TestMBCOMPOSE',
       skip: true,
+      only: false,
       func: MBCOMPOSE,
       args: [],
       expected: {
@@ -116,6 +119,7 @@ function testRunner() {
       // TODO: fill out
       name: 'TestMBCUSTOMQUERY',
       skip: true,
+      only: false,
       func: MBCUSTOMQUERY,
       args: [],
       expected: [],
@@ -124,6 +128,7 @@ function testRunner() {
       // TODO: fill out
       name: 'TestMBCUSTOMQUERYTEMPLATE',
       skip: true,
+      only: false,
       func: MBCUSTOMQUERYTEMPLATE,
       args: [],
       expected: [],
@@ -131,6 +136,7 @@ function testRunner() {
     {
       name: 'TestMBEVENTLIST',
       skip: false,
+      only: false,
       func: MBEVENTLIST,
       args: ['publiclock'],
       expected: [
@@ -142,6 +148,7 @@ function testRunner() {
       // TODO: fill out
       name: 'TestMBEVENTS',
       skip: true,
+      only: false,
       func: MBEVENTS,
       args: [],
       expected: [],
@@ -149,6 +156,7 @@ function testRunner() {
     {
       name: 'TestMBFUNCTIONLIST',
       skip: false,
+      only: false,
       func: MBFUNCTIONLIST,
       args: ['erc20interface'],
       expected: [
@@ -160,6 +168,7 @@ function testRunner() {
       // TODO: fill out
       name: 'TestMBGET',
       skip: true,
+      only: false,
       func: MBGET,
       args: [],
       expected: [],
@@ -168,6 +177,7 @@ function testRunner() {
       // TODO: fill out
       name: 'TestMBPOSTTEMPLATE',
       skip: true,
+      only: false,
       func: MBPOSTTEMPLATE,
       args: [],
       expected: [],
@@ -175,6 +185,7 @@ function testRunner() {
     {
       name: 'TestMBQUERY',
       skip: false,
+      only: false,
       func: MBQUERY,
       args: ['Queued Exits', 5],
       expected: [
@@ -190,6 +201,7 @@ function testRunner() {
       // TODO: fix error
       name: 'TestMBTX',
       skip: false,
+      only: false,
       func: MBTX,
       args: ['0xf2dc2d5a7d758e8fc3170e407e7a4e7b86b89b02fc945191d403e4a78486e813'],
       expected: [
@@ -226,8 +238,13 @@ function testRunner() {
   // TODO: cover internal functions
   // https://github.com/curvegrid/hackathon-sunset-supreme/issues/5
 
+  let testCasesFiltered = testCases.filter((testCase) => testCase.only);
+  if (testCasesFiltered.length < 1) {
+    testCasesFiltered = testCases;
+  }
+
   // eslint-disable-next-line no-restricted-syntax
-  for (const testCase of testCases) {
+  for (const testCase of testCasesFiltered) {
     run(test, config, testCase);
   }
 
