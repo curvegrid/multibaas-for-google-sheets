@@ -405,15 +405,17 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
  * @param {method} method Smart contract function name.
  * @param {from} from From address.
  * @param {signer} signer (Optional) Signer address. Defaults to the 'from' address.
+ * @param {value} value (Optional) Value for amount of ETH sent.
  * @param {args} args (Optional) Arguments to pass to the function.
  * @return An unsigned transaction, suitable for signing and submitting to the blockchain.
  * @customfunction
  */
-function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, ...args) {
+function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, value, ...args) {
+  console.log(deployment, apiKey, address, contract, method, from, signer, args);
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
-  const payload = buildMethodArgs(args, from, signer);
+  const payload = buildMethodArgs(args, from, signer, undefined, value);
 
   const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
   const output = JSON.stringify(results.result.tx);
