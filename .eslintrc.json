@@ -47,6 +47,7 @@
     "addressToArray": false,
     "objectArrayToArray": false,
     "eventsToArray": false,
+    "formatDateTime": false,
     // Validate.js
     "validateBlockTxHash": false,
     "validateBlockNumOrHash": false,
