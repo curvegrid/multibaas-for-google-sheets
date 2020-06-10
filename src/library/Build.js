@@ -180,7 +180,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   return query;
 }
 
-function buildMethodArgs(args, from, signer, signAndSubmit) {
+function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   const payload = {
     args,
     contractOverride: true,
@@ -193,6 +193,10 @@ function buildMethodArgs(args, from, signer, signAndSubmit) {
 
     if (signer === undefined || signer === '') {
       payload.signer = from;
+    }
+
+    if (value) {
+      payload.value = value;
     }
 
     // optional "sign and submit" for HSM addresses
