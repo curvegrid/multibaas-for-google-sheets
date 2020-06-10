@@ -47,18 +47,31 @@ function run(test, config, testCase) {
     }
 
     const output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
-    const numRow = output.length;
-    const numCol = output[0].length;
+    const numRow = Array.isArray(output) ? output.length : 0;
+    const numCol = numRow > 0 ? output[0].length : 0;
+
+    if (testCase.debug) {
+      loggerAPI(`OUTPUT: ${output}`);
+      loggerAPI(`OUTPUT ROW, COL: ${numRow}, ${numCol}`);
+    }
 
     // Write on test sheet
     config.sheet.clearContents();
-    config.sheet.getRange(1, 1, numRow, numCol).setValues(output);
+    if (numRow > 0 && numCol > 0) {
+      config.sheet.getRange(1, 1, numRow, numCol).setValues(output);
+    } else {
+      config.sheet.getRange(1, 1).setValue(output);
+    }
     SpreadsheetApp.flush();
 
-    const actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
+    let actualSheet;
+    if (numRow > 0 && numCol > 0) {
+      actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
+    } else {
+      actualSheet = config.sheet.getRange(1, 1).getValue();
+    }
 
-    // Show both values through logger API
-    if (testCase.showValues) {
+    if (testCase.debug) {
       loggerAPI(`Actual Values: ${JSON.stringify(actualSheet)}`);
       loggerAPI(`Expected Values: ${JSON.stringify(testCase.expected)}`);
     }
@@ -66,7 +79,7 @@ function run(test, config, testCase) {
     t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
     // Keep final data in the spreadsheet
-    if (!testCase.showValues) {
+    if (!testCase.debug) {
       config.sheet.clearContents();
     }
   });
@@ -93,6 +106,7 @@ function testRunner() {
       name: 'TestMBADDRESS',
       skip: false,
       only: false,
+      debug: false,
       func: MBADDRESS,
       args: ['0x0000000000000012340000000000000000000000'],
       expected: [
@@ -104,6 +118,7 @@ function testRunner() {
       name: 'TestMBBLOCK',
       skip: false,
       only: false,
+      debug: false,
       func: MBBLOCK,
       args: [1],
       expected: [
@@ -131,21 +146,36 @@ function testRunner() {
       ],
     },
     {
-      // TODO: fix error
       name: 'TestMBCOMPOSE',
-      skip: true,
+      skip: false,
       only: false,
+      debug: false,
       func: MBCOMPOSE,
-      args: [],
-      expected: {
-        from: '0xfa49187F19edeEb7df7868Db82F2D723440B6C6E', to: '0x775E90a06A3D908940eC326924262b37943Aa140', value: '0', gas: 78572, gasPrice: '18200000000', data: '0xd32bfb6c00000000000000000000000000000000000000000000000000000000000000ec', nonce: 11, hash: '0xf662f76728c8e6cbaa011a189b87f43236f0884653635158dc6a47cc7fcf3c6e',
-      },
+      args: [
+        'multibaasfaucet',
+        'multibaasfaucet',
+        'deposit',
+        '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        '100000000000000000',
+      ],
+      expected: JSON.stringify({
+        from: '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        to: '0x317570b8c43feCaDb8Ebaf765044Ad9626F4848e',
+        value: '100000000000000000',
+        gas: 22774,
+        gasPrice: '20000000000',
+        data: '0xd0e30db0',
+        nonce: 1,
+        hash: '0x64f1968921d16ad654eb6d50e5fad3c7046fceca8f6b6985b56dfce09c4a960c',
+      }),
     },
     {
       // TODO: fill out
       name: 'TestMBCUSTOMQUERY',
       skip: true,
       only: false,
+      debug: false,
       func: MBCUSTOMQUERY,
       args: [],
       expected: [],
@@ -155,6 +185,7 @@ function testRunner() {
       name: 'TestMBCUSTOMQUERYTEMPLATE',
       skip: true,
       only: false,
+      debug: false,
       func: MBCUSTOMQUERYTEMPLATE,
       args: [],
       expected: [],
@@ -163,6 +194,7 @@ function testRunner() {
       name: 'TestMBEVENTLIST',
       skip: false,
       only: false,
+      debug: false,
       func: MBEVENTLIST,
       args: ['publiclock'],
       expected: [
@@ -175,6 +207,7 @@ function testRunner() {
       name: 'TestMBEVENTS',
       skip: true,
       only: false,
+      debug: false,
       func: MBEVENTS,
       args: [],
       expected: [],
@@ -183,6 +216,7 @@ function testRunner() {
       name: 'TestMBFUNCTIONLIST',
       skip: false,
       only: false,
+      debug: false,
       func: MBFUNCTIONLIST,
       args: ['erc20interface'],
       expected: [
@@ -195,6 +229,7 @@ function testRunner() {
       name: 'TestMBGET',
       skip: true,
       only: false,
+      debug: false,
       func: MBGET,
       args: [],
       expected: [],
@@ -204,6 +239,7 @@ function testRunner() {
       name: 'TestMBPOSTTEMPLATE',
       skip: true,
       only: false,
+      debug: false,
       func: MBPOSTTEMPLATE,
       args: [],
       expected: [],
@@ -212,6 +248,7 @@ function testRunner() {
       name: 'TestMBQUERY',
       skip: false,
       only: false,
+      debug: false,
       func: MBQUERY,
       args: ['Queued Exits', 5],
       expected: [
@@ -227,6 +264,7 @@ function testRunner() {
       name: 'TestMBTX',
       skip: false,
       only: false,
+      debug: false,
       func: MBTX,
       args: ['0xf2dc2d5a7d758e8fc3170e407e7a4e7b86b89b02fc945191d403e4a78486e813'],
       expected: [
