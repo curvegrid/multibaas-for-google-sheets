@@ -56,11 +56,19 @@ function run(test, config, testCase) {
     SpreadsheetApp.flush();
 
     const actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
-    // loggerAPI(`BOTH VALUES:
-    //   ${JSON.stringify(actualSheet)}, ${JSON.stringify(testCase.expected)}`);
+
+    // Show both values through logger API
+    if (testCase.showValues) {
+      loggerAPI(`Actual Values: ${JSON.stringify(actualSheet)}`);
+      loggerAPI(`Expected Values: ${JSON.stringify(testCase.expected)}`);
+    }
+
     t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
-    config.sheet.clearContents();
+    // Keep final data in the spreadsheet
+    if (!testCase.showValues) {
+      config.sheet.clearContents();
+    }
   });
 }
 
@@ -216,7 +224,6 @@ function testRunner() {
       ],
     },
     {
-      // TODO: fix error
       name: 'TestMBTX',
       skip: false,
       only: false,
@@ -237,7 +244,7 @@ function testRunner() {
           'hash',
         ],
         [
-          'false',
+          false,
           0,
           30000000000,
           100000,
