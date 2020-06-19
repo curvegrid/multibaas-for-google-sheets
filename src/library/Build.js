@@ -13,6 +13,7 @@ function buildSelects(items, start, numItems) {
     const triplet = {
       alias: items[i],
       inputIndex: parseInt(items[i + 1], 10),
+      type: 'input',
     };
     const aggregator = validateAggregator(items[i + 2]);
     if (aggregator !== '') {
@@ -145,7 +146,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   }
 
   // parse and validate header row
-  if (events.length < 2) {
+  if (events.length < 1) {
     throw new Error(`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
   }
   const header = events[0];
@@ -169,12 +170,18 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
     // build selects and filters
     const selects = buildSelects(event, 1, numSelect);
     const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
-
-    query.events.push({
+    const newQuery = {
       eventName: event[0],
       select: selects,
-      filter: filters,
-    });
+    };
+
+    // Add filter only if filter exists
+    // If empty filter is added then API will return 502
+    if (Object.keys(filters).length > 0) {
+      newQuery.filter = filters;
+    }
+
+    query.events.push(newQuery);
   }
 
   return query;
