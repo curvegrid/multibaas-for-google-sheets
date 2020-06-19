@@ -46,7 +46,13 @@ function run(test, config, testCase) {
       return;
     }
 
-    const output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
+    let output;
+    if (testCase.isAPICall) {
+      output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
+    } else {
+      output = testCase.func(...testCase.args);
+    }
+
     const numRow = Array.isArray(output) ? output.length : 0;
     const numCol = numRow > 0 ? output[0].length : 0;
 
@@ -108,6 +114,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBADDRESS,
+      isAPICall: true,
       args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', '', false],
       expected: [
         [
@@ -136,6 +143,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBBLOCK,
+      isAPICall: true,
       args: [1],
       expected: [
         [
@@ -166,6 +174,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBCOMPOSE,
+      isAPICall: true,
       args: [
         'multibaasfaucet',
         'multibaasfaucet',
@@ -190,8 +199,9 @@ function testRunner() {
       name: 'TestMBCUSTOMQUERY',
       skip: true,
       only: true,
-      debug: false,
+      debug: true,
       func: MBCUSTOMQUERY,
+      isAPICall: true,
       args: [],
       expected: [],
     },
@@ -202,15 +212,17 @@ function testRunner() {
       only: true,
       debug: true,
       func: MBCUSTOMQUERYTEMPLATE,
+      isAPICall: true,
       args: [],
       expected: [],
     },
     {
       name: 'TestMBEVENTLIST',
-      skip: true,
+      skip: false,
       only: false,
       debug: false,
       func: MBEVENTLIST,
+      isAPICall: true,
       args: ['publiclock'],
       expected: [
         ['event', 'description', 'inputs'],
@@ -241,6 +253,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBEVENTS,
+      isAPICall: true,
       args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', 1, 1],
       expected: [
         [
@@ -295,6 +308,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBFUNCTIONLIST,
+      isAPICall: true,
       args: ['erc20interface'],
       expected: [
         ['function', 'description', 'read/write', 'inputs', 'outputs'],
@@ -315,17 +329,19 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBGET,
+      isAPICall: true,
       args: ['privatefaucet', 'multibaasfaucet', 'getOperator'],
       expected: '0x005080F78567F8001115F1eee835DD0151BEA476',
     },
     {
       name: 'TestMBPOSTTEMPLATE',
-      skip: true,
-      only: true,
+      skip: false,
+      only: false,
       debug: false,
       func: MBPOSTTEMPLATE,
-      args: [],
-      expected: [],
+      isAPICall: false,
+      args: [2],
+      expected: [['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
     },
     {
       name: 'TestMBQUERY',
