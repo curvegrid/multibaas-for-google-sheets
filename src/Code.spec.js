@@ -238,8 +238,8 @@ function testRunner() {
     {
       name: 'TestMBEVENTS',
       skip: false,
-      only: true,
-      debug: true,
+      only: false,
+      debug: false,
       func: MBEVENTS,
       args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', 1, 1],
       expected: [
@@ -311,12 +311,12 @@ function testRunner() {
     },
     {
       name: 'TestMBGET',
-      skip: true,
-      only: true,
+      skip: false,
+      only: false,
       debug: false,
       func: MBGET,
-      args: [],
-      expected: [],
+      args: ['privatefaucet', 'multibaasfaucet', 'getOperator'],
+      expected: '0x005080F78567F8001115F1eee835DD0151BEA476',
     },
     {
       name: 'TestMBPOSTTEMPLATE',
