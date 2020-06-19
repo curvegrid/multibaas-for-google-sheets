@@ -47,7 +47,7 @@ function run(test, config, testCase) {
     }
 
     let output;
-    if (testCase.isAPICall) {
+    if (!testCase.isTemplate) {
       output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
     } else {
       output = testCase.func(...testCase.args);
@@ -114,7 +114,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBADDRESS,
-      isAPICall: true,
+      isTemplate: false,
       args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', '', false],
       expected: [
         [
@@ -143,7 +143,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBBLOCK,
-      isAPICall: true,
+      isTemplate: false,
       args: [1],
       expected: [
         [
@@ -174,7 +174,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBCOMPOSE,
-      isAPICall: true,
+      isTemplate: false,
       args: [
         'multibaasfaucet',
         'multibaasfaucet',
@@ -201,20 +201,19 @@ function testRunner() {
       only: true,
       debug: true,
       func: MBCUSTOMQUERY,
-      isAPICall: true,
+      isTemplate: false,
       args: [],
       expected: [],
     },
     {
-      // TODO: TOMORROW after enabling feature
       name: 'TestMBCUSTOMQUERYTEMPLATE',
-      skip: true,
+      skip: false,
       only: true,
       debug: true,
       func: MBCUSTOMQUERYTEMPLATE,
-      isAPICall: true,
-      args: [],
-      expected: [],
+      isTemplate: true,
+      args: [2, 2],
+      expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value']],
     },
     {
       name: 'TestMBEVENTLIST',
@@ -222,7 +221,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBEVENTLIST,
-      isAPICall: true,
+      isTemplate: false,
       args: ['publiclock'],
       expected: [
         ['event', 'description', 'inputs'],
@@ -253,7 +252,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBEVENTS,
-      isAPICall: true,
+      isTemplate: false,
       args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', 1, 1],
       expected: [
         [
@@ -308,7 +307,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBFUNCTIONLIST,
-      isAPICall: true,
+      isTemplate: false,
       args: ['erc20interface'],
       expected: [
         ['function', 'description', 'read/write', 'inputs', 'outputs'],
@@ -329,7 +328,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBGET,
-      isAPICall: true,
+      isTemplate: false,
       args: ['privatefaucet', 'multibaasfaucet', 'getOperator'],
       expected: '0x005080F78567F8001115F1eee835DD0151BEA476',
     },
@@ -339,7 +338,7 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBPOSTTEMPLATE,
-      isAPICall: false,
+      isTemplate: true,
       args: [2],
       expected: [['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
     },
