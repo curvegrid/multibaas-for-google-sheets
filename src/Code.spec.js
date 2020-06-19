@@ -195,15 +195,28 @@ function testRunner() {
       }),
     },
     {
-      // TODO: TOMORROW after enabling feature
       name: 'TestMBCUSTOMQUERY',
-      skip: true,
-      only: true,
-      debug: true,
+      skip: false,
+      only: false,
+      debug: false,
       func: MBCUSTOMQUERY,
       isTemplate: false,
-      args: [],
-      expected: [],
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 0, ''],
+        ],
+        '',
+        '',
+        3,
+        0,
+      ],
+      expected: [
+        ['amount', 'sender'],
+        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+      ],
     },
     {
       name: 'TestMBCUSTOMQUERYTEMPLATE',
@@ -341,10 +354,11 @@ function testRunner() {
       only: false,
       debug: false,
       func: MBQUERY,
-      args: ['Faucet', 2],
+      args: ['Faucet', 2, 1],
       expected: [
-        ['deposit', 'sender'],
-        [1000000000000000000, '0x317570b8c43fecadb8ebaf765044ad9626f4848e'],
+        ['amount', 'sender'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
       ],
     },
     {
