@@ -46,19 +46,48 @@ function run(test, config, testCase) {
       return;
     }
 
-    const output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
-    const numRow = output.length;
-    const numCol = output[0].length;
+    let output;
+    if (!testCase.isTemplate) {
+      output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
+    } else {
+      output = testCase.func(...testCase.args);
+    }
+
+    const numRow = Array.isArray(output) ? output.length : 0;
+    const numCol = numRow > 0 ? output[0].length : 0;
+
+    if (testCase.debug) {
+      loggerAPI(`OUTPUT: ${output}`);
+      loggerAPI(`OUTPUT ROW, COL: ${numRow}, ${numCol}`);
+    }
 
     // Write on test sheet
     config.sheet.clearContents();
-    config.sheet.getRange(1, 1, numRow, numCol).setValues(output);
+    if (numRow > 0 && numCol > 0) {
+      config.sheet.getRange(1, 1, numRow, numCol).setValues(output);
+    } else {
+      config.sheet.getRange(1, 1).setValue(output);
+    }
     SpreadsheetApp.flush();
 
-    const actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
+    let actualSheet;
+    if (numRow > 0 && numCol > 0) {
+      actualSheet = config.sheet.getRange(1, 1, numRow, numCol).getValues();
+    } else {
+      actualSheet = config.sheet.getRange(1, 1).getValue();
+    }
+
+    if (testCase.debug) {
+      loggerAPI(`Actual Values: ${JSON.stringify(actualSheet)}`);
+      loggerAPI(`Expected Values: ${JSON.stringify(testCase.expected)}`);
+    }
+
     t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
-    config.sheet.clearContents();
+    // Keep final data in the spreadsheet
+    if (!testCase.debug) {
+      config.sheet.clearContents();
+    }
   });
 }
 
@@ -80,17 +109,294 @@ function testRunner() {
   };
   const testCases = [
     {
+      name: 'TestMBADDRESS',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBADDRESS,
+      isTemplate: false,
+      args: ['0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7', '', false],
+      expected: [
+        [
+          'label',
+          'address',
+          'balance',
+          'chain',
+          'isContract',
+          'modules',
+          'contracts',
+        ],
+        [
+          'privatefaucet',
+          '0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7',
+          2000000000000000000,
+          'ethereum',
+          true,
+          '',
+          'multibaasfaucet 1.0',
+        ],
+      ],
+    },
+    {
+      name: 'TestMBBLOCK',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBBLOCK,
+      isTemplate: false,
+      args: [1],
+      expected: [
+        [
+          'blockchain',
+          'hash',
+          'difficulty',
+          'gasLimit',
+          'number',
+          'timestamp',
+          'receipt',
+          'txHashes',
+        ],
+        [
+          'ethereum',
+          '0x91b8583852f0244b4c4969bef7c456898fa16d0dde5e328e4c6c0e2c086136bf',
+          2,
+          9990236,
+          1,
+          formatDateTime('2020-05-20T08:38:13.000Z'),
+          '0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2',
+          '0x9157a6ce0112ed417e3bda098af4fe63afbfa8af769debba3534ee24891a2050',
+        ],
+      ],
+    },
+    {
+      name: 'TestMBCOMPOSE',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCOMPOSE,
+      isTemplate: false,
+      args: [
+        'multibaasfaucet',
+        'multibaasfaucet',
+        'deposit',
+        '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        '100000000000000000',
+      ],
+      expected: JSON.stringify({
+        from: '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+        to: '0x317570b8c43feCaDb8Ebaf765044Ad9626F4848e',
+        value: '100000000000000000',
+        gas: 22774,
+        gasPrice: '20000000000',
+        data: '0xd0e30db0',
+        nonce: 6,
+        hash: '0x72f0a63bc24503d1b71e93729c7787891633aa192dadb999f87b0f343a8ecbf4',
+      }),
+    },
+    {
+      name: 'TestMBCUSTOMQUERY',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERY,
+      isTemplate: false,
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 0, ''],
+        ],
+        '',
+        '',
+        3,
+        0,
+      ],
+      expected: [
+        ['amount', 'sender'],
+        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+      ],
+    },
+    {
+      name: 'TestMBCUSTOMQUERYTEMPLATE',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERYTEMPLATE,
+      isTemplate: true,
+      args: [2, 2],
+      expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value']],
+    },
+    {
+      name: 'TestMBEVENTLIST',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBEVENTLIST,
+      isTemplate: false,
+      args: ['multibaasfaucet'],
+      expected: [
+        ['event', 'description', 'inputs'],
+        ['LogCurrentOperatorRevoked', '', '2 inputs:\nowner address\noperatorRevoked address'],
+        ['LogDeposited', '', '2 inputs:\nsender address\namount uint256'],
+        ['LogOperatorCandidateAccepted', '', '1 input:\ncandidateAccepted address'],
+        ['LogOperatorCandidateRequested', '', '2 inputs:\nowner address\ncandidate address'],
+        ['LogOperatorCandidateRevoked', '', '1 input:\ncandidateRevoked address'],
+        ['LogOwnerCandidateAccepted', '', '1 input:\ncandidateAccepted address'],
+        ['LogOwnerCandidateRequested', '', '2 inputs:\nowner address\ncandidate address'],
+        ['LogOwnerCandidateRevoked', '', '1 input:\ncandidateRevoked address'],
+        ['LogPaused', '', '1 input:\nowner address'],
+        ['LogSent', '', '2 inputs:\nreceiver address\namount uint256'],
+        ['LogUnpaused', '', '1 input:\nowner address'],
+        ['LogWithdrew', '', '2 inputs:\nowner address\namount uint256'],
+      ],
+    },
+    {
+      name: 'TestMBEVENTS',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBEVENTS,
+      isTemplate: false,
+      args: ['privatefaucet', 1, 2],
+      expected: [
+        [
+          'triggeredAt',
+          'eventName',
+          'eventDef',
+          'eventInput0',
+          'eventInput1',
+          'eventIndexInLog',
+          'eventContractAddressLabel',
+          'eventContractAddress',
+          'eventContractName',
+          'txFrom',
+          'txData',
+          'txHash',
+          'txIndexInBlock',
+          'txBlockHash',
+          'txBlockNumber',
+          'txContractAddressLabel',
+          'txContractAddress',
+          'txContractName',
+          'fxnName',
+          'fxnDef',
+        ],
+        [
+          formatDateTime('2020-06-19T08:48:36.000Z'),
+          'LogDeposited',
+          'LogDeposited(address sender,uint256) amount',
+          '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+          1000000000000000000,
+          formatDateTime('1899-12-29T15:00:00.000Z'),
+          'multibaasfaucet',
+          '0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7',
+          'MultiBaasFaucet',
+          '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
+          '0xd0e30db0',
+          '0x937f1d11da26d7350e66691bd1e8669961d3cb4727978fd6213265b504174fbf',
+          0,
+          '0x611df11ac2d2e8a2da1e305817f1342bed60667c7d1a7292f6da09e7f4a1cc66',
+          149,
+          'multibaasfaucet',
+          '0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7',
+          'MultiBaasFaucet',
+          'deposit',
+          'deposit()',
+        ],
+      ],
+    },
+    {
+      name: 'TestMBFUNCTIONLIST',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBFUNCTIONLIST,
+      isTemplate: false,
+      args: ['erc20interface'],
+      expected: [
+        ['function', 'description', 'read/write', 'inputs', 'outputs'],
+        ['allowance', '', 'read', '2 inputs:\ntokenOwner address\nspender address', '1 output:\nremaining uint256'],
+        ['approve', '', 'write', '2 inputs:\nspender address\ntokens uint256', '1 output:\nsuccess bool'],
+        ['balanceOf', '', 'read', '1 input:\ntokenOwner address', '1 output:\nbalance uint256'],
+        ['decimals', '', 'read', 'no inputs', '1 output:\nuint8'],
+        ['name', '', 'read', 'no inputs', '1 output:\nstring'],
+        ['symbol', '', 'read', 'no inputs', '1 output:\nstring'],
+        ['totalSupply', '', 'read', 'no inputs', '1 output:\nuint256'],
+        ['transfer', '', 'write', '2 inputs:\nto address\ntokens uint256', '1 output:\nsuccess bool'],
+        ['transferFrom', '', 'write', '3 inputs:\nfrom address\nto address\ntokens uint256', '1 output:\nsuccess bool'],
+      ],
+    },
+    {
+      name: 'TestMBGET',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBGET,
+      isTemplate: false,
+      args: ['privatefaucet', 'multibaasfaucet', 'getOperator'],
+      expected: '0x005080F78567F8001115F1eee835DD0151BEA476',
+    },
+    {
+      name: 'TestMBPOSTTEMPLATE',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBPOSTTEMPLATE,
+      isTemplate: true,
+      args: [2],
+      expected: [['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
+    },
+    {
       name: 'TestMBQUERY',
       skip: false,
+      only: false,
+      debug: false,
       func: MBQUERY,
-      args: ['Queued Exits', 5],
+      args: ['Faucet', 2, 1],
       expected: [
-        ['exitid', 'priority'],
-        ['666629079848833945283516969712032889240528132', '41733475565687827013448321883143303337820997464902624318864041623172916484'],
-        ['1401973687505857731830456287637471880977785047', '41751861880721805686398941946704262444111373862207383147640349032816517335'],
-        ['2054345912177215402617314954546801559724193123', '41752026299537173367456859727492207583157445734862728631688173641164748131'],
-        ['12018136374180221520320355170630020014075267311', '41753870186123925948850253652650103648140958609936382295744042661855611119'],
-        ['1805958224368381604189476822833232573913333196', '41755646356907136232573277651225957746239350543415473449459681295463054796'],
+        ['amount', 'sender'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+      ],
+    },
+    {
+      name: 'TestMBTX',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBTX,
+      args: ['0xfe9e4b800d14c36f2e8c26ab44ffcfcbf55ac71d6f0d5f2ac95b3d63c7f71569'],
+      expected: [
+        [
+          'isPending',
+          'nonce',
+          'gasPrice',
+          'gas',
+          'to',
+          'value',
+          'input',
+          'v',
+          'r',
+          's',
+          'hash',
+        ],
+        [
+          false,
+          42,
+          20000000000,
+          22774,
+          '0xe9f2e2b0105b683b436fd0d7a2895be25c310af7',
+          // TODO: Fix tx value format issue in a spreadsheet
+          // https://github.com/curvegrid/hackathon-sunset-supreme/issues/15
+          formatDateTime('1E+18'),
+          '0xd0e30db0',
+          '0xf0742a46',
+          '0xf7d63ad5985bfcc8f1764198a32d7e1800e852b2408068b0904187c3e3b3c4dc',
+          '0x290fae6d05ef9007ce21f8144629edbd7ebf23a1205a3b4a74a3746c6737132c',
+          '0xfe9e4b800d14c36f2e8c26ab44ffcfcbf55ac71d6f0d5f2ac95b3d63c7f71569',
+        ],
       ],
     },
   ];
@@ -98,8 +404,13 @@ function testRunner() {
   // TODO: cover internal functions
   // https://github.com/curvegrid/hackathon-sunset-supreme/issues/5
 
+  let testCasesFiltered = testCases.filter((testCase) => testCase.only);
+  if (testCasesFiltered.length < 1) {
+    testCasesFiltered = testCases;
+  }
+
   // eslint-disable-next-line no-restricted-syntax
-  for (const testCase of testCases) {
+  for (const testCase of testCasesFiltered) {
     run(test, config, testCase);
   }
 
