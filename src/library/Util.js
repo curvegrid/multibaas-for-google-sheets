@@ -1,5 +1,7 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
+/* eslint-disable no-unused-vars, no-use-before-define */
+
 function isNaturalNumber(number) {
   return RegExp('^[0-9]+$').test(number);
 }
@@ -62,17 +64,18 @@ function extractSelectFilterCounts(header) {
 
 function clampBool(value, def) {
   // clamp value to a valid bool with a default
+  let final;
   if (value === undefined || value === '') {
-    value = def;
+    final = def;
   } else if (value === true) {
-    value = true;
+    final = true;
   } else if (value === false) {
-    value = false;
+    final = false;
   } else {
-    value = def;
+    final = def;
   }
 
-  return value;
+  return final;
 }
 
 function normalizeCreds(deployment, apiKey) {
@@ -83,11 +86,12 @@ function normalizeCreds(deployment, apiKey) {
 
   // validate API key
   // based on: https://www.regextester.com/105777
+  // eslint-disable-next-line no-useless-escape
   if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
     throw new Error('invalid API key');
   }
 
-  return deployment, apiKey;
+  return [deployment, apiKey];
 }
 
 function txToArray(tx, headers) {
@@ -101,13 +105,14 @@ function txToArray(tx, headers) {
   }
 
   // special cases for nonce, gasPrice, gas, and value: convert from hex to base 10
-  tx.data.nonce = parseHexToNum(tx.data.nonce);
-  tx.data.gas = parseHexToNum(tx.data.gas);
-  tx.data.gasPrice = parseHexToNum(tx.data.gasPrice);
-  tx.data.value = parseHexToNum(tx.data.value);
+  const txDataFinal = tx.data;
+  txDataFinal.nonce = parseHexToNum(tx.data.nonce);
+  txDataFinal.gas = parseHexToNum(tx.data.gas);
+  txDataFinal.gasPrice = parseHexToNum(tx.data.gasPrice);
+  txDataFinal.value = parseHexToNum(tx.data.value);
 
   // tx body
-  rows.push([tx.isPending].concat(valuesFromKeys(dataKeys, tx.data)));
+  rows.push([tx.isPending].concat(valuesFromKeys(dataKeys, txDataFinal)));
   return rows;
 }
 
@@ -144,7 +149,14 @@ function blockToArray(block, headers, txHashes) {
 
   // block body
   const timestamp = new Date(block.timestamp * 1000);
-  const row = [block.blockchain, block.hash, block.difficulty, block.gasLimit, block.number, timestamp, block.receipt];
+  const row = [
+    block.blockchain,
+    block.hash,
+    block.difficulty,
+    block.gasLimit,
+    block.number,
+    timestamp,
+    block.receipt];
 
   if (txHashes) {
     row.push(buildTxHashes(block.transactions));
@@ -178,7 +190,15 @@ function addressToArray(address, headers, code) {
   // address body
   const modules = buildAssociations(address.modules);
   const contracts = buildAssociations(address.contracts);
-  const row = [address.label, address.address, address.balance, address.chain, address.isContract, modules, contracts];
+  const row = [
+    address.label,
+    address.address,
+    address.balance,
+    address.chain,
+    address.isContract,
+    modules,
+    contracts,
+  ];
 
   if (code) {
     row.push(address.codeAt);
@@ -319,7 +339,7 @@ function eventsToArray(entries) {
       .concat([event.name, eventDef])
       .concat(eventInputs)
       .concat([
-        event.indexInLog, event.contract.label, event.contract.address, event.contract.name
+        event.indexInLog, event.contract.label, event.contract.address, event.contract.name,
       ]);
 
     // tx fields
@@ -381,4 +401,10 @@ function objectArrayToArray(objArr) {
   }
 
   return rows;
+}
+
+// After blockToArray, date value in spreadsheet will be formatted
+// as new Date('2015-07-30T15:26:28.000Z') from "2015-07-30T15:26:28.000Z"
+function formatDateTime(dateTime) {
+  return new Date(dateTime);
 }

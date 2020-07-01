@@ -1,8 +1,10 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
-function query(httpMethod, deployment, apiKey, query, payload) {
+/* eslint-disable no-unused-vars */
+
+function query(httpMethod, deployment, apiKey, qry, payload) {
   // validate and normalize deployment and API key
-  deployment, apiKey = normalizeCreds(deployment, apiKey);
+  const [deploymentNorm, apiKeyNorm] = normalizeCreds(deployment, apiKey);
 
   // query options
   const options = {
@@ -10,7 +12,7 @@ function query(httpMethod, deployment, apiKey, query, payload) {
     contentType: 'application/json',
     headers: {
       Accept: 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKeyNorm}`,
     },
   };
 
@@ -19,7 +21,7 @@ function query(httpMethod, deployment, apiKey, query, payload) {
   }
 
   // call the MultiBaas API
-  const url = URL_SCHEME + deployment + URL_BASE + query;
+  const url = URL_SCHEME + deploymentNorm + URL_BASE + qry;
   console.log(`URL: ${url}`);
   console.log(`Payload: ${JSON.stringify(payload)}`);
   const response = UrlFetchApp.fetch(url, options);
