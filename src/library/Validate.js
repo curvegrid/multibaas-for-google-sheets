@@ -1,31 +1,36 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
+/* eslint-disable no-unused-vars, no-use-before-define */
+
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
 const VALID_BOOLEANS = ['and', 'or'];
 const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
 const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
 
 function validateOperator(operator) {
-  operator = String(operator).toLowerCase();
+  const operatorString = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operator)) {
-    throw new Error(`'${operator}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
+    showAlert(`'${operatorString}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
+    return undefined;
   }
 
-  return operator;
+  return operatorString;
 }
 
 function validateAggregator(aggregator) {
-  aggregator = String(aggregator).toLowerCase();
-  if (!VALID_AGGREGATORS.includes(aggregator)) {
-    throw new Error(`'${aggregator}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
+  const aggregatorString = String(aggregator).toLowerCase();
+  if (!VALID_AGGREGATORS.includes(aggregatorString)) {
+    showAlert(`'${aggregatorString}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
+    return undefined;
   }
 
-  return aggregator;
+  return aggregatorString;
 }
 
 function validateBlockNumOrHash(numOrHash) {
   if (numOrHash === undefined || numOrHash === '') {
-    throw new Error('must provide a block number or hash');
+    showAlert('must provide a block number or hash');
+    return;
   }
 
   // fast return if it's a valid positive integer
@@ -37,21 +42,24 @@ function validateBlockNumOrHash(numOrHash) {
 }
 
 function validateBlockTxHash(hash) {
-  hash = String(hash);
+  const hashString = String(hash);
 
-  if (hash === undefined || hash === '' || hash.length < 2) {
-    throw new Error('must provide a hash');
+  if (hashString === undefined || hashString === '' || hashString.length < 2) {
+    showAlert('must provide a hash');
+    return;
   }
 
-  if (hash.substring(0, 2).toLowerCase() !== '0x') {
-    throw new Error("hash must start with '0x'");
+  if (hashString.substring(0, 2).toLowerCase() !== '0x') {
+    showAlert("hash must start with '0x'");
+    return;
   }
 
-  if (hash.length !== 66) {
-    throw new Error(`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
+  if (hashString.length !== 66) {
+    showAlert(`invalid hash length of ${hashString.length}, should be 64 hex characters long excluding the '0x' prefix`);
+    return;
   }
 
-  if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hash)) {
-    throw new Error('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
+  if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hashString)) {
+    showAlert('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
   }
 }

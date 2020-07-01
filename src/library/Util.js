@@ -32,13 +32,16 @@ function extractSelectFilterCounts(header) {
         selectHalf = false;
       } else {
         if (aliasRule !== 'alias') {
-          throw new Error(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
+          showAlert(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
+          return undefined;
         }
         if (indexOperator !== 'index') {
-          throw new Error(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+          showAlert(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+          return undefined;
         }
         if (aggregatorValue !== 'aggregator') {
-          throw new Error(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+          showAlert(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+          return undefined;
         }
 
         numSelect++;
@@ -46,13 +49,16 @@ function extractSelectFilterCounts(header) {
     }
     if (!selectHalf) {
       if (aliasRule !== 'rule') {
-        throw new Error(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
+        showAlert(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
+        return undefined;
       }
       if (indexOperator !== 'operator') {
-        throw new Error(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        showAlert(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        return undefined;
       }
       if (aggregatorValue !== 'value') {
-        throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
+        showAlert(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
+        return undefined;
       }
 
       numFilter++;
@@ -81,14 +87,16 @@ function clampBool(value, def) {
 function normalizeCreds(deployment, apiKey) {
   // validate deployment ID
   if (!RegExp('^[a-z0-9]+$', 'i').test(deployment)) {
-    throw new Error('invalid deployment ID');
+    showAlert('invalid deployment ID');
+    return undefined;
   }
 
   // validate API key
   // based on: https://www.regextester.com/105777
   // eslint-disable-next-line no-useless-escape
   if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw new Error('invalid API key');
+    showAlert('invalid API key');
+    return undefined;
   }
 
   return [deployment, apiKey];
@@ -407,4 +415,8 @@ function objectArrayToArray(objArr) {
 // as new Date('2015-07-30T15:26:28.000Z') from "2015-07-30T15:26:28.000Z"
 function formatDateTime(dateTime) {
   return new Date(dateTime);
+}
+
+function showAlert(message) {
+  SpreadsheetApp.getUi().alert(message);
 }

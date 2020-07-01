@@ -47,7 +47,8 @@ function mbPost() {
   const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    throw new Error(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    showAlert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    return;
   }
 
   const values = range.getValues();
@@ -97,7 +98,8 @@ function MBPOSTTEMPLATE(numArgs) {
   if (numberOfArgs === undefined || numberOfArgs === '') {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
-    throw new Error('number of arguments must be a valid positive integer');
+    showAlert('number of arguments must be a valid positive integer');
+    return undefined;
   }
 
   const header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
@@ -121,7 +123,8 @@ function MBPOSTTEMPLATE(numArgs) {
  */
 function MBEVENTLIST(deployment, apiKey, contract, filter) {
   if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+    showAlert('must provide a smart contract label');
+    return undefined;
   }
 
   const queryPath = `contracts/${contract}`;
@@ -147,7 +150,8 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
  */
 function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
   if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+    showAlert('must provide a smart contract label');
+    return undefined;
   }
 
   const queryPath = `contracts/${contract}`;
@@ -228,7 +232,8 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  */
 function MBADDRESS(deployment, apiKey, address, headers, code) {
   if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+    showAlert('must provide an address or address label');
+    return undefined;
   }
 
   const isHeaders = clampBool(headers, true);
@@ -257,7 +262,8 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
  */
 function MBQUERY(deployment, apiKey, query, limit, offset) {
   if (query === undefined || query === '') {
-    throw new Error('must provide an Event Query name');
+    showAlert('must provide an Event Query name');
+    return undefined;
   }
 
   const queryPath = `queries/${query}/results`;
@@ -284,7 +290,8 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  */
 function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
   if (events === undefined || events === '') {
-    throw new Error('must provide an events definition');
+    showAlert('must provide an events definition');
+    return undefined;
   }
 
   const queryPath = 'queries';
@@ -316,12 +323,14 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
   if (numberOfSelects === undefined || numberOfSelects === '') {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
-    throw new Error("number of 'select' groups must be a valid positive integer");
+    showAlert("number of 'select' groups must be a valid positive integer");
+    return undefined;
   }
   if (numberOfFilters === undefined || numberOfFilters === '') {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
-    throw new Error("number of 'filter' groups must be a valid positive integer");
+    showAlert("number of 'filter' groups must be a valid positive integer");
+    return undefined;
   }
 
   let header = ['eventName'];
@@ -348,7 +357,8 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
  */
 function MBEVENTS(deployment, apiKey, address, limit, offset) {
   if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+    showAlert('must provide an address or address label');
+    return undefined;
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/events`;
@@ -374,13 +384,16 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  */
 function MBGET(deployment, apiKey, address, contract, method, ...args) {
   if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+    showAlert('must provide an address or address label');
+    return undefined;
   }
   if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+    showAlert('must provide a smart contract label');
+    return undefined;
   }
   if (method === undefined || method === '') {
-    throw new Error('must provide a method (function) name');
+    showAlert('must provide a method (function) name');
+    return undefined;
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
