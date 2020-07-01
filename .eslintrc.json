@@ -48,6 +48,7 @@
     "objectArrayToArray": false,
     "eventsToArray": false,
     "formatDateTime": false,
+    "showAlert": false,
     // Validate.js
     "validateBlockTxHash": false,
     "validateBlockNumOrHash": false,
