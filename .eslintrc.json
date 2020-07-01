@@ -6,9 +6,14 @@
   },
   "extends": ["eslint:recommended", "airbnb/base"],
   "globals": {
+    // Google spreadsheet
     "SpreadsheetApp": false,
     "UrlFetchApp": false,
+    // Google spreadsheet test library
     "GasTap": false,
+    // Code.js
+    "URL_SCHEME": false,
+    "URL_BASE": false,
     "MBADDRESS": false,
     "MBBLOCK": false,
     "MBCOMPOSE": false,
@@ -21,6 +26,36 @@
     "MBPOSTTEMPLATE": false,
     "MBQUERY": false,
     "MBTX": false,
+    // Build.js
+    "buildSigDef": false,
+    "buildInputs": false,
+    "buildSeqHeader": false,
+    "buildNumInputsOrOutputs": false,
+    "buildFunctionInputsOrOutputs": false,
+    "buildAssociations": false,
+    "buildTxHashes": false,
+    "buildMethodArgs": false,
+    "buildLimitOffset": false,
+    "buildCustomQuery": false,
+    // Util.js
+    "normalizeCreds": false,
+    "isNaturalNumber": false,
+    "functionsToArray": false,
+    "clampBool": false,
+    "txToArray": false,
+    "blockToArray": false,
+    "addressToArray": false,
+    "objectArrayToArray": false,
+    "eventsToArray": false,
+    "formatDateTime": false,
+    // Validate.js
+    "validateBlockTxHash": false,
+    "validateBlockNumOrHash": false,
+    // Query.js
+    "query": false,
+    "limitQuery": false,
+    // Others
+    "BigInt": false,
     "before": false,
     "beforeEach": false,
     "it": false,
@@ -30,5 +65,6 @@
     "ecmaVersion": 2018
   },
   "rules": {
+    "no-plusplus": "off"
   }
 }
