@@ -81,7 +81,7 @@ function clampBool(value, def) {
 function normalizeCreds(deployment, apiKey) {
   // validate deployment ID
   if (!RegExp('^[a-z0-9]+$', 'i').test(deployment)) {
-    throw new Error('invalid deployment ID');
+    throw new Error('invalid deployment ID. See "A10" in https://docs.google.com/spreadsheets/d/1AHCYefYNCjU80X1aSs8Ebre85nVtBeu1cVWmXDIz0_0');
   }
 
   // validate API key
@@ -407,4 +407,8 @@ function objectArrayToArray(objArr) {
 // as new Date('2015-07-30T15:26:28.000Z') from "2015-07-30T15:26:28.000Z"
 function formatDateTime(dateTime) {
   return new Date(dateTime);
+}
+
+function showAlert(message) {
+  SpreadsheetApp.getUi().alert(message);
 }
