@@ -234,7 +234,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the address structure into a flat array
@@ -351,8 +351,17 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
     throw new Error('must provide an address or address label');
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/events`;
-  const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+  const queryPath = 'events';
+  const results = limitQuery(
+    HTTP_GET,
+    deployment,
+    apiKey,
+    queryPath,
+    limit,
+    offset,
+    undefined,
+    address,
+  );
   console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the events structure into a flat array
