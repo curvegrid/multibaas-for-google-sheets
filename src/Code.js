@@ -279,7 +279,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
   let results;
   try {
     results = query(HTTP_GET, deployment, apiKey, queryPath);
@@ -425,10 +425,19 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
     return undefined;
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/events`;
+  const queryPath = 'events';
   let results;
   try {
-    results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+    results = limitQuery(
+      HTTP_GET,
+      deployment,
+      apiKey,
+      queryPath,
+      limit,
+      offset,
+      undefined,
+      address,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;

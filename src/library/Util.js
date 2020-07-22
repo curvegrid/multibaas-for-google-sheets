@@ -195,7 +195,7 @@ function addressToArray(address, headers, code) {
     address.address,
     address.balance,
     address.chain,
-    address.isContract,
+    address.contracts.length > 0,
     modules,
     contracts,
   ];

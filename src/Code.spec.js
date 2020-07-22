@@ -389,7 +389,7 @@ function testRunner() {
           22774,
           '0xe9f2e2b0105b683b436fd0d7a2895be25c310af7',
           // TODO: Fix tx value format issue in a spreadsheet
-          // https://github.com/curvegrid/hackathon-sunset-supreme/issues/15
+          // https://github.com/curvegrid/multibaas-for-google-sheets/issues/15
           formatDateTime('1E+18'),
           '0xd0e30db0',
           '0xf0742a46',
@@ -402,7 +402,7 @@ function testRunner() {
   ];
 
   // TODO: cover internal functions
-  // https://github.com/curvegrid/hackathon-sunset-supreme/issues/5
+  // https://github.com/curvegrid/multibaas-for-google-sheets/issues/5
 
   let testCasesFiltered = testCases.filter((testCase) => testCase.only);
   if (testCasesFiltered.length < 1) {
