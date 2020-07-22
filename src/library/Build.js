@@ -215,7 +215,7 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   return payload;
 }
 
-function buildLimitOffset(limit, offset) {
+function buildLimitOffsetAddress(limit, offset, address) {
   // validate limit
   if (limit !== undefined && !isNaturalNumber(limit)) {
     throw new Error('invalid limit, must be a positive integer');
@@ -226,21 +226,34 @@ function buildLimitOffset(limit, offset) {
     throw new Error('invalid offset, must be a positive integer');
   }
 
-  // generate a clean URL query param
-  let limitOffset = '';
-  if (limit !== undefined) {
-    limitOffset += `?limit=${limit}`;
-  }
-  if (offset !== undefined) {
-    if (limitOffset === '') {
-      limitOffset += '?';
-    } else {
-      limitOffset += '&';
-    }
-    limitOffset += `offset=${offset}`;
+  // validate address
+  if (address !== undefined && address.length < 1) {
+    throw new Error('invalid address, must be a string');
   }
 
-  return limitOffset;
+  // generate a clean URL query param
+  let queryOptions = '';
+  if (limit !== undefined) {
+    queryOptions += `?limit=${limit}`;
+  }
+  if (offset !== undefined) {
+    if (queryOptions === '') {
+      queryOptions += '?';
+    } else {
+      queryOptions += '&';
+    }
+    queryOptions += `offset=${offset}`;
+  }
+  if (address !== undefined) {
+    if (queryOptions === '') {
+      queryOptions += '?';
+    } else {
+      queryOptions += '&';
+    }
+    queryOptions += `contract_address=${address}`;
+  }
+
+  return queryOptions;
 }
 
 function buildTxHashes(txs) {

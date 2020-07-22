@@ -26,19 +26,18 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
   console.log(`Payload: ${JSON.stringify(payload)}`);
   const response = UrlFetchApp.fetch(url, options);
 
-
   // pre-process the results
   const results = JSON.parse(response.getContentText());
 
   return results;
 }
 
-function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload) {
+function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload, address) {
   // validate and normalize limit and offset
-  const limitOffset = buildLimitOffset(limit, offset);
+  const limitOffsetAddress = buildLimitOffsetAddress(limit, offset, address);
 
   // query
-  const results = query(httpMethod, deployment, apiKey, queryPath + limitOffset, payload);
+  const results = query(httpMethod, deployment, apiKey, queryPath + limitOffsetAddress, payload);
 
   return results;
 }
