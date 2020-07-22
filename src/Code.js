@@ -234,7 +234,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
   const results = query(HTTP_GET, deployment, apiKey, queryPath);
 
   // turn the address structure into a flat array
