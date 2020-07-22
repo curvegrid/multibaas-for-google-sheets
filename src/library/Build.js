@@ -215,7 +215,7 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   return payload;
 }
 
-function buildLimitOffsetAddress(limit, offset, address) {
+function buildQueryOptions(limit, offset, address) {
   // validate limit
   if (limit !== undefined && !isNaturalNumber(limit)) {
     throw new Error('invalid limit, must be a positive integer');

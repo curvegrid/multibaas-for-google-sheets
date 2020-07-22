@@ -35,7 +35,7 @@
     "buildAssociations": false,
     "buildTxHashes": false,
     "buildMethodArgs": false,
-    "buildLimitOffsetAddress": false,
+    "buildQueryOptions": false,
     "buildCustomQuery": false,
     // Util.js
     "normalizeCreds": false,

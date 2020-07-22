@@ -34,10 +34,10 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
 
 function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload, address) {
   // validate and normalize limit and offset
-  const limitOffsetAddress = buildLimitOffsetAddress(limit, offset, address);
+  const queryOptions = buildQueryOptions(limit, offset, address);
 
   // query
-  const results = query(httpMethod, deployment, apiKey, queryPath + limitOffsetAddress, payload);
+  const results = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
 
   return results;
 }
