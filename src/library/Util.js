@@ -78,10 +78,10 @@ function clampBool(value, def) {
   return final;
 }
 
-function normalizeCreds(deployment, apiKey) {
+function normalizeCreds(deploymentId, apiKey) {
   // validate deployment ID
-  if (!RegExp('^[a-z0-9]+$', 'i').test(deployment)) {
-    throw new Error('invalid deployment ID. See "A10" in https://docs.google.com/spreadsheets/d/1AHCYefYNCjU80X1aSs8Ebre85nVtBeu1cVWmXDIz0_0');
+  if (!RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
+    throw new Error('invalid deployment ID');
   }
 
   // validate API key
@@ -91,7 +91,7 @@ function normalizeCreds(deployment, apiKey) {
     throw new Error('invalid API key');
   }
 
-  return [deployment, apiKey];
+  return [deploymentId, apiKey];
 }
 
 function txToArray(tx, headers) {
@@ -410,5 +410,6 @@ function formatDateTime(dateTime) {
 }
 
 function showAlert(message) {
-  SpreadsheetApp.getUi().alert(message);
+  // SpreadsheetApp.getUi().alert(message);
+  console.log(message);
 }
