@@ -6,6 +6,8 @@ const URL_SCHEME = 'https://';
 const URL_BASE = '.multibaas.com/api/v0/';
 const HTTP_GET = 'GET';
 const HTTP_POST = 'POST';
+let mbDeploymentId = '';
+let mbApiKey = '';
 
 /**
  * Add menu
@@ -17,6 +19,30 @@ function onOpen() {
     .addItem('Post to the blockchain', 'mbPost')
     .addItem('Refresh current cell', 'mbRefresh')
     .addToUi();
+
+  const spreadsheet = SpreadsheetApp.getActive();
+  const menuItems = [
+    { name: 'Set Deployment ID', functionName: 'setDeploymentId' },
+    { name: 'Set API KEY', functionName: 'setApiKey' },
+  ];
+  spreadsheet.addMenu('Directions', menuItems);
+}
+
+function setDeploymentId() {
+  mbDeploymentId = Browser.inputBox('Set Deployment ID',
+    'Please enter the deployment ID'
+    + '(for example, if the host is "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com", just put "xxxxxxxxxxxxxxxxxxxxxxxxxx" only"):',
+    Browser.Buttons.OK_CANCEL);
+
+  console.log('mb deployment id: ', mbDeploymentId);
+}
+
+function setApiKey() {
+  mbApiKey = Browser.inputBox('Set API Key',
+    'Please enter the API key:',
+    Browser.Buttons.OK_CANCEL);
+
+  console.log('mb api key: ', mbApiKey);
 }
 
 /**
