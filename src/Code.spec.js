@@ -46,8 +46,10 @@ function run(test, config, testCase) {
       return;
     }
 
-    MBSETDEPLOYMENTID(config.deployment);
-    MBSETAPIKEY(config.apiKey);
+    /* eslint-disable no-undef */
+    setProperty(PROP_MB_DEPLOYMENT_ID, config.deployment);
+    setProperty(PROP_MB_API_KEY, config.apiKey);
+    /* eslint-enable no-undef */
 
     const output = testCase.func(...testCase.args);
     const numRow = Array.isArray(output) ? output.length : 0;
@@ -343,7 +345,7 @@ function testRunner() {
       func: MBPOSTTEMPLATE,
       isTemplate: true,
       args: [2],
-      expected: [['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
+      expected: [['address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
     },
     {
       name: 'TestMBQUERY',
