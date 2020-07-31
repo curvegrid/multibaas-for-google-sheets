@@ -46,13 +46,10 @@ function run(test, config, testCase) {
       return;
     }
 
-    let output;
-    if (!testCase.isTemplate) {
-      output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
-    } else {
-      output = testCase.func(...testCase.args);
-    }
+    MBSETDEPLOYMENTID(config.deployment);
+    MBSETAPIKEY(config.apiKey);
 
+    const output = testCase.func(...testCase.args);
     const numRow = Array.isArray(output) ? output.length : 0;
     const numCol = numRow > 0 ? output[0].length : 0;
 
