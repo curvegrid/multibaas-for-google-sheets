@@ -8,7 +8,8 @@
   "private": false,
   "scripts": {
     "lint": "eslint ./*.js src/*.js test/*.js",
-    "test": "clasp push && cd test && node mbSheetsAddOn.js"
+    "test": "clasp push && cd test && node mbSheetsAddOn.js",
+    "push": "clasp push"
   },
   "keywords": [
     "multibaas",
