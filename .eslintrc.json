@@ -9,6 +9,7 @@
     // Google spreadsheet
     "SpreadsheetApp": false,
     "UrlFetchApp": false,
+    "Browser": false,
     // Google spreadsheet test library
     "GasTap": false,
     // Code.js
