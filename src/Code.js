@@ -26,18 +26,15 @@ function onOpen() {
 function setDeploymentId() {
   mbDeploymentId = Browser.inputBox('Set Deployment ID',
     'Please enter the deployment ID'
-    + '(for example, if the host is "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com", just put "xxxxxxxxxxxxxxxxxxxxxxxxxx" only"):',
+    + ' (for example, if the host is "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
+    + ' just put "xxxxxxxxxxxxxxxxxxxxxxxxxx" only"):',
     Browser.Buttons.OK_CANCEL);
-
-  console.log('mb deployment id: ', mbDeploymentId);
 }
 
 function setApiKey() {
   mbApiKey = Browser.inputBox('Set API Key',
     'Please enter the API key:',
     Browser.Buttons.OK_CANCEL);
-
-  console.log('mb api key: ', mbApiKey);
 }
 
 function refreshCurrentCell() {
@@ -57,7 +54,6 @@ function refreshCurrentCell() {
 
 function postToBlockchain() {
   const MIN_COLUMNS = 7;
-
   const sheet = SpreadsheetApp.getActiveSheet();
   const range = SpreadsheetApp.getActiveRange();
 
@@ -67,10 +63,8 @@ function postToBlockchain() {
   }
 
   const values = range.getValues();
-
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-
     const [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
 
     let args = [];
