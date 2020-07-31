@@ -27,6 +27,8 @@
     "MBPOSTTEMPLATE": false,
     "MBQUERY": false,
     "MBTX": false,
+    "MBSETDEPLOYMENTID": false,
+    "MBSETAPIKEY": false,
     // Build.js
     "buildSigDef": false,
     "buildInputs": false,
