@@ -9,7 +9,7 @@
     // Google spreadsheet
     "SpreadsheetApp": false,
     "UrlFetchApp": false,
-    "Browser": false,
+    "PropertiesService": false,
     // Google spreadsheet test library
     "GasTap": false,
     // Code.js
@@ -27,8 +27,6 @@
     "MBPOSTTEMPLATE": false,
     "MBQUERY": false,
     "MBTX": false,
-    "MBSETDEPLOYMENTID": false,
-    "MBSETAPIKEY": false,
     // Build.js
     "buildSigDef": false,
     "buildInputs": false,
