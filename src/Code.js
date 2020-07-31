@@ -13,17 +13,12 @@ let mbApiKey = '';
  * Add menu
  */
 function onOpen() {
-  const ui = SpreadsheetApp.getUi();
-
-  ui.createMenu('MultiBaas')
-    .addItem('Post to the blockchain', 'mbPost')
-    .addItem('Refresh current cell', 'mbRefresh')
-    .addToUi();
-
   const spreadsheet = SpreadsheetApp.getActive();
   const menuItems = [
     { name: 'Set Deployment ID', functionName: 'setDeploymentId' },
-    { name: 'Set API KEY', functionName: 'setApiKey' },
+    { name: 'Set API Key', functionName: 'setApiKey' },
+    { name: 'Post to the blockchain', functionName: 'postToBlockchain' },
+    { name: 'Refresh current cell', functionName: 'refreshCurrentCell' },
   ];
   spreadsheet.addMenu('Directions', menuItems);
 }
@@ -45,10 +40,7 @@ function setApiKey() {
   console.log('mb api key: ', mbApiKey);
 }
 
-/**
- * Menu 1
- */
-function mbRefresh() {
+function refreshCurrentCell() {
   const range = SpreadsheetApp.getActiveRange();
   const cell = range.getCell(1, 1);
   const value = cell.getValue();
@@ -63,10 +55,7 @@ function mbRefresh() {
   SpreadsheetApp.flush();
 }
 
-/**
- * Menu 2
- */
-function mbPost() {
+function postToBlockchain() {
   const MIN_COLUMNS = 7;
 
   const sheet = SpreadsheetApp.getActiveSheet();
