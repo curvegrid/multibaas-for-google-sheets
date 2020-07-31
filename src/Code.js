@@ -6,35 +6,72 @@ const URL_SCHEME = 'https://';
 const URL_BASE = '.multibaas.com/api/v0/';
 const HTTP_GET = 'GET';
 const HTTP_POST = 'POST';
-let mbDeploymentId = '';
-let mbApiKey = '';
 
-/**
- * Add menu
- */
-function onOpen() {
-  const spreadsheet = SpreadsheetApp.getActive();
-  const menuItems = [
-    { name: 'Set Deployment ID', functionName: 'setDeploymentId' },
-    { name: 'Set API Key', functionName: 'setApiKey' },
-    { name: 'Post to the blockchain', functionName: 'postToBlockchain' },
-    { name: 'Refresh current cell', functionName: 'refreshCurrentCell' },
-  ];
-  spreadsheet.addMenu('Directions', menuItems);
+// Property keys for deployment ID and API key.
+const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
+const PROP_MB_API_KEY = 'mbApiKey';
+
+// NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
+// and on running as Add-On after installed "testProperties" cannot be written(read only).
+let testProperties = {};
+
+function setProperty(key, value) {
+  const properties = PropertiesService.getDocumentProperties();
+  if (properties) {
+    properties.setProperty(key, value);
+  } else {
+    testProperties[key] = value;
+  }
+}
+
+function getProperty(key) {
+  const properties = PropertiesService.getDocumentProperties();
+  return properties ? properties.getProperty(key) : testProperties[key];
 }
 
 function setDeploymentId() {
-  mbDeploymentId = Browser.inputBox('Set Deployment ID',
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Set Deployment ID',
     'Please enter the deployment ID'
-    + ' (for example, if the host is "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
+    + ' (i.e. for "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
     + ' just put "xxxxxxxxxxxxxxxxxxxxxxxxxx" only"):',
-    Browser.Buttons.OK_CANCEL);
+    ui.ButtonSet.OK_CANCEL,
+  );
+
+  const button = result.getSelectedButton();
+  const text = result.getResponseText();
+  if (button === ui.Button.OK) {
+    setProperty(PROP_MB_DEPLOYMENT_ID, text);
+    ui.alert(`Deployment ID is ${text}.`);
+  }
 }
 
 function setApiKey() {
-  mbApiKey = Browser.inputBox('Set API Key',
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Set API Key',
     'Please enter the API key:',
-    Browser.Buttons.OK_CANCEL);
+    ui.ButtonSet.OK_CANCEL,
+  );
+
+  const button = result.getSelectedButton();
+  const text = result.getResponseText();
+  if (button === ui.Button.OK) {
+    setProperty(PROP_MB_API_KEY, text);
+    ui.alert(`API key is ${text}.`);
+  }
+}
+
+function deleteAllSettings() {
+  const properties = PropertiesService.getDocumentProperties();
+  if (properties) {
+    properties.deleteAllProperties();
+  } else {
+    testProperties = {};
+  }
+  SpreadsheetApp.getUi()
+    .alert('Deployment ID and API key have been removed.');
 }
 
 function refreshCurrentCell() {
@@ -53,7 +90,7 @@ function refreshCurrentCell() {
 }
 
 function postToBlockchain() {
-  const MIN_COLUMNS = 7;
+  const MIN_COLUMNS = 5;
   const sheet = SpreadsheetApp.getActiveSheet();
   const range = SpreadsheetApp.getActiveRange();
 
@@ -65,7 +102,7 @@ function postToBlockchain() {
   const values = range.getValues();
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-    const [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
+    const [address, contract, method, from, signer] = row.slice(0, 6);
 
     let args = [];
     if (row.length > MIN_COLUMNS) {
@@ -80,7 +117,13 @@ function postToBlockchain() {
 
     let results;
     try {
-      results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+      results = query(
+        HTTP_POST,
+        getProperty(PROP_MB_DEPLOYMENT_ID),
+        getProperty(PROP_MB_API_KEY),
+        queryPath,
+        payload,
+      );
     } catch (e) {
       showAlert(e.message);
       return;
@@ -98,23 +141,17 @@ function postToBlockchain() {
 }
 
 /**
- * Set a MultiBaas deployment ID.
- *
- * @param {deploymentId} deploymentId MultiBaas deployment ID.
- * @customfunction
+ * Add menu
  */
-function MBSETDEPLOYMENTID(deploymentId) {
-  mbDeploymentId = deploymentId;
-}
-
-/**
- * Set a MultiBaas API key.
- *
- * @param {apiKey} apiKey MultiBaas API key.
- * @customfunction
- */
-function MBSETAPIKEY(apiKey) {
-  mbApiKey = apiKey;
+function onOpen() {
+  SpreadsheetApp.getUi() // Or DocumentApp, SlidesApp, or FormApp.
+    .createMenu('Custom Menu')
+    .addItem('Set Deployment ID', 'setDeploymentId')
+    .addItem('Set API Key', 'setApiKey')
+    .addItem('Delete All Settings', 'deleteAllSettings')
+    .addItem('Post to the blockchain', 'postToBlockchain')
+    .addItem('Refresh current cell', 'refreshCurrentCell')
+    .addToUi();
 }
 
 /**
@@ -138,7 +175,7 @@ function MBPOSTTEMPLATE(numArgs) {
     return undefined;
   }
 
-  const header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
+  const header = ['address', 'contract', 'method', 'from', 'signer'];
   for (let i = 0; i < numberOfArgs; i++) {
     header.push(`input${String(i)}`);
   }
@@ -164,7 +201,12 @@ function MBEVENTLIST(contract, filter) {
   const queryPath = `contracts/${contract}`;
   let results;
   try {
-    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -195,9 +237,15 @@ function MBFUNCTIONLIST(contract, filter) {
   const queryPath = `contracts/${contract}`;
   let results;
   try {
-    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
   } catch (e) {
     showAlert(e.message);
+    return undefined;
   }
 
   // turn the block structure into a flat array
@@ -229,7 +277,12 @@ function MBTX(hash, headers) {
   const queryPath = `chains/ethereum/transactions/${hash}`;
   let results;
   try {
-    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -266,7 +319,12 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
   const queryPath = `chains/ethereum/blocks/${numberOrHash}`;
   let results;
   try {
-    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -301,7 +359,12 @@ function MBADDRESS(address, headers, code) {
   const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
   let results;
   try {
-    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -332,7 +395,14 @@ function MBQUERY(query, limit, offset) {
   const queryPath = `queries/${query}/results`;
   let results;
   try {
-    results = limitQuery(HTTP_GET, mbDeploymentId, mbApiKey, queryPath, limit, offset);
+    results = limitQuery(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      limit,
+      offset,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -372,7 +442,15 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
 
   let results;
   try {
-    results = limitQuery(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, limit, offset, payload);
+    results = limitQuery(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      limit,
+      offset,
+      payload,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -443,8 +521,8 @@ function MBEVENTS(address, limit, offset) {
   try {
     results = limitQuery(
       HTTP_GET,
-      mbDeploymentId,
-      mbApiKey,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
       queryPath,
       limit,
       offset,
@@ -493,7 +571,13 @@ function MBGET(address, contract, method, ...args) {
 
   let results;
   try {
-    results = query(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, payload);
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -518,7 +602,16 @@ function MBGET(address, contract, method, ...args) {
  * @customfunction
  */
 function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
-  console.log(mbDeploymentId, mbApiKey, address, contract, method, from, signer, args);
+  console.log(
+    getProperty(PROP_MB_DEPLOYMENT_ID),
+    getProperty(PROP_MB_API_KEY),
+    address,
+    contract,
+    method,
+    from,
+    signer,
+    args,
+  );
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
@@ -526,7 +619,13 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
 
   let results;
   try {
-    results = query(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, payload);
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
   } catch (e) {
     showAlert(e.message);
     return undefined;
