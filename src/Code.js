@@ -104,6 +104,26 @@ function postToBlockchain() {
 }
 
 /**
+ * Set a MultiBaas deployment ID.
+ *
+ * @param {deploymentId} deploymentId MultiBaas deployment ID.
+ * @customfunction
+ */
+function MBSETDEPLOYMENTID(deploymentId) {
+  mbDeploymentId = deploymentId;
+}
+
+/**
+ * Set a MultiBaas API key.
+ *
+ * @param {apiKey} apiKey MultiBaas API key.
+ * @customfunction
+ */
+function MBSETAPIKEY(apiKey) {
+  mbApiKey = apiKey;
+}
+
+/**
  * Create a template to be used with calling a smart contract method (function)
  * that will write to the blockchain.
  *
@@ -136,14 +156,12 @@ function MBPOSTTEMPLATE(numArgs) {
 /**
  * Retrieve a detailed list of a smart contract's events.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
  * @return Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
-function MBEVENTLIST(deployment, apiKey, contract, filter) {
+function MBEVENTLIST(contract, filter) {
   if (contract === undefined || contract === '') {
     showAlert('must provide a smart contract label');
     return undefined;
@@ -152,7 +170,7 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
   const queryPath = `contracts/${contract}`;
   let results;
   try {
-    results = query(HTTP_GET, deployment, apiKey, queryPath);
+    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -169,14 +187,12 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
 /**
  * Retrieve a detailed list of a smart contract's functions.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
  * @return Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
-function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
+function MBFUNCTIONLIST(contract, filter) {
   if (contract === undefined || contract === '') {
     showAlert('must provide a smart contract label');
     return undefined;
@@ -185,7 +201,7 @@ function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
   const queryPath = `contracts/${contract}`;
   let results;
   try {
-    results = query(HTTP_GET, deployment, apiKey, queryPath);
+    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
   } catch (e) {
     showAlert(e.message);
   }
@@ -201,14 +217,12 @@ function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
 /**
  * Retrieve the details of a blockchain transaction.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {hash} hash Transaction hash.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @return Transaction details.
  * @customfunction
  */
-function MBTX(deployment, apiKey, hash, headers) {
+function MBTX(hash, headers) {
   try {
     validateBlockTxHash(hash);
   } catch (e) {
@@ -221,7 +235,7 @@ function MBTX(deployment, apiKey, hash, headers) {
   const queryPath = `chains/ethereum/transactions/${hash}`;
   let results;
   try {
-    results = query(HTTP_GET, deployment, apiKey, queryPath);
+    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -237,8 +251,6 @@ function MBTX(deployment, apiKey, hash, headers) {
 /**
  * Retrieve the details of a block.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {numberOrHash} numberOrHash Block number or hash.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {txHashes} txHashes (Optional) Include the transaction hashes. TRUE/FALSE,
@@ -246,7 +258,7 @@ function MBTX(deployment, apiKey, hash, headers) {
  * @return Block details.
  * @customfunction
  */
-function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
+function MBBLOCK(numberOrHash, headers, txHashes) {
   try {
     validateBlockNumOrHash(numberOrHash);
   } catch (e) {
@@ -260,7 +272,7 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
   const queryPath = `chains/ethereum/blocks/${numberOrHash}`;
   let results;
   try {
-    results = query(HTTP_GET, deployment, apiKey, queryPath);
+    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -276,8 +288,6 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
 /**
  * Retrieve the details of a blockchain address.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
@@ -285,7 +295,7 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  * @return Address details.
  * @customfunction
  */
-function MBADDRESS(deployment, apiKey, address, headers, code) {
+function MBADDRESS(address, headers, code) {
   if (address === undefined || address === '') {
     showAlert('must provide an address or address label');
     return undefined;
@@ -297,7 +307,7 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
   const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
   let results;
   try {
-    results = query(HTTP_GET, deployment, apiKey, queryPath);
+    results = query(HTTP_GET, mbDeploymentId, mbApiKey, queryPath);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -313,15 +323,13 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
 /**
  * Retrieve the results of a MultiBaas Event Query.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {query} query Event Query name to return results from.
  * @param {limit} limit (Optional) Number of results to return.
  * @param {offset} offset (Optional) Offset from the 0th result to return.
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBQUERY(deployment, apiKey, query, limit, offset) {
+function MBQUERY(query, limit, offset) {
   if (query === undefined || query === '') {
     showAlert('must provide an Event Query name');
     return undefined;
@@ -330,7 +338,7 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
   const queryPath = `queries/${query}/results`;
   let results;
   try {
-    results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+    results = limitQuery(HTTP_GET, mbDeploymentId, mbApiKey, queryPath, limit, offset);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -345,8 +353,6 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
 /**
  * Retrieve the results of a custom MultiBaas Event Query.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {events} events Two dimensional array of event names, selectors and filters.
  * @param {groupBy} groupBy (Optional) Field to group by.
  * @param {orderBy} orderBy (Optional) Field to order by.
@@ -355,7 +361,7 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
+function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   if (events === undefined || events === '') {
     showAlert('must provide an events definition');
     return undefined;
@@ -372,7 +378,7 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
 
   let results;
   try {
-    results = limitQuery(HTTP_POST, deployment, apiKey, queryPath, limit, offset, payload);
+    results = limitQuery(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, limit, offset, payload);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -426,15 +432,13 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
 /**
  * Retrieve blockchain events. Address must be associated with one or more contracts in MultiBaas.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {limit} limit (Optional) Number of results to return.
  * @param {offset} offset (Optional) Offset from the 0th result to return.
  * @return A two dimensional array of events.
  * @customfunction
  */
-function MBEVENTS(deployment, apiKey, address, limit, offset) {
+function MBEVENTS(address, limit, offset) {
   if (address === undefined || address === '') {
     showAlert('must provide an address or address label');
     return undefined;
@@ -445,8 +449,8 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
   try {
     results = limitQuery(
       HTTP_GET,
-      deployment,
-      apiKey,
+      mbDeploymentId,
+      mbApiKey,
       queryPath,
       limit,
       offset,
@@ -467,8 +471,6 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
 /**
  * Retrieve the results of a smart contract function call.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -476,7 +478,7 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  * @return One or more values returned from the function.
  * @customfunction
  */
-function MBGET(deployment, apiKey, address, contract, method, ...args) {
+function MBGET(address, contract, method, ...args) {
   if (address === undefined || address === '') {
     showAlert('must provide an address or address label');
     return undefined;
@@ -497,7 +499,7 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
 
   let results;
   try {
-    results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+    results = query(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, payload);
   } catch (e) {
     showAlert(e.message);
     return undefined;
@@ -511,8 +513,6 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
 /**
  * Compose an unsigned transaction to call a smart contract function.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -523,8 +523,8 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
  * @return An unsigned transaction, suitable for signing and submitting to the blockchain.
  * @customfunction
  */
-function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, value, ...args) {
-  console.log(deployment, apiKey, address, contract, method, from, signer, args);
+function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
+  console.log(mbDeploymentId, mbApiKey, address, contract, method, from, signer, args);
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
@@ -532,7 +532,7 @@ function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, 
 
   let results;
   try {
-    results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+    results = query(HTTP_POST, mbDeploymentId, mbApiKey, queryPath, payload);
   } catch (e) {
     showAlert(e.message);
     return undefined;
