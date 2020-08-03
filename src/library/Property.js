@@ -10,21 +10,21 @@ const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
 const PROP_MB_API_KEY = 'mbApiKey';
 
 // NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
-// and on running as Add-On after installed "testProperties" cannot be written(read only).
-let testProperties = {};
+// and on running as Add-On after installed "fallbackProperties" cannot be written(read only).
+let fallbackProperties = {};
 
 function setProperty(key, value) {
   const properties = PropertiesService.getDocumentProperties();
   if (properties) {
     properties.setProperty(key, value);
   } else {
-    testProperties[key] = value;
+    fallbackProperties[key] = value;
   }
 }
 
 function getProperty(key) {
   const properties = PropertiesService.getDocumentProperties();
-  return properties ? properties.getProperty(key) : testProperties[key];
+  return properties ? properties.getProperty(key) : fallbackProperties[key];
 }
 
 function deleteAllProperties() {
@@ -32,6 +32,6 @@ function deleteAllProperties() {
   if (properties) {
     properties.deleteAllProperties();
   } else {
-    testProperties = {};
+    fallbackProperties = {};
   }
 }
