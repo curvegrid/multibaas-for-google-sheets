@@ -1,44 +1,6 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
-/* eslint-disable no-unused-vars, no-use-before-define */
-
-const URL_SCHEME = 'https://';
-const URL_BASE = '.multibaas.com/api/v0/';
-const HTTP_GET = 'GET';
-const HTTP_POST = 'POST';
-
-// Property keys for deployment ID and API key.
-const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
-const PROP_MB_API_KEY = 'mbApiKey';
-
-// NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
-// and on running as Add-On after installed "testProperties" cannot be written(read only).
-let testProperties = {};
-
-function setProperty(key, value) {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.setProperty(key, value);
-  } else {
-    testProperties[key] = value;
-  }
-}
-
-function getProperty(key) {
-  const properties = PropertiesService.getDocumentProperties();
-  console.log('TYPEOF service', key, typeof properties.getProperty(key));
-  console.log('TYPEOF test', key, typeof testProperties[key]);
-  return properties ? properties.getProperty(key) : testProperties[key];
-}
-
-function deleteAllProperties() {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.deleteAllProperties();
-  } else {
-    testProperties = {};
-  }
-}
+/* eslint-disable no-unused-vars */
 
 function isNaturalNumber(number) {
   return RegExp('^[0-9]+$').test(number);
@@ -132,6 +94,30 @@ function credentialsExist() {
   return validateDeploymentId(deploymentId) && validateApiKey(apiKey);
 }
 
+function parseHexToNum(hex) {
+  const big = BigInt(hex).toString();
+  const int = parseInt(hex, 16);
+
+  if (String(int) !== big) {
+    return big;
+  }
+
+  return int;
+}
+
+function keysFromObj(obj, sort) {
+  const keys = [];
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const key in obj) {
+    keys.push(key);
+  }
+  if (sort) {
+    keys.sort();
+  }
+
+  return keys;
+}
+
 function txToArray(tx, headers) {
   const rows = [];
 
@@ -152,17 +138,6 @@ function txToArray(tx, headers) {
   // tx body
   rows.push([tx.isPending].concat(valuesFromKeys(dataKeys, txDataFinal)));
   return rows;
-}
-
-function parseHexToNum(hex) {
-  const big = BigInt(hex).toString();
-  const int = parseInt(hex, 16);
-
-  if (String(int) !== big) {
-    return big;
-  }
-
-  return int;
 }
 
 function blockToArray(block, headers, txHashes) {
@@ -408,19 +383,6 @@ function eventsToArray(entries) {
   }
 
   return rows;
-}
-
-function keysFromObj(obj, sort) {
-  const keys = [];
-  // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const key in obj) {
-    keys.push(key);
-  }
-  if (sort) {
-    keys.sort();
-  }
-
-  return keys;
 }
 
 function objectArrayToArray(objArr) {
