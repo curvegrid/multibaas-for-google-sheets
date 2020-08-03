@@ -53,6 +53,8 @@
     // Validate.js
     "validateBlockTxHash": false,
     "validateBlockNumOrHash": false,
+    "validateApiKey": false,
+    "validateDeploymentId": false,
     // Query.js
     "query": false,
     "limitQuery": false,

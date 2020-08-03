@@ -42,8 +42,13 @@ function setDeploymentId() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    setProperty(PROP_MB_DEPLOYMENT_ID, text);
-    ui.alert(`Deployment ID is ${text}.`);
+    try {
+      validateDeploymentId(text);
+      setProperty(PROP_MB_DEPLOYMENT_ID, text);
+      ui.alert(`Deployment ID is ${text}.`);
+    } catch (e) {
+      ui.alert(e.message);
+    }
   }
 }
 
@@ -58,8 +63,13 @@ function setApiKey() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    setProperty(PROP_MB_API_KEY, text);
-    ui.alert(`API key is ${text}.`);
+    try {
+      validateApiKey(text);
+      setProperty(PROP_MB_API_KEY, text);
+      ui.alert(`API key is ${text}.`);
+    } catch (e) {
+      ui.alert(e.message);
+    }
   }
 }
 

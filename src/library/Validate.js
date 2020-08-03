@@ -1,26 +1,47 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
+/* eslint-disable no-unused-vars */
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
 const VALID_BOOLEANS = ['and', 'or'];
 const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
 const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
 
 function validateOperator(operator) {
-  operator = String(operator).toLowerCase();
-  if (!VALID_OPERATORS.includes(operator)) {
-    throw new Error(`'${operator}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
+  const operatorLower = String(operator).toLowerCase();
+  if (!VALID_OPERATORS.includes(operatorLower)) {
+    throw new Error(`'${operatorLower}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
   }
 
-  return operator;
+  return operatorLower;
 }
 
 function validateAggregator(aggregator) {
-  aggregator = String(aggregator).toLowerCase();
-  if (!VALID_AGGREGATORS.includes(aggregator)) {
-    throw new Error(`'${aggregator}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
+  const aggregatorLower = String(aggregator).toLowerCase();
+  if (!VALID_AGGREGATORS.includes(aggregatorLower)) {
+    throw new Error(`'${aggregatorLower}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
   }
 
-  return aggregator;
+  return aggregatorLower;
+}
+
+function validateBlockTxHash(hash) {
+  const hashString = String(hash);
+
+  if (hashString === undefined || hashString === '' || hashString.length < 2) {
+    throw new Error('must provide a hash');
+  }
+
+  if (hashString.substring(0, 2).toLowerCase() !== '0x') {
+    throw new Error("hash must start with '0x'");
+  }
+
+  if (hashString.length !== 66) {
+    throw new Error(`invalid hash length of ${hashString.length}, should be 64 hex characters long excluding the '0x' prefix`);
+  }
+
+  if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hashString)) {
+    throw new Error('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
+  }
 }
 
 function validateBlockNumOrHash(numOrHash) {
@@ -36,22 +57,18 @@ function validateBlockNumOrHash(numOrHash) {
   validateBlockTxHash(numOrHash);
 }
 
-function validateBlockTxHash(hash) {
-  hash = String(hash);
-
-  if (hash === undefined || hash === '' || hash.length < 2) {
-    throw new Error('must provide a hash');
+function validateDeploymentId(deploymentId) {
+  // validate deployment ID
+  if (!RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
+    throw new Error('Invalid deployment ID');
   }
+}
 
-  if (hash.substring(0, 2).toLowerCase() !== '0x') {
-    throw new Error("hash must start with '0x'");
-  }
-
-  if (hash.length !== 66) {
-    throw new Error(`invalid hash length of ${hash.length}, should be 64 hex characters long excluding the '0x' prefix`);
-  }
-
-  if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hash)) {
-    throw new Error('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
+function validateApiKey(apiKey) {
+  // validate API key
+  // based on: https://www.regextester.com/105777
+  // eslint-disable-next-line no-useless-escape
+  if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
+    throw new Error('Invalid API key');
   }
 }

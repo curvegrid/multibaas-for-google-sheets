@@ -79,17 +79,8 @@ function clampBool(value, def) {
 }
 
 function normalizeCreds(deploymentId, apiKey) {
-  // validate deployment ID
-  if (!RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
-    throw new Error('invalid deployment ID');
-  }
-
-  // validate API key
-  // based on: https://www.regextester.com/105777
-  // eslint-disable-next-line no-useless-escape
-  if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw new Error('invalid API key');
-  }
+  validateDeploymentId(deploymentId);
+  validateApiKey(apiKey);
 
   return [deploymentId, apiKey];
 }
@@ -410,6 +401,7 @@ function formatDateTime(dateTime) {
 }
 
 function showAlert(message) {
-  // SpreadsheetApp.getUi().alert(message);
   console.log(message);
+  SpreadsheetApp.getActiveSpreadsheet().toast(message);
+  SpreadsheetApp.getUi().alert(message);
 }
