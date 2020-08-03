@@ -203,7 +203,7 @@ function testRunner() {
       args: [
         [
           ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
-          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 0, ''],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, ''],
         ],
         '',
         '',
@@ -212,9 +212,9 @@ function testRunner() {
       ],
       expected: [
         ['amount', 'sender'],
-        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
-        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
-        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
       ],
     },
     {
