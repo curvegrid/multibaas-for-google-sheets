@@ -20,7 +20,7 @@ function setDeploymentId() {
     try {
       validateDeploymentId(text);
       setProperty(PROP_MB_DEPLOYMENT_ID, text);
-      ui.alert(`Deployment ID is ${text}.`);
+      ui.alert(`Deployment ID is ${text}`);
     } catch (e) {
       ui.alert(e.message);
     }
@@ -40,7 +40,7 @@ function setApiKey() {
   if (button === ui.Button.OK) {
     try {
       setProperty(PROP_MB_API_KEY, text);
-      ui.alert(`API key is ${text}.`);
+      ui.alert(`API key is ${text}`);
     } catch (e) {
       ui.alert(e.message);
     }
@@ -56,7 +56,7 @@ function deleteAllSettings() {
 
   if (result === ui.Button.YES) {
     deleteAllProperties();
-    ui.alert('Deployment ID and API key have been deleted.');
+    ui.alert('Deployment ID and API key have been deleted');
   }
 }
 
