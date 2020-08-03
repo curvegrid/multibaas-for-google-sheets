@@ -131,7 +131,8 @@ function postToBlockchain() {
         payload,
       );
     } catch (e) {
-      showAlert(e.message);
+      console.error(e);
+      ui.alert(e.message);
       return;
     }
 
@@ -177,8 +178,7 @@ function MBPOSTTEMPLATE(numArgs) {
   if (numberOfArgs === undefined || numberOfArgs === '') {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
-    showAlert('number of arguments must be a valid positive integer');
-    return undefined;
+    throw new Error('Number of arguments must be a valid positive integer');
   }
 
   const header = ['address', 'contract', 'method', 'from', 'signer'];
@@ -200,8 +200,7 @@ function MBPOSTTEMPLATE(numArgs) {
  */
 function MBEVENTLIST(contract, filter) {
   if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -214,8 +213,8 @@ function MBEVENTLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -236,8 +235,7 @@ function MBEVENTLIST(contract, filter) {
  */
 function MBFUNCTIONLIST(contract, filter) {
   if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -250,8 +248,8 @@ function MBFUNCTIONLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -274,8 +272,7 @@ function MBTX(hash, headers) {
   try {
     validateBlockTxHash(hash);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   const isHeaders = clampBool(headers, true);
@@ -290,8 +287,8 @@ function MBTX(hash, headers) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -315,8 +312,7 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
   try {
     validateBlockNumOrHash(numberOrHash);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   const isHeaders = clampBool(headers, true);
@@ -332,8 +328,8 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -355,8 +351,7 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
  */
 function MBADDRESS(address, headers, code) {
   if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+    throw new Error('Must provide an address or address label');
   }
 
   const isHeaders = clampBool(headers, true);
@@ -372,8 +367,8 @@ function MBADDRESS(address, headers, code) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the address structure into a flat array
@@ -394,8 +389,7 @@ function MBADDRESS(address, headers, code) {
  */
 function MBQUERY(query, limit, offset) {
   if (query === undefined || query === '') {
-    showAlert('must provide an Event Query name');
-    return undefined;
+    throw new Error('Must provide an Event Query name');
   }
 
   const queryPath = `queries/${query}/results`;
@@ -410,8 +404,8 @@ function MBQUERY(query, limit, offset) {
       offset,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -433,8 +427,7 @@ function MBQUERY(query, limit, offset) {
  */
 function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   if (events === undefined || events === '') {
-    showAlert('must provide an events definition');
-    return undefined;
+    throw new Error('Must provide an events definition');
   }
 
   const queryPath = 'queries';
@@ -442,8 +435,7 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   try {
     payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   let results;
@@ -458,8 +450,8 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -486,14 +478,12 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
   if (numberOfSelects === undefined || numberOfSelects === '') {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
-    showAlert("number of 'select' groups must be a valid positive integer");
-    return undefined;
+    throw new Error("Number of 'select' groups must be a valid positive integer");
   }
   if (numberOfFilters === undefined || numberOfFilters === '') {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
-    showAlert("number of 'filter' groups must be a valid positive integer");
-    return undefined;
+    throw new Error("Number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
@@ -518,8 +508,7 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
  */
 function MBEVENTS(address, limit, offset) {
   if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+    throw new Error('Must provide an address or address label');
   }
 
   const queryPath = 'events';
@@ -536,8 +525,8 @@ function MBEVENTS(address, limit, offset) {
       address,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -558,16 +547,13 @@ function MBEVENTS(address, limit, offset) {
  */
 function MBGET(address, contract, method, ...args) {
   if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+    throw new Error('Must provide an address or address label');
   }
   if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+    throw new Error('Must provide a smart contract label');
   }
   if (method === undefined || method === '') {
-    showAlert('must provide a method (function) name');
-    return undefined;
+    throw new Error('Must provide a method (function) name');
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -585,8 +571,8 @@ function MBGET(address, contract, method, ...args) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   const { output } = results.result;
   console.log(`Results: ${JSON.stringify(output)}`);
@@ -608,16 +594,6 @@ function MBGET(address, contract, method, ...args) {
  * @customfunction
  */
 function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
-  console.log(
-    getProperty(PROP_MB_DEPLOYMENT_ID),
-    getProperty(PROP_MB_API_KEY),
-    address,
-    contract,
-    method,
-    from,
-    signer,
-    args,
-  );
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
@@ -633,8 +609,8 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   const output = JSON.stringify(results.result.tx);
   console.log(`Results: ${output}`);
