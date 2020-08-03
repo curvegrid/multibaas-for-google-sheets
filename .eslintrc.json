@@ -47,9 +47,17 @@
     "objectArrayToArray": false,
     "eventsToArray": false,
     "formatDateTime": false,
-    "showAlert": false,
     "credentialsExist": false,
-    "testProperties": false,
+    // Validate.js
+    "validateBlockTxHash": false,
+    "validateBlockNumOrHash": false,
+    "validateApiKey": false,
+    "validateDeploymentId": false,
+    // Query.js
+    "query": false,
+    "limitQuery": false,
+    // Property.js
+    "fallbackProperties": false,
     "setProperty": false,
     "getProperty": false,
     "deleteAllProperties": false,
@@ -59,14 +67,6 @@
     "URL_BASE": false,
     "HTTP_GET": false,
     "HTTP_POST": false,
-    // Validate.js
-    "validateBlockTxHash": false,
-    "validateBlockNumOrHash": false,
-    "validateApiKey": false,
-    "validateDeploymentId": false,
-    // Query.js
-    "query": false,
-    "limitQuery": false,
     // Others
     "BigInt": false,
     "before": false,
