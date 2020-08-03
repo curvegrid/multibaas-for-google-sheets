@@ -79,10 +79,8 @@ function clampBool(value, def) {
 }
 
 function normalizeCreds(deploymentId, apiKey) {
-  if (
-    !validateDeploymentId(deploymentId) || !validateApiKey(apiKey)) {
-    return undefined;
-  }
+  validateDeploymentId(deploymentId);
+  validateApiKey(apiKey);
 
   return [deploymentId, apiKey];
 }

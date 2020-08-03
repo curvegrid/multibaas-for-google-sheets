@@ -15,11 +15,12 @@ function setDeploymentId() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    if (!validateDeploymentId(text)) {
-      ui.alert('Invalid deployment ID');
-    } else {
+    try {
+      validateDeploymentId(text);
       setProperty(PROP_MB_DEPLOYMENT_ID, text);
       ui.alert(`Deployment ID is ${text}.`);
+    } catch (e) {
+      ui.alert(e.message);
     }
   }
 }
@@ -35,11 +36,11 @@ function setApiKey() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    if (!validateApiKey(text)) {
-      ui.alert('Invalid API key');
-    } else {
+    try {
       setProperty(PROP_MB_API_KEY, text);
       ui.alert(`API key is ${text}.`);
+    } catch (e) {
+      ui.alert(e.message);
     }
   }
 }
