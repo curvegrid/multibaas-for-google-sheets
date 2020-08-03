@@ -32,13 +32,13 @@ function extractSelectFilterCounts(header) {
         selectHalf = false;
       } else {
         if (aliasRule !== 'alias') {
-          throw new Error(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
+          throw new Error(`Expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
         if (indexOperator !== 'index') {
-          throw new Error(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
         }
         if (aggregatorValue !== 'aggregator') {
-          throw new Error(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
         }
 
         numSelect++;
@@ -46,10 +46,10 @@ function extractSelectFilterCounts(header) {
     }
     if (!selectHalf) {
       if (aliasRule !== 'rule') {
-        throw new Error(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
+        throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
       if (indexOperator !== 'operator') {
-        throw new Error(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        throw new Error(`Expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
       }
       if (aggregatorValue !== 'value') {
         throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
@@ -407,10 +407,4 @@ function objectArrayToArray(objArr) {
 // as new Date('2015-07-30T15:26:28.000Z') from "2015-07-30T15:26:28.000Z"
 function formatDateTime(dateTime) {
   return new Date(dateTime);
-}
-
-function showAlert(message) {
-  console.log(message);
-  SpreadsheetApp.getActiveSpreadsheet().toast(message);
-  SpreadsheetApp.getUi().alert(message);
 }
