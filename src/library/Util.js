@@ -2,6 +2,44 @@
 
 /* eslint-disable no-unused-vars, no-use-before-define */
 
+const URL_SCHEME = 'https://';
+const URL_BASE = '.multibaas.com/api/v0/';
+const HTTP_GET = 'GET';
+const HTTP_POST = 'POST';
+
+// Property keys for deployment ID and API key.
+const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
+const PROP_MB_API_KEY = 'mbApiKey';
+
+// NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
+// and on running as Add-On after installed "testProperties" cannot be written(read only).
+let testProperties = {};
+
+function setProperty(key, value) {
+  const properties = PropertiesService.getDocumentProperties();
+  if (properties) {
+    properties.setProperty(key, value);
+  } else {
+    testProperties[key] = value;
+  }
+}
+
+function getProperty(key) {
+  const properties = PropertiesService.getDocumentProperties();
+  console.log('TYPEOF service', key, typeof properties.getProperty(key));
+  console.log('TYPEOF test', key, typeof testProperties[key]);
+  return properties ? properties.getProperty(key) : testProperties[key];
+}
+
+function deleteAllProperties() {
+  const properties = PropertiesService.getDocumentProperties();
+  if (properties) {
+    properties.deleteAllProperties();
+  } else {
+    testProperties = {};
+  }
+}
+
 function isNaturalNumber(number) {
   return RegExp('^[0-9]+$').test(number);
 }
@@ -79,10 +117,19 @@ function clampBool(value, def) {
 }
 
 function normalizeCreds(deploymentId, apiKey) {
-  validateDeploymentId(deploymentId);
-  validateApiKey(apiKey);
+  if (
+    !validateDeploymentId(deploymentId) || !validateApiKey(apiKey)) {
+    return undefined;
+  }
 
   return [deploymentId, apiKey];
+}
+
+function credentialsExist() {
+  const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
+  const apiKey = getProperty(PROP_MB_API_KEY);
+
+  return validateDeploymentId(deploymentId) && validateApiKey(apiKey);
 }
 
 function txToArray(tx, headers) {

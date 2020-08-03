@@ -2,33 +2,6 @@
 
 /* eslint-disable no-unused-vars */
 
-const URL_SCHEME = 'https://';
-const URL_BASE = '.multibaas.com/api/v0/';
-const HTTP_GET = 'GET';
-const HTTP_POST = 'POST';
-
-// Property keys for deployment ID and API key.
-const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
-const PROP_MB_API_KEY = 'mbApiKey';
-
-// NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
-// and on running as Add-On after installed "testProperties" cannot be written(read only).
-let testProperties = {};
-
-function setProperty(key, value) {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.setProperty(key, value);
-  } else {
-    testProperties[key] = value;
-  }
-}
-
-function getProperty(key) {
-  const properties = PropertiesService.getDocumentProperties();
-  return properties ? properties.getProperty(key) : testProperties[key];
-}
-
 function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
@@ -42,12 +15,11 @@ function setDeploymentId() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    try {
-      validateDeploymentId(text);
+    if (!validateDeploymentId(text)) {
+      ui.alert('Invalid deployment ID');
+    } else {
       setProperty(PROP_MB_DEPLOYMENT_ID, text);
       ui.alert(`Deployment ID is ${text}.`);
-    } catch (e) {
-      ui.alert(e.message);
     }
   }
 }
@@ -63,32 +35,47 @@ function setApiKey() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    try {
-      validateApiKey(text);
+    if (!validateApiKey(text)) {
+      ui.alert('Invalid API key');
+    } else {
       setProperty(PROP_MB_API_KEY, text);
       ui.alert(`API key is ${text}.`);
-    } catch (e) {
-      ui.alert(e.message);
     }
   }
 }
 
 function deleteAllSettings() {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.deleteAllProperties();
-  } else {
-    testProperties = {};
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.alert(
+    'Are you sure to delete all settings?',
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (result === ui.Button.YES) {
+    deleteAllProperties();
+    ui.alert('Deployment ID and API key have been deleted.');
   }
-  SpreadsheetApp.getUi()
-    .alert('Deployment ID and API key have been removed.');
 }
 
 function refreshCurrentCell() {
+  const ui = SpreadsheetApp.getUi();
+
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/multibaas-for-google-sheets/credentials');
+    return;
+  }
+
   const range = SpreadsheetApp.getActiveRange();
   const cell = range.getCell(1, 1);
   const value = cell.getValue();
   const formula = cell.getFormula();
+
+  if (!value && !formula) {
+    SpreadsheetApp.getUi()
+      .alert('No data in the cell you selected. Please see https://www.curvegrid.com/multibaas-for-google-sheets/refresh-current-cell');
+    return;
+  }
+
   cell.setValue('');
   SpreadsheetApp.flush();
   if (formula !== '') {
@@ -100,12 +87,20 @@ function refreshCurrentCell() {
 }
 
 function postToBlockchain() {
+  const ui = SpreadsheetApp.getUi();
+
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/multibaas-for-google-sheets/credentials');
+    return;
+  }
+
   const MIN_COLUMNS = 5;
   const sheet = SpreadsheetApp.getActiveSheet();
   const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    showAlert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    ui.alert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns.
+      Please see https://www.curvegrid.com/multibaas-for-google-sheets/post-to-the-blokchain`);
     return;
   }
 

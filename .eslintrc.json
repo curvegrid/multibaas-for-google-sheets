@@ -13,8 +13,6 @@
     // Google spreadsheet test library
     "GasTap": false,
     // Code.js
-    "URL_SCHEME": false,
-    "URL_BASE": false,
     "MBADDRESS": false,
     "MBBLOCK": false,
     "MBCOMPOSE": false,
@@ -50,6 +48,17 @@
     "eventsToArray": false,
     "formatDateTime": false,
     "showAlert": false,
+    "credentialsExist": false,
+    "testProperties": false,
+    "setProperty": false,
+    "getProperty": false,
+    "deleteAllProperties": false,
+    "PROP_MB_API_KEY": false,
+    "PROP_MB_DEPLOYMENT_ID": false,
+    "URL_SCHEME": false,
+    "URL_BASE": false,
+    "HTTP_GET": false,
+    "HTTP_POST": false,
     // Validate.js
     "validateBlockTxHash": false,
     "validateBlockNumOrHash": false,

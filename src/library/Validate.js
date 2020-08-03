@@ -58,17 +58,11 @@ function validateBlockNumOrHash(numOrHash) {
 }
 
 function validateDeploymentId(deploymentId) {
-  // validate deployment ID
-  if (!RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
-    throw new Error('Invalid deployment ID');
-  }
+  return deploymentId !== null && RegExp('^[a-z0-9]+$', 'i').test(deploymentId);
 }
 
 function validateApiKey(apiKey) {
-  // validate API key
   // based on: https://www.regextester.com/105777
   // eslint-disable-next-line no-useless-escape
-  if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw new Error('Invalid API key');
-  }
+  return apiKey !== null && RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey);
 }
