@@ -38,7 +38,7 @@ function buildFilters(items, start, numItems) {
     }
 
     if (value === '') {
-      throw new Error(`value is empty for rule '${rules}'`);
+      throw new Error(`Value is empty for rule '${rules}'`);
     }
 
     // split by colons
@@ -55,11 +55,11 @@ function buildFilters(items, start, numItems) {
       // parse out rule and optional numeric portions (e.g., input0)
       const ruleParts = RegExp('^([A-Za-z.]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts === null || ruleParts.length < 2) {
-        throw new Error(`invalid rule '${rulePath[j]}' in '${rules}'`);
+        throw new Error(`Invalid rule '${rulePath[j]}' in '${rules}'`);
       }
       const rule = ruleParts[1].toLowerCase();
       if (rule === '') {
-        throw new Error(`sub-rule is empty in '${rules}'`);
+        throw new Error(`Sub-rule is empty in '${rules}'`);
       }
 
       // if we're on a children array, search for a child matching this rule
@@ -118,11 +118,11 @@ function buildFilters(items, start, numItems) {
         // special case for an input
         if (rule === 'input') {
           if (ruleParts.length !== 3) {
-            throw new Error("no input index provided, just 'input'");
+            throw new Error("No input index provided, just 'input'");
           }
           const inputIndex = ruleParts[2];
           if (!isNaturalNumber(inputIndex)) {
-            throw new Error(`invalid input index '${inputIndex}', must be a positive number`);
+            throw new Error(`Invalid input index '${inputIndex}', must be a positive number`);
           }
           node.inputIndex = parseInt(inputIndex, 10);
         }
@@ -147,17 +147,17 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
 
   // parse and validate header row
   if (events.length < 1) {
-    throw new Error(`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
+    throw new Error(`Expecting a header row followed by one or more data rows, found ${events.length} rows total`);
   }
   const header = events[0];
   if (header.length < 4) {
-    throw new Error(`expecting to have at least four columns, found ${header.length} columns total`);
+    throw new Error(`Expecting to have at least four columns, found ${header.length} columns total`);
   }
   if ((header.length - 1) % 3 !== 0) {
-    throw new Error(`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
+    throw new Error(`Expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
   }
   if (header[0].toLowerCase() !== 'eventname') {
-    throw new Error(`expecting first column in header row to be 'eventName', found '${header[0]}'`);
+    throw new Error(`Expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
   // extract the number of select and filter triplets
@@ -218,17 +218,17 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
 function buildQueryOptions(limit, offset, address) {
   // validate limit
   if (limit !== undefined && !isNaturalNumber(limit)) {
-    throw new Error('invalid limit, must be a positive integer');
+    throw new Error('Invalid limit, must be a positive integer');
   }
 
   // validate offset
   if (offset !== undefined && !isNaturalNumber(offset)) {
-    throw new Error('invalid offset, must be a positive integer');
+    throw new Error('Invalid offset, must be a positive integer');
   }
 
   // validate address
   if (address !== undefined && address.length < 1) {
-    throw new Error('invalid address, must be a string');
+    throw new Error('Invalid address, must be a string');
   }
 
   // generate a clean URL query param

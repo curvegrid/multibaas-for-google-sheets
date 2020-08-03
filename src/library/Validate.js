@@ -28,25 +28,25 @@ function validateBlockTxHash(hash) {
   const hashString = String(hash);
 
   if (hashString === undefined || hashString === '' || hashString.length < 2) {
-    throw new Error('must provide a hash');
+    throw new Error('Must provide a hash');
   }
 
   if (hashString.substring(0, 2).toLowerCase() !== '0x') {
-    throw new Error("hash must start with '0x'");
+    throw new Error("Hash must start with '0x'");
   }
 
   if (hashString.length !== 66) {
-    throw new Error(`invalid hash length of ${hashString.length}, should be 64 hex characters long excluding the '0x' prefix`);
+    throw new Error(`Invalid hash length of ${hashString.length}, should be 64 hex characters long excluding the '0x' prefix`);
   }
 
   if (!RegExp('^0[xX][A-Fa-f0-9]+$').test(hashString)) {
-    throw new Error('hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
+    throw new Error('Hash contains non-hexidecimal digits (outside of 0-9 and a-f)');
   }
 }
 
 function validateBlockNumOrHash(numOrHash) {
   if (numOrHash === undefined || numOrHash === '') {
-    throw new Error('must provide a block number or hash');
+    throw new Error('Must provide a block number or hash');
   }
 
   // fast return if it's a valid positive integer
