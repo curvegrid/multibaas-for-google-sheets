@@ -2,6 +2,8 @@
 
 /* eslint-disable no-unused-vars */
 
+const VERSION = '1.0.0';
+
 function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
@@ -148,6 +150,11 @@ function postToBlockchain() {
   }
 }
 
+function showVersion() {
+  SpreadsheetApp.getUi()
+    .alert(`MultiBaas for Google Sheets Version ${VERSION}`);
+}
+
 /**
  * Add menu
  */
@@ -159,6 +166,7 @@ function onOpen() {
     .addItem('Delete All Settings', 'deleteAllSettings')
     .addItem('Post to the blockchain', 'postToBlockchain')
     .addItem('Refresh current cell', 'refreshCurrentCell')
+    .addItem('Version', 'showVersion')
     .addToUi();
 }
 
