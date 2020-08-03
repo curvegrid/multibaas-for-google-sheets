@@ -100,13 +100,14 @@ function postToBlockchain() {
   }
 
   const values = range.getValues();
+  // NOTE: see MBPOSTTEMPLATE(numArgs) to understand slicing
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-    const [address, contract, method, from, signer] = row.slice(0, 6);
+    const [address, contract, method, from, signer] = row.slice(0, 5);
 
     let args = [];
     if (row.length > MIN_COLUMNS) {
-      args = row.slice(7);
+      args = row.slice(MIN_COLUMNS, row.length);
     }
 
     const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
