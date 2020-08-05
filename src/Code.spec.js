@@ -279,8 +279,8 @@ function testRunner() {
           'txContractAddressLabel',
           'txContractAddress',
           'txContractName',
-          'fxnName',
-          'fxnDef',
+          'fnName',
+          'fnDef',
         ],
         [
           formatDateTime('2020-06-19T08:48:36.000Z'),
