@@ -310,8 +310,8 @@ function eventsToArray(entries) {
     'txContractAddressLabel',
     'txContractAddress',
     'txContractName',
-    'fxnName',
-    'fxnDef',
+    'fnName',
+    'fnDef',
   ];
 
   // determine the maximum number of event and method inputs
@@ -322,7 +322,7 @@ function eventsToArray(entries) {
     const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
-    if (entry.transaction.method.inputs !== undefined) {
+    if (entry.transaction.method && entry.transaction.method.inputs !== undefined) {
       maxMethodInputs = Math.max(maxMethodInputs, entry.transaction.method.inputs.length);
     }
   }
@@ -354,11 +354,13 @@ function eventsToArray(entries) {
       ]);
 
     // tx fields
-    let fxnDef = '';
-    let fxnInputs = [];
-    if (tx.method !== undefined) {
-      fxnDef = buildSigDef(tx.method);
-      fxnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
+    let fnDef = '';
+    let fnInputs = [];
+    let fnName = '';
+    if (tx.method) {
+      fnDef = buildSigDef(tx.method);
+      fnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
+      fnName = tx.method.name;
     }
 
     row = row
@@ -372,10 +374,10 @@ function eventsToArray(entries) {
         tx.contract.label,
         tx.contract.address,
         tx.contract.name,
-        tx.method.name,
-        fxnDef,
+        fnName,
+        fnDef,
       ])
-      .concat(fxnInputs);
+      .concat(fnInputs);
 
     rows.push(row);
   }
