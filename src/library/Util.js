@@ -89,7 +89,13 @@ function credentialsExist() {
   const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
   const apiKey = getProperty(PROP_MB_API_KEY);
 
-  return validateDeploymentId(deploymentId) && validateApiKey(apiKey);
+  try {
+    validateDeploymentId(deploymentId);
+    validateApiKey(apiKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 function parseHexToNum(hex) {
