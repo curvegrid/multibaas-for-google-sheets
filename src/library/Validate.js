@@ -27,7 +27,7 @@ function validateAggregator(aggregator) {
 function validateBlockTxHash(hash) {
   const hashString = String(hash);
 
-  if (hashString === undefined || hashString === '' || hashString.length < 2) {
+  if (!hashString || hashString.length < 2) {
     throw new Error('Must provide a hash');
   }
 
@@ -45,7 +45,7 @@ function validateBlockTxHash(hash) {
 }
 
 function validateBlockNumOrHash(numOrHash) {
-  if (numOrHash === undefined || numOrHash === '') {
+  if (!numOrHash) {
     throw new Error('Must provide a block number or hash');
   }
 

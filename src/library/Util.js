@@ -65,7 +65,7 @@ function extractSelectFilterCounts(header) {
 function clampBool(value, def) {
   // clamp value to a valid bool with a default
   let final;
-  if (value === undefined || value === '') {
+  if (!value) {
     final = def;
   } else if (value === true) {
     final = true;
@@ -248,17 +248,17 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   for (const i in entries) {
     const entry = entries[i];
 
-    if (filter !== '' && filter !== undefined && !filterRe.test(entry.name)) {
+    if (filter && filter !== '' && !filterRe.test(entry.name)) {
       // eslint-disable-next-line no-continue
       continue;
     }
 
     // build description/notes (docs) for this function/event
     let description = '';
-    if (entry.notes !== undefined) {
+    if (entry.notes) {
       description += entry.notes;
     }
-    if (entry.description !== undefined && entry.description !== '') {
+    if (entry.description && entry.description !== '') {
       if (description !== '') {
         description += ' / ';
       }
@@ -328,7 +328,7 @@ function eventsToArray(entries) {
     const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
-    if (entry.transaction.method && entry.transaction.method.inputs !== undefined) {
+    if (entry.transaction.method && entry.transaction.method.inputs) {
       maxMethodInputs = Math.max(maxMethodInputs, entry.transaction.method.inputs.length);
     }
   }

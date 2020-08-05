@@ -184,7 +184,7 @@ function MBPOSTTEMPLATE(numArgs) {
   let numberOfArgs = numArgs;
 
   // validate and normalize parameters
-  if (numberOfArgs === undefined || numberOfArgs === '') {
+  if (!numberOfArgs) {
     numberOfArgs = 0;
   } else if (!isNaturalNumber(numberOfArgs)) {
     throw new Error('Number of arguments must be a valid positive integer');
@@ -208,7 +208,7 @@ function MBPOSTTEMPLATE(numArgs) {
  * @customfunction
  */
 function MBEVENTLIST(contract, filter) {
-  if (contract === undefined || contract === '') {
+  if (!contract) {
     throw new Error('Must provide a smart contract label');
   }
 
@@ -243,7 +243,7 @@ function MBEVENTLIST(contract, filter) {
  * @customfunction
  */
 function MBFUNCTIONLIST(contract, filter) {
-  if (contract === undefined || contract === '') {
+  if (!contract) {
     throw new Error('Must provide a smart contract label');
   }
 
@@ -359,7 +359,7 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
  * @customfunction
  */
 function MBADDRESS(address, headers, code) {
-  if (address === undefined || address === '') {
+  if (!address) {
     throw new Error('Must provide an address or address label');
   }
 
@@ -397,7 +397,7 @@ function MBADDRESS(address, headers, code) {
  * @customfunction
  */
 function MBQUERY(query, limit, offset) {
-  if (query === undefined || query === '') {
+  if (!query) {
     throw new Error('Must provide an Event Query name');
   }
 
@@ -435,7 +435,7 @@ function MBQUERY(query, limit, offset) {
  * @customfunction
  */
 function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
-  if (events === undefined || events === '') {
+  if (!events) {
     throw new Error('Must provide an events definition');
   }
 
@@ -484,12 +484,12 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
   let numberOfFilters = numFilters;
 
   // validate and normalize parameters
-  if (numberOfSelects === undefined || numberOfSelects === '') {
+  if (!numberOfSelects) {
     numberOfSelects = 1;
   } else if (!isNaturalNumber(numberOfSelects)) {
     throw new Error("Number of 'select' groups must be a valid positive integer");
   }
-  if (numberOfFilters === undefined || numberOfFilters === '') {
+  if (!numberOfFilters) {
     numberOfFilters = 1;
   } else if (!isNaturalNumber(numberOfFilters)) {
     throw new Error("Number of 'filter' groups must be a valid positive integer");
@@ -516,7 +516,7 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
  * @customfunction
  */
 function MBEVENTS(address, limit, offset) {
-  if (address === undefined || address === '') {
+  if (!address) {
     throw new Error('Must provide an address or address label');
   }
 
@@ -555,13 +555,13 @@ function MBEVENTS(address, limit, offset) {
  * @customfunction
  */
 function MBGET(address, contract, method, ...args) {
-  if (address === undefined || address === '') {
+  if (!address) {
     throw new Error('Must provide an address or address label');
   }
-  if (contract === undefined || contract === '') {
+  if (!contract) {
     throw new Error('Must provide a smart contract label');
   }
-  if (method === undefined || method === '') {
+  if (!method) {
     throw new Error('Must provide a method (function) name');
   }
 
