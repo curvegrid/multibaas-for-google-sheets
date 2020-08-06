@@ -58,7 +58,7 @@ function validateBlockNumOrHash(numOrHash) {
 }
 
 function validateDeploymentId(deploymentId) {
-  if (deploymentId !== null && !RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
+  if (!deploymentId || !RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
     throw new Error('Invalid deployment ID');
   }
 }
@@ -66,7 +66,7 @@ function validateDeploymentId(deploymentId) {
 function validateApiKey(apiKey) {
   // based on: https://www.regextester.com/105777
   // eslint-disable-next-line no-useless-escape
-  if (apiKey !== null && !RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
+  if (!apiKey || !RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
     throw new Error('Invalid API key');
   }
 }
