@@ -86,12 +86,9 @@ function normalizeCreds(deploymentId, apiKey) {
 }
 
 function credentialsExist() {
-  const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
-  const apiKey = getProperty(PROP_MB_API_KEY);
-
   try {
-    validateDeploymentId(deploymentId);
-    validateApiKey(apiKey);
+    validateDeploymentId(getProperty(PROP_MB_DEPLOYMENT_ID));
+    validateApiKey(getProperty(PROP_MB_API_KEY));
     return true;
   } catch (e) {
     return false;
