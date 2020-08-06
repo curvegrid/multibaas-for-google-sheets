@@ -138,10 +138,10 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
     events: [],
   };
 
-  if (groupBy !== undefined && groupBy !== '') {
+  if (groupBy && groupBy !== '') {
     query.groupBy = groupBy;
   }
-  if (orderBy !== undefined && orderBy !== '') {
+  if (orderBy && orderBy !== '') {
     query.orderBy = orderBy;
   }
 
@@ -194,11 +194,11 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   };
 
   // optional from and signer for "write" transactions
-  if (from !== undefined) {
+  if (from) {
     payload.from = from;
     payload.signer = signer;
 
-    if (signer === undefined || signer === '') {
+    if (!signer) {
       payload.signer = from;
     }
 
@@ -207,7 +207,7 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
     }
 
     // optional "sign and submit" for HSM addresses
-    if (signAndSubmit !== undefined) {
+    if (signAndSubmit) {
       payload.signAndSubmit = signAndSubmit;
     }
   }
@@ -217,26 +217,26 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
 
 function buildQueryOptions(limit, offset, address) {
   // validate limit
-  if (limit !== undefined && !isNaturalNumber(limit)) {
+  if (limit && !isNaturalNumber(limit)) {
     throw new Error('Invalid limit, must be a positive integer');
   }
 
   // validate offset
-  if (offset !== undefined && !isNaturalNumber(offset)) {
+  if (offset && !isNaturalNumber(offset)) {
     throw new Error('Invalid offset, must be a positive integer');
   }
 
   // validate address
-  if (address !== undefined && address.length < 1) {
+  if (address && address.length < 1) {
     throw new Error('Invalid address, must be a string');
   }
 
   // generate a clean URL query param
   let queryOptions = '';
-  if (limit !== undefined) {
+  if (limit) {
     queryOptions += `?limit=${limit}`;
   }
-  if (offset !== undefined) {
+  if (offset) {
     if (queryOptions === '') {
       queryOptions += '?';
     } else {
@@ -244,7 +244,7 @@ function buildQueryOptions(limit, offset, address) {
     }
     queryOptions += `offset=${offset}`;
   }
-  if (address !== undefined) {
+  if (address) {
     if (queryOptions === '') {
       queryOptions += '?';
     } else {
@@ -265,10 +265,10 @@ function buildTxHashes(txs) {
 function buildAssociations(associations) {
   const summary = associations.map((association) => {
     let text = association.label;
-    if (association.name !== undefined && association.name !== '') {
+    if (association.name && association.name !== '') {
       text += ` (${association.version})`;
     }
-    if (association.version !== undefined && association.version !== '') {
+    if (association.version && association.version !== '') {
       text += ` ${association.version}`;
     }
     return text;
@@ -283,7 +283,7 @@ function buildInputs(inputs, maxInputs) {
   const values = [];
   for (let i = 0; i < maxInputs; i++) {
     let input;
-    if (inputs !== undefined && i < inputs.length) {
+    if (inputs && i < inputs.length) {
       input = inputs[i].value;
     }
     values.push(input);
@@ -330,7 +330,7 @@ function buildNumInputsOrOutputs(label, length) {
 
 function buildType(paramType) {
   let builtType = paramType.type;
-  if (paramType.type !== 'address' && paramType.type !== 'string' && paramType.size !== undefined && paramType.size > 0) {
+  if (paramType.type !== 'address' && paramType.type !== 'string' && paramType.size && paramType.size > 0) {
     builtType += paramType.size;
   }
 
@@ -348,7 +348,7 @@ function buildFunctionInputsOrOutputs(entries) {
       param += ' ';
     }
     param += buildType(entry.type);
-    if (entry.notes !== undefined && entry.notes !== '') {
+    if (entry.notes && entry.notes !== '') {
       param += ` (${entry.notes})`;
     }
     params.push(param);
