@@ -10,7 +10,7 @@ function setDeploymentId() {
     'Set Deployment ID',
     'Please enter the deployment ID'
     + ' (i.e. for "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
-    + ' just put "xxxxxxxxxxxxxxxxxxxxxxxxxx" only"):',
+    + ' only the "xxxxxxxxxxxxxxxxxxxxxxxxxx" part"):',
     ui.ButtonSet.OK_CANCEL,
   );
 
