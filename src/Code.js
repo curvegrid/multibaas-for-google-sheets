@@ -157,10 +157,9 @@ function showAbout() {
   const deploymentUrl = deploymentId ? `https://${deploymentId}.multibaas.com` : 'no value set';
 
   ui.alert(
-    'MultiBaas for Google Sheets',
-    `Version ${VERSION}\n
-    Deployment URL: ${deploymentUrl}`,
-    ui.Button.OK,
+    'MultiBaas for Google Sheets\n'
+    + `Version ${VERSION}\n`
+    + `Deployment URL: ${deploymentUrl}`,
   );
 }
 
