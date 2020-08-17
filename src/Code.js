@@ -47,10 +47,10 @@ function setApiKey() {
   }
 }
 
-function deleteAllSettings() {
+function resetCredentials() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.alert(
-    'Are you sure to delete all settings?',
+    'Are you sure you want to reset the Deployment ID and API key?',
     ui.ButtonSet.YES_NO,
   );
 
@@ -163,7 +163,7 @@ function onOpen() {
     .createMenu('Custom Menu')
     .addItem('Set Deployment ID', 'setDeploymentId')
     .addItem('Set API Key', 'setApiKey')
-    .addItem('Delete All Settings', 'deleteAllSettings')
+    .addItem('Reset Credentials', 'resetCredentials')
     .addItem('Post to the blockchain', 'postToBlockchain')
     .addItem('Refresh current cell', 'refreshCurrentCell')
     .addItem('Version', 'showVersion')
