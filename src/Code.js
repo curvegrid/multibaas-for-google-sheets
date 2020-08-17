@@ -8,7 +8,7 @@ function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
     'Set Deployment ID',
-    'Please enter the deployment ID'
+    'Please enter the deployment ID\n'
     + ' (i.e. for "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
     + ' only the "xxxxxxxxxxxxxxxxxxxxxxxxxx" part"):',
     ui.ButtonSet.OK_CANCEL,
@@ -151,15 +151,16 @@ function postToBlockchain() {
 }
 
 function showAbout() {
+  const ui = SpreadsheetApp.getUi();
   const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
-  const deploymentUrl = deploymentId ? `https://${deploymentId}.multibaas.com` : 'not set';
+  const deploymentUrl = deploymentId ? `https://${deploymentId}.multibaas.com` : 'no value set';
 
-  SpreadsheetApp.getUi()
-    .alert(
-      `MultiBaas for Google Sheets\n
-      Version ${VERSION}\n
-      Deployment URL: ${deploymentUrl}`,
-    );
+  ui.alert(
+    'MultiBaas for Google Sheets',
+    `Version ${VERSION}\n
+    Deployment URL: ${deploymentUrl}`,
+    ui.Button.OK,
+  );
 }
 
 /**
