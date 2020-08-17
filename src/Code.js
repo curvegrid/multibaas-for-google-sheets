@@ -150,9 +150,16 @@ function postToBlockchain() {
   }
 }
 
-function showVersion() {
+function showAbout() {
+  const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
+  const deploymentUrl = deploymentId ? `https://${deploymentId}.multibaas.com` : 'not set';
+
   SpreadsheetApp.getUi()
-    .alert(`MultiBaas for Google Sheets Version ${VERSION}`);
+    .alert(
+      `MultiBaas for Google Sheets\n
+      Version ${VERSION}\n
+      Deployment URL: ${deploymentUrl}`,
+    );
 }
 
 /**
@@ -166,7 +173,7 @@ function onOpen() {
     .addItem('Reset Credentials', 'resetCredentials')
     .addItem('Post to the blockchain', 'postToBlockchain')
     .addItem('Refresh current cell', 'refreshCurrentCell')
-    .addItem('Version', 'showVersion')
+    .addItem('About', 'showAbout')
     .addToUi();
 }
 
