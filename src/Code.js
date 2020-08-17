@@ -185,18 +185,18 @@ function onOpen() {
  * a smart contract method.
  * @customfunction
  */
-function MBPOSTTEMPLATE(numArgs) {
-  let numberOfArgs = numArgs;
+function MBPOSTTEMPLATE(numberOfArgs) {
+  let numArgs = numberOfArgs;
 
   // validate and normalize parameters
-  if (!numberOfArgs) {
-    numberOfArgs = 0;
-  } else if (!isNaturalNumber(numberOfArgs)) {
+  if (!numArgs) {
+    numArgs = 0;
+  } else if (!isNaturalNumber(numArgs)) {
     throw new Error('Number of arguments must be a valid positive integer');
   }
 
   const header = ['address', 'contract', 'method', 'from', 'signer'];
-  for (let i = 0; i < numberOfArgs; i++) {
+  for (let i = 0; i < numArgs; i++) {
     header.push(`input${String(i)}`);
   }
   header.push('txHash (output)');
@@ -484,27 +484,27 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
  * @return A two dimensional array that can be used as the starting point for a custom Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
-  let numberOfSelects = numSelects;
-  let numberOfFilters = numFilters;
+function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
+  let numSelects = numberOfSelects;
+  let numFilters = numberOfFilters;
 
   // validate and normalize parameters
-  if (!numberOfSelects) {
-    numberOfSelects = 1;
-  } else if (!isNaturalNumber(numberOfSelects)) {
+  if (!numSelects) {
+    numSelects = 1;
+  } else if (!isNaturalNumber(numSelects)) {
     throw new Error("Number of 'select' groups must be a valid positive integer");
   }
-  if (!numberOfFilters) {
-    numberOfFilters = 1;
-  } else if (!isNaturalNumber(numberOfFilters)) {
+  if (!numFilters) {
+    numFilters = 1;
+  } else if (!isNaturalNumber(numFilters)) {
     throw new Error("Number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
-  for (let i = 0; i < numberOfSelects; i++) {
+  for (let i = 0; i < numSelects; i++) {
     header = header.concat(['alias', 'index', 'aggregator']);
   }
-  for (let i = 0; i < numberOfFilters; i++) {
+  for (let i = 0; i < numFilters; i++) {
     header = header.concat(['rule', 'operator', 'value']);
   }
 
