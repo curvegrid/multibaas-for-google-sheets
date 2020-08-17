@@ -39,6 +39,7 @@ function setApiKey() {
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
     try {
+      validateApiKey(text);
       setProperty(PROP_MB_API_KEY, text);
       ui.alert(`API key is ${text}`);
     } catch (e) {
