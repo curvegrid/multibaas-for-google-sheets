@@ -1,7 +1,7 @@
 {
-  "name": "multibaas-sheets-add-on",
+  "name": "multibaas-for-google-sheets",
   "version": "1.0.0",
-  "description": "MultiBaas Sheets Add-On",
+  "description": "MultiBaas for Google Sheets",
   "repository": "https://github.com/curvegrid/multibaas-for-google-sheets",
   "author": "Curvegrid Inc.",
   "license": "MIT",
