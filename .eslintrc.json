@@ -53,6 +53,7 @@
     "validateBlockNumOrHash": false,
     "validateApiKey": false,
     "validateDeploymentId": false,
+    "getDeploymentId": false,
     // Query.js
     "query": false,
     "limitQuery": false,
@@ -67,6 +68,7 @@
     "URL_BASE": false,
     "HTTP_GET": false,
     "HTTP_POST": false,
+    "DEPLOYMENT_DOMAIN": false,
     // Others
     "BigInt": false,
     "before": false,
