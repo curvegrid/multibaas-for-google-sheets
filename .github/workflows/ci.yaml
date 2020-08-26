@@ -77,7 +77,6 @@ jobs:
           ls -l $HOME/.*.json
           ls .*.json
           PATH=$PATH:"$(yarn global bin)"
-          echo TEST: $(git tag)
           yarn update
           clasp push
           yarn test
