@@ -62,7 +62,7 @@ function refreshCurrentCell() {
   const ui = SpreadsheetApp.getUi();
 
   if (!credentialsExist()) {
-    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/multibaas-for-google-sheets/credentials');
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
     return;
   }
 
@@ -73,7 +73,7 @@ function refreshCurrentCell() {
 
   if (!value && !formula) {
     SpreadsheetApp.getUi()
-      .alert('No data in the cell you selected. Please see https://www.curvegrid.com/multibaas-for-google-sheets/refresh-current-cell');
+      .alert('No data in the cell you selected. Please see https://www.curvegrid.com/docs/17-4-functions/');
     return;
   }
 
@@ -91,7 +91,7 @@ function postToBlockchain() {
   const ui = SpreadsheetApp.getUi();
 
   if (!credentialsExist()) {
-    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/multibaas-for-google-sheets/credentials');
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
     return;
   }
 
@@ -101,7 +101,7 @@ function postToBlockchain() {
 
   if (range.getNumColumns() < MIN_COLUMNS) {
     ui.alert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns.
-      Please see https://www.curvegrid.com/multibaas-for-google-sheets/post-to-the-blokchain`);
+      Please see https://www.curvegrid.com/docs/17-4-functions/`);
     return;
   }
 
