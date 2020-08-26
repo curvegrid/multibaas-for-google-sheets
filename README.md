@@ -62,3 +62,5 @@ And run `yarn update` to update the version in `src/Code.js`.
 ```sh
 yarn update
 ```
+
+DO NOT commit the change after running these command above, please use these only for test.
