@@ -10,7 +10,7 @@
     "lint": "eslint ./*.js src/*.js test/*.js",
     "test": "clasp push && cd test && node mbSheetsAddOn.js",
     "push": "clasp push",
-    "update": "yarn version && sed -i '' \"s/const VERSION\\ .*/const VERSION\\ =\\ \\'\"$(git describe --tags --match 'v*[0-9].*[0-9].*[0-9]')\"\\';/g\" src/Code.js"
+    "update": "sed -i '' \"s/const VERSION\\ .*/const VERSION\\ =\\ \\'\"$(git describe --tags --match 'v*[0-9].*[0-9].*[0-9]')\"\\';/g\" src/Code.js"
   },
   "keywords": [
     "multibaas",
