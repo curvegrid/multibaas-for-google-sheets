@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 
+const DEPLOYMENT_DOMAIN = 'multibaas.com';
 const URL_SCHEME = 'https://';
-const URL_BASE = '.multibaas.com/api/v0/';
+const URL_BASE = `.${DEPLOYMENT_DOMAIN}/api/v0/`;
 const HTTP_GET = 'GET';
 const HTTP_POST = 'POST';
 

@@ -6,6 +6,9 @@ const VALID_BOOLEANS = ['and', 'or'];
 const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
 const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
 
+// eslint-disable-next-line no-useless-escape
+const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
+
 function validateOperator(operator) {
   const operatorLower = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operatorLower)) {
@@ -58,9 +61,21 @@ function validateBlockNumOrHash(numOrHash) {
 }
 
 function validateDeploymentId(deploymentId) {
-  if (!deploymentId || !RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
+  if (!deploymentId || typeof deploymentId !== 'string') {
     throw new Error('Invalid deployment ID');
   }
+}
+
+function getDeploymentId(deploymentHost) {
+  if (!deploymentHost || typeof deploymentHost !== 'string' || !deploymentHostRegex.test(deploymentHost)) {
+    throw new Error('Invalid deployment host');
+  }
+
+  // i.e. for "https://xxxxxxxxxxxx.multibaas.com/abcd" will be
+  // 0: "https://xxxxxxxxxxxx.multibaas.com/abcd"
+  // 1: "https://xxxxxxxxxxxx.multibaas.com/"
+  // 2: "xxxxxxxxxxxx"
+  return deploymentHost.match(deploymentHostRegex)[2];
 }
 
 function validateApiKey(apiKey) {
