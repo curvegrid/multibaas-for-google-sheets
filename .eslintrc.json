@@ -13,8 +13,6 @@
     // Google spreadsheet test library
     "GasTap": false,
     // Code.js
-    "URL_SCHEME": false,
-    "URL_BASE": false,
     "MBADDRESS": false,
     "MBBLOCK": false,
     "MBCOMPOSE": false,
@@ -49,13 +47,28 @@
     "objectArrayToArray": false,
     "eventsToArray": false,
     "formatDateTime": false,
-    "showAlert": false,
+    "credentialsExist": false,
     // Validate.js
     "validateBlockTxHash": false,
     "validateBlockNumOrHash": false,
+    "validateApiKey": false,
+    "validateDeploymentId": false,
+    "getDeploymentId": false,
     // Query.js
     "query": false,
     "limitQuery": false,
+    // Property.js
+    "fallbackProperties": false,
+    "setProperty": false,
+    "getProperty": false,
+    "deleteAllProperties": false,
+    "PROP_MB_API_KEY": false,
+    "PROP_MB_DEPLOYMENT_ID": false,
+    "URL_SCHEME": false,
+    "URL_BASE": false,
+    "HTTP_GET": false,
+    "HTTP_POST": false,
+    "DEPLOYMENT_DOMAIN": false,
     // Others
     "BigInt": false,
     "before": false,

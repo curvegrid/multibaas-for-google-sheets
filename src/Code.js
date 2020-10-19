@@ -2,48 +2,27 @@
 
 /* eslint-disable no-unused-vars */
 
-const URL_SCHEME = 'https://';
-const URL_BASE = '.multibaas.com/api/v0/';
-const HTTP_GET = 'GET';
-const HTTP_POST = 'POST';
-
-// Property keys for deployment ID and API key.
-const PROP_MB_DEPLOYMENT_ID = 'mbDeploymentId';
-const PROP_MB_API_KEY = 'mbApiKey';
-
-// NOTE: On test "PropertiesService.getDocumentProperties()" cannot be used
-// and on running as Add-On after installed "testProperties" cannot be written(read only).
-let testProperties = {};
-
-function setProperty(key, value) {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.setProperty(key, value);
-  } else {
-    testProperties[key] = value;
-  }
-}
-
-function getProperty(key) {
-  const properties = PropertiesService.getDocumentProperties();
-  return properties ? properties.getProperty(key) : testProperties[key];
-}
+const VERSION = '0.1.0';
 
 function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
     'Set Deployment ID',
-    'Please enter the deployment ID'
-    + ' (i.e. for "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.multibaas.com",'
-    + ' only the "xxxxxxxxxxxxxxxxxxxxxxxxxx" part"):',
+    'Please enter the deployment host\n'
+    + ` (i.e. "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.${DEPLOYMENT_DOMAIN}/"):`,
     ui.ButtonSet.OK_CANCEL,
   );
 
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    setProperty(PROP_MB_DEPLOYMENT_ID, text);
-    ui.alert(`Deployment ID is ${text}.`);
+    try {
+      const deploymentId = getDeploymentId(text);
+      validateDeploymentId(deploymentId);
+      setProperty(PROP_MB_DEPLOYMENT_ID, deploymentId);
+    } catch (e) {
+      ui.alert(e.message);
+    }
   }
 }
 
@@ -58,27 +37,46 @@ function setApiKey() {
   const button = result.getSelectedButton();
   const text = result.getResponseText();
   if (button === ui.Button.OK) {
-    setProperty(PROP_MB_API_KEY, text);
-    ui.alert(`API key is ${text}.`);
+    try {
+      validateApiKey(text);
+      setProperty(PROP_MB_API_KEY, text);
+    } catch (e) {
+      ui.alert(e.message);
+    }
   }
 }
 
-function deleteAllSettings() {
-  const properties = PropertiesService.getDocumentProperties();
-  if (properties) {
-    properties.deleteAllProperties();
-  } else {
-    testProperties = {};
+function resetCredentials() {
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.alert(
+    'Are you sure you want to reset the Deployment ID and API key?',
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (result === ui.Button.YES) {
+    deleteAllProperties();
   }
-  SpreadsheetApp.getUi()
-    .alert('Deployment ID and API key have been removed.');
 }
 
 function refreshCurrentCell() {
+  const ui = SpreadsheetApp.getUi();
+
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
+    return;
+  }
+
   const range = SpreadsheetApp.getActiveRange();
   const cell = range.getCell(1, 1);
   const value = cell.getValue();
   const formula = cell.getFormula();
+
+  if (!value && !formula) {
+    SpreadsheetApp.getUi()
+      .alert('No data in the cell you selected. Please see https://www.curvegrid.com/docs/17-4-functions/');
+    return;
+  }
+
   cell.setValue('');
   SpreadsheetApp.flush();
   if (formula !== '') {
@@ -90,23 +88,32 @@ function refreshCurrentCell() {
 }
 
 function postToBlockchain() {
+  const ui = SpreadsheetApp.getUi();
+
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
+    return;
+  }
+
   const MIN_COLUMNS = 5;
   const sheet = SpreadsheetApp.getActiveSheet();
   const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    showAlert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    ui.alert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns.
+      Please see https://www.curvegrid.com/docs/17-4-functions/`);
     return;
   }
 
   const values = range.getValues();
+  // NOTE: see MBPOSTTEMPLATE(numArgs) to understand slicing
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-    const [address, contract, method, from, signer] = row.slice(0, 6);
+    const [address, contract, method, from, signer] = row.slice(0, 5);
 
     let args = [];
     if (row.length > MIN_COLUMNS) {
-      args = row.slice(7);
+      args = row.slice(MIN_COLUMNS, row.length);
     }
 
     const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -125,7 +132,8 @@ function postToBlockchain() {
         payload,
       );
     } catch (e) {
-      showAlert(e.message);
+      console.error(e);
+      ui.alert(e.message);
       return;
     }
 
@@ -140,6 +148,18 @@ function postToBlockchain() {
   }
 }
 
+function showAbout() {
+  const ui = SpreadsheetApp.getUi();
+  const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
+  const deploymentUrl = deploymentId ? `https://${deploymentId}.${DEPLOYMENT_DOMAIN}` : 'no value set';
+
+  ui.alert(
+    'MultiBaas for Google Sheets\n'
+    + `Version ${VERSION}\n`
+    + `Deployment URL: ${deploymentUrl}`,
+  );
+}
+
 /**
  * Add menu
  */
@@ -148,9 +168,10 @@ function onOpen() {
     .createMenu('Custom Menu')
     .addItem('Set Deployment ID', 'setDeploymentId')
     .addItem('Set API Key', 'setApiKey')
-    .addItem('Delete All Settings', 'deleteAllSettings')
+    .addItem('Reset Credentials', 'resetCredentials')
     .addItem('Post to the blockchain', 'postToBlockchain')
     .addItem('Refresh current cell', 'refreshCurrentCell')
+    .addItem('About', 'showAbout')
     .addToUi();
 }
 
@@ -164,19 +185,18 @@ function onOpen() {
  * a smart contract method.
  * @customfunction
  */
-function MBPOSTTEMPLATE(numArgs) {
-  let numberOfArgs = numArgs;
+function MBPOSTTEMPLATE(numberOfArgs) {
+  let numArgs = numberOfArgs;
 
   // validate and normalize parameters
-  if (numberOfArgs === undefined || numberOfArgs === '') {
-    numberOfArgs = 0;
-  } else if (!isNaturalNumber(numberOfArgs)) {
-    showAlert('number of arguments must be a valid positive integer');
-    return undefined;
+  if (!numArgs) {
+    numArgs = 0;
+  } else if (!isNaturalNumber(numArgs)) {
+    throw new Error('Number of arguments must be a valid positive integer');
   }
 
   const header = ['address', 'contract', 'method', 'from', 'signer'];
-  for (let i = 0; i < numberOfArgs; i++) {
+  for (let i = 0; i < numArgs; i++) {
     header.push(`input${String(i)}`);
   }
   header.push('txHash (output)');
@@ -193,9 +213,8 @@ function MBPOSTTEMPLATE(numArgs) {
  * @customfunction
  */
 function MBEVENTLIST(contract, filter) {
-  if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -208,8 +227,8 @@ function MBEVENTLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -229,9 +248,8 @@ function MBEVENTLIST(contract, filter) {
  * @customfunction
  */
 function MBFUNCTIONLIST(contract, filter) {
-  if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
@@ -244,8 +262,8 @@ function MBFUNCTIONLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -268,8 +286,7 @@ function MBTX(hash, headers) {
   try {
     validateBlockTxHash(hash);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   const isHeaders = clampBool(headers, true);
@@ -284,8 +301,8 @@ function MBTX(hash, headers) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -309,8 +326,7 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
   try {
     validateBlockNumOrHash(numberOrHash);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   const isHeaders = clampBool(headers, true);
@@ -326,8 +342,8 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the block structure into a flat array
@@ -348,9 +364,8 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
  * @customfunction
  */
 function MBADDRESS(address, headers, code) {
-  if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
 
   const isHeaders = clampBool(headers, true);
@@ -366,8 +381,8 @@ function MBADDRESS(address, headers, code) {
       queryPath,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
 
   // turn the address structure into a flat array
@@ -387,9 +402,8 @@ function MBADDRESS(address, headers, code) {
  * @customfunction
  */
 function MBQUERY(query, limit, offset) {
-  if (query === undefined || query === '') {
-    showAlert('must provide an Event Query name');
-    return undefined;
+  if (!query) {
+    throw new Error('Must provide an Event Query name');
   }
 
   const queryPath = `queries/${query}/results`;
@@ -404,8 +418,8 @@ function MBQUERY(query, limit, offset) {
       offset,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -426,9 +440,8 @@ function MBQUERY(query, limit, offset) {
  * @customfunction
  */
 function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
-  if (events === undefined || events === '') {
-    showAlert('must provide an events definition');
-    return undefined;
+  if (!events) {
+    throw new Error('Must provide an events definition');
   }
 
   const queryPath = 'queries';
@@ -436,8 +449,7 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   try {
     payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    throw new Error(e.message);
   }
 
   let results;
@@ -452,8 +464,8 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -472,29 +484,27 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
  * @return A two dimensional array that can be used as the starting point for a custom Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
-  let numberOfSelects = numSelects;
-  let numberOfFilters = numFilters;
+function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
+  let numSelects = numberOfSelects;
+  let numFilters = numberOfFilters;
 
   // validate and normalize parameters
-  if (numberOfSelects === undefined || numberOfSelects === '') {
-    numberOfSelects = 1;
-  } else if (!isNaturalNumber(numberOfSelects)) {
-    showAlert("number of 'select' groups must be a valid positive integer");
-    return undefined;
+  if (!numSelects) {
+    numSelects = 1;
+  } else if (!isNaturalNumber(numSelects)) {
+    throw new Error("Number of 'select' groups must be a valid positive integer");
   }
-  if (numberOfFilters === undefined || numberOfFilters === '') {
-    numberOfFilters = 1;
-  } else if (!isNaturalNumber(numberOfFilters)) {
-    showAlert("number of 'filter' groups must be a valid positive integer");
-    return undefined;
+  if (!numFilters) {
+    numFilters = 1;
+  } else if (!isNaturalNumber(numFilters)) {
+    throw new Error("Number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
-  for (let i = 0; i < numberOfSelects; i++) {
+  for (let i = 0; i < numSelects; i++) {
     header = header.concat(['alias', 'index', 'aggregator']);
   }
-  for (let i = 0; i < numberOfFilters; i++) {
+  for (let i = 0; i < numFilters; i++) {
     header = header.concat(['rule', 'operator', 'value']);
   }
 
@@ -511,9 +521,8 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
  * @customfunction
  */
 function MBEVENTS(address, limit, offset) {
-  if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
 
   const queryPath = 'events';
@@ -530,8 +539,8 @@ function MBEVENTS(address, limit, offset) {
       address,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
@@ -551,17 +560,14 @@ function MBEVENTS(address, limit, offset) {
  * @customfunction
  */
 function MBGET(address, contract, method, ...args) {
-  if (address === undefined || address === '') {
-    showAlert('must provide an address or address label');
-    return undefined;
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
-  if (contract === undefined || contract === '') {
-    showAlert('must provide a smart contract label');
-    return undefined;
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
-  if (method === undefined || method === '') {
-    showAlert('must provide a method (function) name');
-    return undefined;
+  if (!method) {
+    throw new Error('Must provide a method (function) name');
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -579,8 +585,8 @@ function MBGET(address, contract, method, ...args) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   const { output } = results.result;
   console.log(`Results: ${JSON.stringify(output)}`);
@@ -602,16 +608,6 @@ function MBGET(address, contract, method, ...args) {
  * @customfunction
  */
 function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
-  console.log(
-    getProperty(PROP_MB_DEPLOYMENT_ID),
-    getProperty(PROP_MB_API_KEY),
-    address,
-    contract,
-    method,
-    from,
-    signer,
-    args,
-  );
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
@@ -627,8 +623,8 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
       payload,
     );
   } catch (e) {
-    showAlert(e.message);
-    return undefined;
+    console.error(e);
+    throw new Error(e.message);
   }
   const output = JSON.stringify(results.result.tx);
   console.log(`Results: ${output}`);

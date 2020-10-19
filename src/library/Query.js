@@ -16,7 +16,7 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
     },
   };
 
-  if (payload !== undefined && payload !== '{}') {
+  if (payload && payload !== '{}') {
     options.payload = JSON.stringify(payload);
   }
 

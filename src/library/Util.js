@@ -1,6 +1,6 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
-/* eslint-disable no-unused-vars, no-use-before-define */
+/* eslint-disable no-unused-vars */
 
 function isNaturalNumber(number) {
   return RegExp('^[0-9]+$').test(number);
@@ -32,13 +32,13 @@ function extractSelectFilterCounts(header) {
         selectHalf = false;
       } else {
         if (aliasRule !== 'alias') {
-          throw new Error(`expecting 'alias' in position ${i}, found '${aliasRule}'`);
+          throw new Error(`Expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
         if (indexOperator !== 'index') {
-          throw new Error(`expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
         }
         if (aggregatorValue !== 'aggregator') {
-          throw new Error(`expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
         }
 
         numSelect++;
@@ -46,10 +46,10 @@ function extractSelectFilterCounts(header) {
     }
     if (!selectHalf) {
       if (aliasRule !== 'rule') {
-        throw new Error(`expecting 'rule' in position ${i}, found '${aliasRule}'`);
+        throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
       if (indexOperator !== 'operator') {
-        throw new Error(`expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        throw new Error(`Expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
       }
       if (aggregatorValue !== 'value') {
         throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
@@ -65,7 +65,7 @@ function extractSelectFilterCounts(header) {
 function clampBool(value, def) {
   // clamp value to a valid bool with a default
   let final;
-  if (value === undefined || value === '') {
+  if (!value) {
     final = def;
   } else if (value === true) {
     final = true;
@@ -79,19 +79,44 @@ function clampBool(value, def) {
 }
 
 function normalizeCreds(deploymentId, apiKey) {
-  // validate deployment ID
-  if (!RegExp('^[a-z0-9]+$', 'i').test(deploymentId)) {
-    throw new Error('invalid deployment ID');
-  }
-
-  // validate API key
-  // based on: https://www.regextester.com/105777
-  // eslint-disable-next-line no-useless-escape
-  if (!RegExp('^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+\/=]*$').test(apiKey)) {
-    throw new Error('invalid API key');
-  }
+  validateDeploymentId(deploymentId);
+  validateApiKey(apiKey);
 
   return [deploymentId, apiKey];
+}
+
+function credentialsExist() {
+  try {
+    validateDeploymentId(getProperty(PROP_MB_DEPLOYMENT_ID));
+    validateApiKey(getProperty(PROP_MB_API_KEY));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function parseHexToNum(hex) {
+  const big = BigInt(hex).toString();
+  const int = parseInt(hex, 16);
+
+  if (String(int) !== big) {
+    return big;
+  }
+
+  return int;
+}
+
+function keysFromObj(obj, sort) {
+  const keys = [];
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const key in obj) {
+    keys.push(key);
+  }
+  if (sort) {
+    keys.sort();
+  }
+
+  return keys;
 }
 
 function txToArray(tx, headers) {
@@ -114,17 +139,6 @@ function txToArray(tx, headers) {
   // tx body
   rows.push([tx.isPending].concat(valuesFromKeys(dataKeys, txDataFinal)));
   return rows;
-}
-
-function parseHexToNum(hex) {
-  const big = BigInt(hex).toString();
-  const int = parseInt(hex, 16);
-
-  if (String(int) !== big) {
-    return big;
-  }
-
-  return int;
 }
 
 function blockToArray(block, headers, txHashes) {
@@ -231,17 +245,17 @@ function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   for (const i in entries) {
     const entry = entries[i];
 
-    if (filter !== '' && filter !== undefined && !filterRe.test(entry.name)) {
+    if (filter && filter !== '' && !filterRe.test(entry.name)) {
       // eslint-disable-next-line no-continue
       continue;
     }
 
     // build description/notes (docs) for this function/event
     let description = '';
-    if (entry.notes !== undefined) {
+    if (entry.notes) {
       description += entry.notes;
     }
-    if (entry.description !== undefined && entry.description !== '') {
+    if (entry.description && entry.description !== '') {
       if (description !== '') {
         description += ' / ';
       }
@@ -299,8 +313,8 @@ function eventsToArray(entries) {
     'txContractAddressLabel',
     'txContractAddress',
     'txContractName',
-    'fxnName',
-    'fxnDef',
+    'fnName',
+    'fnDef',
   ];
 
   // determine the maximum number of event and method inputs
@@ -311,7 +325,7 @@ function eventsToArray(entries) {
     const entry = entries[i];
 
     maxEventInputs = Math.max(maxEventInputs, entry.event.inputs.length);
-    if (entry.transaction.method.inputs !== undefined) {
+    if (entry.transaction.method && entry.transaction.method.inputs) {
       maxMethodInputs = Math.max(maxMethodInputs, entry.transaction.method.inputs.length);
     }
   }
@@ -343,11 +357,13 @@ function eventsToArray(entries) {
       ]);
 
     // tx fields
-    let fxnDef = '';
-    let fxnInputs = [];
-    if (tx.method !== undefined) {
-      fxnDef = buildSigDef(tx.method);
-      fxnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
+    let fnDef = '';
+    let fnInputs = [];
+    let fnName = '';
+    if (tx.method) {
+      fnDef = buildSigDef(tx.method);
+      fnInputs = buildInputs(tx.method.inputs, maxMethodInputs);
+      fnName = tx.method.name;
     }
 
     row = row
@@ -361,28 +377,15 @@ function eventsToArray(entries) {
         tx.contract.label,
         tx.contract.address,
         tx.contract.name,
-        tx.method.name,
-        fxnDef,
+        fnName,
+        fnDef,
       ])
-      .concat(fxnInputs);
+      .concat(fnInputs);
 
     rows.push(row);
   }
 
   return rows;
-}
-
-function keysFromObj(obj, sort) {
-  const keys = [];
-  // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const key in obj) {
-    keys.push(key);
-  }
-  if (sort) {
-    keys.sort();
-  }
-
-  return keys;
 }
 
 function objectArrayToArray(objArr) {
@@ -407,9 +410,4 @@ function objectArrayToArray(objArr) {
 // as new Date('2015-07-30T15:26:28.000Z') from "2015-07-30T15:26:28.000Z"
 function formatDateTime(dateTime) {
   return new Date(dateTime);
-}
-
-function showAlert(message) {
-  // SpreadsheetApp.getUi().alert(message);
-  console.log(message);
 }
