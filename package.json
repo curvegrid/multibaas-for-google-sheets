@@ -1,14 +1,17 @@
 {
-  "name": "multibaas-sheets-add-on",
+  "name": "multibaas-for-google-sheets",
   "version": "1.0.0",
-  "description": "MultiBaas Sheets Add-On",
+  "description": "MultiBaas for Google Sheets",
   "repository": "https://github.com/curvegrid/multibaas-for-google-sheets",
   "author": "Curvegrid Inc.",
   "license": "MIT",
   "private": false,
   "scripts": {
     "lint": "eslint ./*.js src/*.js test/*.js",
-    "test": "clasp push && cd test && node mbSheetsAddOn.js"
+    "test": "clasp push && cd test && node mbSheetsAddOn.js",
+    "push": "clasp push",
+    "update": "sed -i \"s/const VERSION\\ .*/const VERSION\\ =\\ \\'\"$(git describe --tags --match 'v*[0-9].*[0-9].*[0-9]')\"\\';/g\" src/Code.js",
+    "update:mac": "sed -i '' \"s/const VERSION\\ .*/const VERSION\\ =\\ \\'\"$(git describe --tags --match 'v*[0-9].*[0-9].*[0-9]')\"\\';/g\" src/Code.js"
   },
   "keywords": [
     "multibaas",

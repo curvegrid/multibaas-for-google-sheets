@@ -46,13 +46,12 @@ function run(test, config, testCase) {
       return;
     }
 
-    let output;
-    if (!testCase.isTemplate) {
-      output = testCase.func(config.deployment, config.apiKey, ...testCase.args);
-    } else {
-      output = testCase.func(...testCase.args);
-    }
+    /* eslint-disable no-undef */
+    setProperty(PROP_MB_DEPLOYMENT_ID, config.deployment);
+    setProperty(PROP_MB_API_KEY, config.apiKey);
+    /* eslint-enable no-undef */
 
+    const output = testCase.func(...testCase.args);
     const numRow = Array.isArray(output) ? output.length : 0;
     const numCol = numRow > 0 ? output[0].length : 0;
 
@@ -204,7 +203,7 @@ function testRunner() {
       args: [
         [
           ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
-          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 0, ''],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, ''],
         ],
         '',
         '',
@@ -213,9 +212,9 @@ function testRunner() {
       ],
       expected: [
         ['amount', 'sender'],
-        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
-        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
-        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
       ],
     },
     {
@@ -280,8 +279,8 @@ function testRunner() {
           'txContractAddressLabel',
           'txContractAddress',
           'txContractName',
-          'fxnName',
-          'fxnDef',
+          'fnName',
+          'fnDef',
         ],
         [
           formatDateTime('2020-06-19T08:48:36.000Z'),
@@ -346,7 +345,7 @@ function testRunner() {
       func: MBPOSTTEMPLATE,
       isTemplate: true,
       args: [2],
-      expected: [['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
+      expected: [['address', 'contract', 'method', 'from', 'signer', 'input0', 'input1', 'txHash (output)']],
     },
     {
       name: 'TestMBQUERY',

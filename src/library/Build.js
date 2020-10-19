@@ -38,7 +38,7 @@ function buildFilters(items, start, numItems) {
     }
 
     if (value === '') {
-      throw new Error(`value is empty for rule '${rules}'`);
+      throw new Error(`Value is empty for rule '${rules}'`);
     }
 
     // split by colons
@@ -55,11 +55,11 @@ function buildFilters(items, start, numItems) {
       // parse out rule and optional numeric portions (e.g., input0)
       const ruleParts = RegExp('^([A-Za-z.]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts === null || ruleParts.length < 2) {
-        throw new Error(`invalid rule '${rulePath[j]}' in '${rules}'`);
+        throw new Error(`Invalid rule '${rulePath[j]}' in '${rules}'`);
       }
       const rule = ruleParts[1].toLowerCase();
       if (rule === '') {
-        throw new Error(`sub-rule is empty in '${rules}'`);
+        throw new Error(`Sub-rule is empty in '${rules}'`);
       }
 
       // if we're on a children array, search for a child matching this rule
@@ -118,11 +118,11 @@ function buildFilters(items, start, numItems) {
         // special case for an input
         if (rule === 'input') {
           if (ruleParts.length !== 3) {
-            throw new Error("no input index provided, just 'input'");
+            throw new Error("No input index provided, just 'input'");
           }
           const inputIndex = ruleParts[2];
           if (!isNaturalNumber(inputIndex)) {
-            throw new Error(`invalid input index '${inputIndex}', must be a positive number`);
+            throw new Error(`Invalid input index '${inputIndex}', must be a positive number`);
           }
           node.inputIndex = parseInt(inputIndex, 10);
         }
@@ -138,26 +138,26 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
     events: [],
   };
 
-  if (groupBy !== undefined && groupBy !== '') {
+  if (groupBy && groupBy !== '') {
     query.groupBy = groupBy;
   }
-  if (orderBy !== undefined && orderBy !== '') {
+  if (orderBy && orderBy !== '') {
     query.orderBy = orderBy;
   }
 
   // parse and validate header row
   if (events.length < 1) {
-    throw new Error(`expecting a header row followed by one or more data rows, found ${events.length} rows total`);
+    throw new Error(`Expecting a header row followed by one or more data rows, found ${events.length} rows total`);
   }
   const header = events[0];
   if (header.length < 4) {
-    throw new Error(`expecting to have at least four columns, found ${header.length} columns total`);
+    throw new Error(`Expecting to have at least four columns, found ${header.length} columns total`);
   }
   if ((header.length - 1) % 3 !== 0) {
-    throw new Error(`expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
+    throw new Error(`Expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
   }
   if (header[0].toLowerCase() !== 'eventname') {
-    throw new Error(`expecting first column in header row to be 'eventName', found '${header[0]}'`);
+    throw new Error(`Expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
   // extract the number of select and filter triplets
@@ -194,11 +194,11 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   };
 
   // optional from and signer for "write" transactions
-  if (from !== undefined) {
+  if (from) {
     payload.from = from;
     payload.signer = signer;
 
-    if (signer === undefined || signer === '') {
+    if (!signer) {
       payload.signer = from;
     }
 
@@ -207,7 +207,7 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
     }
 
     // optional "sign and submit" for HSM addresses
-    if (signAndSubmit !== undefined) {
+    if (signAndSubmit) {
       payload.signAndSubmit = signAndSubmit;
     }
   }
@@ -217,26 +217,26 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
 
 function buildQueryOptions(limit, offset, address) {
   // validate limit
-  if (limit !== undefined && !isNaturalNumber(limit)) {
-    throw new Error('invalid limit, must be a positive integer');
+  if (limit && !isNaturalNumber(limit)) {
+    throw new Error('Invalid limit, must be a positive integer');
   }
 
   // validate offset
-  if (offset !== undefined && !isNaturalNumber(offset)) {
-    throw new Error('invalid offset, must be a positive integer');
+  if (offset && !isNaturalNumber(offset)) {
+    throw new Error('Invalid offset, must be a positive integer');
   }
 
   // validate address
-  if (address !== undefined && address.length < 1) {
-    throw new Error('invalid address, must be a string');
+  if (address && address.length < 1) {
+    throw new Error('Invalid address, must be a string');
   }
 
   // generate a clean URL query param
   let queryOptions = '';
-  if (limit !== undefined) {
+  if (limit) {
     queryOptions += `?limit=${limit}`;
   }
-  if (offset !== undefined) {
+  if (offset) {
     if (queryOptions === '') {
       queryOptions += '?';
     } else {
@@ -244,7 +244,7 @@ function buildQueryOptions(limit, offset, address) {
     }
     queryOptions += `offset=${offset}`;
   }
-  if (address !== undefined) {
+  if (address) {
     if (queryOptions === '') {
       queryOptions += '?';
     } else {
@@ -265,10 +265,10 @@ function buildTxHashes(txs) {
 function buildAssociations(associations) {
   const summary = associations.map((association) => {
     let text = association.label;
-    if (association.name !== undefined && association.name !== '') {
+    if (association.name && association.name !== '') {
       text += ` (${association.version})`;
     }
-    if (association.version !== undefined && association.version !== '') {
+    if (association.version && association.version !== '') {
       text += ` ${association.version}`;
     }
     return text;
@@ -283,7 +283,7 @@ function buildInputs(inputs, maxInputs) {
   const values = [];
   for (let i = 0; i < maxInputs; i++) {
     let input;
-    if (inputs !== undefined && i < inputs.length) {
+    if (inputs && i < inputs.length) {
       input = inputs[i].value;
     }
     values.push(input);
@@ -330,7 +330,7 @@ function buildNumInputsOrOutputs(label, length) {
 
 function buildType(paramType) {
   let builtType = paramType.type;
-  if (paramType.type !== 'address' && paramType.type !== 'string' && paramType.size !== undefined && paramType.size > 0) {
+  if (paramType.type !== 'address' && paramType.type !== 'string' && paramType.size && paramType.size > 0) {
     builtType += paramType.size;
   }
 
@@ -348,7 +348,7 @@ function buildFunctionInputsOrOutputs(entries) {
       param += ' ';
     }
     param += buildType(entry.type);
-    if (entry.notes !== undefined && entry.notes !== '') {
+    if (entry.notes && entry.notes !== '') {
       param += ` (${entry.notes})`;
     }
     params.push(param);

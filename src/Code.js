@@ -2,31 +2,81 @@
 
 /* eslint-disable no-unused-vars */
 
-const URL_SCHEME = 'https://';
-const URL_BASE = '.multibaas.com/api/v0/';
-const HTTP_GET = 'GET';
-const HTTP_POST = 'POST';
+const VERSION = '0.1.0';
 
-/**
- * Add menu
- */
-function onOpen() {
+function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Set Deployment ID',
+    'Please enter the deployment host\n'
+    + ` (i.e. "https://xxxxxxxxxxxxxxxxxxxxxxxxxx.${DEPLOYMENT_DOMAIN}/"):`,
+    ui.ButtonSet.OK_CANCEL,
+  );
 
-  ui.createMenu('MultiBaas')
-    .addItem('Post to the blockchain', 'mbPost')
-    .addItem('Refresh current cell', 'mbRefresh')
-    .addToUi();
+  const button = result.getSelectedButton();
+  const text = result.getResponseText();
+  if (button === ui.Button.OK) {
+    try {
+      const deploymentId = getDeploymentId(text);
+      validateDeploymentId(deploymentId);
+      setProperty(PROP_MB_DEPLOYMENT_ID, deploymentId);
+    } catch (e) {
+      ui.alert(e.message);
+    }
+  }
 }
 
-/**
- * Menu 1
- */
-function mbRefresh() {
+function setApiKey() {
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Set API Key',
+    'Please enter the API key:',
+    ui.ButtonSet.OK_CANCEL,
+  );
+
+  const button = result.getSelectedButton();
+  const text = result.getResponseText();
+  if (button === ui.Button.OK) {
+    try {
+      validateApiKey(text);
+      setProperty(PROP_MB_API_KEY, text);
+    } catch (e) {
+      ui.alert(e.message);
+    }
+  }
+}
+
+function resetCredentials() {
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.alert(
+    'Are you sure you want to reset the Deployment ID and API key?',
+    ui.ButtonSet.YES_NO,
+  );
+
+  if (result === ui.Button.YES) {
+    deleteAllProperties();
+  }
+}
+
+function refreshCurrentCell() {
+  const ui = SpreadsheetApp.getUi();
+
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
+    return;
+  }
+
   const range = SpreadsheetApp.getActiveRange();
   const cell = range.getCell(1, 1);
   const value = cell.getValue();
   const formula = cell.getFormula();
+
+  if (!value && !formula) {
+    SpreadsheetApp.getUi()
+      .alert('No data in the cell you selected. Please see https://www.curvegrid.com/docs/17-4-functions/');
+    return;
+  }
+
   cell.setValue('');
   SpreadsheetApp.flush();
   if (formula !== '') {
@@ -37,29 +87,33 @@ function mbRefresh() {
   SpreadsheetApp.flush();
 }
 
-/**
- * Menu 2
- */
-function mbPost() {
-  const MIN_COLUMNS = 7;
+function postToBlockchain() {
+  const ui = SpreadsheetApp.getUi();
 
+  if (!credentialsExist()) {
+    ui.alert('Credentials are invalid. Please see https://www.curvegrid.com/docs/17-2-setup-add-on-api-key/ and https://www.curvegrid.com/docs/17-3-setup-add-on-deployment-id/');
+    return;
+  }
+
+  const MIN_COLUMNS = 5;
   const sheet = SpreadsheetApp.getActiveSheet();
   const range = SpreadsheetApp.getActiveRange();
 
   if (range.getNumColumns() < MIN_COLUMNS) {
-    throw new Error(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns`);
+    ui.alert(`${range.getNumColumns()} selected column(s) is fewer than the minimum of ${MIN_COLUMNS} columns.
+      Please see https://www.curvegrid.com/docs/17-4-functions/`);
+    return;
   }
 
   const values = range.getValues();
-
+  // NOTE: see MBPOSTTEMPLATE(numArgs) to understand slicing
   for (let i = 0; i < values.length; i++) {
     const row = values[i];
-
-    const [deployment, apiKey, address, contract, method, from, signer] = row.slice(0, 6);
+    const [address, contract, method, from, signer] = row.slice(0, 5);
 
     let args = [];
     if (row.length > MIN_COLUMNS) {
-      args = row.slice(7);
+      args = row.slice(MIN_COLUMNS, row.length);
     }
 
     const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -68,7 +122,21 @@ function mbPost() {
     const signAndSubmit = true;
     const payload = buildMethodArgs(args, from, signer, signAndSubmit);
 
-    const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+    let results;
+    try {
+      results = query(
+        HTTP_POST,
+        getProperty(PROP_MB_DEPLOYMENT_ID),
+        getProperty(PROP_MB_API_KEY),
+        queryPath,
+        payload,
+      );
+    } catch (e) {
+      console.error(e);
+      ui.alert(e.message);
+      return;
+    }
+
     const output = JSON.stringify(results.result.tx);
     console.log(`Results: ${output}`);
 
@@ -78,6 +146,33 @@ function mbPost() {
       .setValue(results.result.tx.hash);
     SpreadsheetApp.flush();
   }
+}
+
+function showAbout() {
+  const ui = SpreadsheetApp.getUi();
+  const deploymentId = getProperty(PROP_MB_DEPLOYMENT_ID);
+  const deploymentUrl = deploymentId ? `https://${deploymentId}.${DEPLOYMENT_DOMAIN}` : 'no value set';
+
+  ui.alert(
+    'MultiBaas for Google Sheets\n'
+    + `Version ${VERSION}\n`
+    + `Deployment URL: ${deploymentUrl}`,
+  );
+}
+
+/**
+ * Add menu
+ */
+function onOpen() {
+  SpreadsheetApp.getUi() // Or DocumentApp, SlidesApp, or FormApp.
+    .createMenu('Custom Menu')
+    .addItem('Set Deployment ID', 'setDeploymentId')
+    .addItem('Set API Key', 'setApiKey')
+    .addItem('Reset Credentials', 'resetCredentials')
+    .addItem('Post to the blockchain', 'postToBlockchain')
+    .addItem('Refresh current cell', 'refreshCurrentCell')
+    .addItem('About', 'showAbout')
+    .addToUi();
 }
 
 /**
@@ -90,18 +185,18 @@ function mbPost() {
  * a smart contract method.
  * @customfunction
  */
-function MBPOSTTEMPLATE(numArgs) {
-  let numberOfArgs = numArgs;
+function MBPOSTTEMPLATE(numberOfArgs) {
+  let numArgs = numberOfArgs;
 
   // validate and normalize parameters
-  if (numberOfArgs === undefined || numberOfArgs === '') {
-    numberOfArgs = 0;
-  } else if (!isNaturalNumber(numberOfArgs)) {
-    throw new Error('number of arguments must be a valid positive integer');
+  if (!numArgs) {
+    numArgs = 0;
+  } else if (!isNaturalNumber(numArgs)) {
+    throw new Error('Number of arguments must be a valid positive integer');
   }
 
-  const header = ['deployment', 'apiKey', 'address', 'contract', 'method', 'from', 'signer'];
-  for (let i = 0; i < numberOfArgs; i++) {
+  const header = ['address', 'contract', 'method', 'from', 'signer'];
+  for (let i = 0; i < numArgs; i++) {
     header.push(`input${String(i)}`);
   }
   header.push('txHash (output)');
@@ -112,20 +207,29 @@ function MBPOSTTEMPLATE(numArgs) {
 /**
  * Retrieve a detailed list of a smart contract's events.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
  * @return Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
-function MBEVENTLIST(deployment, apiKey, contract, filter) {
-  if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+function MBEVENTLIST(contract, filter) {
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
-  const results = query(HTTP_GET, deployment, apiKey, queryPath);
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
 
   // turn the block structure into a flat array
   const includeOutputs = false;
@@ -138,20 +242,29 @@ function MBEVENTLIST(deployment, apiKey, contract, filter) {
 /**
  * Retrieve a detailed list of a smart contract's functions.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
  * @return Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
-function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
-  if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+function MBFUNCTIONLIST(contract, filter) {
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
 
   const queryPath = `contracts/${contract}`;
-  const results = query(HTTP_GET, deployment, apiKey, queryPath);
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
 
   // turn the block structure into a flat array
   const includeOutputs = true;
@@ -164,20 +277,33 @@ function MBFUNCTIONLIST(deployment, apiKey, contract, filter) {
 /**
  * Retrieve the details of a blockchain transaction.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {hash} hash Transaction hash.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @return Transaction details.
  * @customfunction
  */
-function MBTX(deployment, apiKey, hash, headers) {
-  validateBlockTxHash(hash);
+function MBTX(hash, headers) {
+  try {
+    validateBlockTxHash(hash);
+  } catch (e) {
+    throw new Error(e.message);
+  }
 
   const isHeaders = clampBool(headers, true);
 
   const queryPath = `chains/ethereum/transactions/${hash}`;
-  const results = query(HTTP_GET, deployment, apiKey, queryPath);
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
 
   // turn the block structure into a flat array
   const output = txToArray(results.result, isHeaders);
@@ -189,8 +315,6 @@ function MBTX(deployment, apiKey, hash, headers) {
 /**
  * Retrieve the details of a block.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {numberOrHash} numberOrHash Block number or hash.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {txHashes} txHashes (Optional) Include the transaction hashes. TRUE/FALSE,
@@ -198,14 +322,29 @@ function MBTX(deployment, apiKey, hash, headers) {
  * @return Block details.
  * @customfunction
  */
-function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
-  validateBlockNumOrHash(numberOrHash);
+function MBBLOCK(numberOrHash, headers, txHashes) {
+  try {
+    validateBlockNumOrHash(numberOrHash);
+  } catch (e) {
+    throw new Error(e.message);
+  }
 
   const isHeaders = clampBool(headers, true);
   const isTxHashes = clampBool(txHashes, true);
 
   const queryPath = `chains/ethereum/blocks/${numberOrHash}`;
-  const results = query(HTTP_GET, deployment, apiKey, queryPath);
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
 
   // turn the block structure into a flat array
   const output = blockToArray(results.result, isHeaders, isTxHashes);
@@ -217,8 +356,6 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
 /**
  * Retrieve the details of a blockchain address.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
@@ -226,16 +363,27 @@ function MBBLOCK(deployment, apiKey, numberOrHash, headers, txHashes) {
  * @return Address details.
  * @customfunction
  */
-function MBADDRESS(deployment, apiKey, address, headers, code) {
-  if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+function MBADDRESS(address, headers, code) {
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
 
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
   const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
-  const results = query(HTTP_GET, deployment, apiKey, queryPath);
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
 
   // turn the address structure into a flat array
   const output = addressToArray(results.result, isHeaders, isCode);
@@ -247,21 +395,32 @@ function MBADDRESS(deployment, apiKey, address, headers, code) {
 /**
  * Retrieve the results of a MultiBaas Event Query.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {query} query Event Query name to return results from.
  * @param {limit} limit (Optional) Number of results to return.
  * @param {offset} offset (Optional) Offset from the 0th result to return.
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBQUERY(deployment, apiKey, query, limit, offset) {
-  if (query === undefined || query === '') {
-    throw new Error('must provide an Event Query name');
+function MBQUERY(query, limit, offset) {
+  if (!query) {
+    throw new Error('Must provide an Event Query name');
   }
 
   const queryPath = `queries/${query}/results`;
-  const results = limitQuery(HTTP_GET, deployment, apiKey, queryPath, limit, offset);
+  let results;
+  try {
+    results = limitQuery(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      limit,
+      offset,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
   console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the array of objects into a flat array
@@ -272,8 +431,6 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
 /**
  * Retrieve the results of a custom MultiBaas Event Query.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {events} events Two dimensional array of event names, selectors and filters.
  * @param {groupBy} groupBy (Optional) Field to group by.
  * @param {orderBy} orderBy (Optional) Field to order by.
@@ -282,15 +439,34 @@ function MBQUERY(deployment, apiKey, query, limit, offset) {
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offset) {
-  if (events === undefined || events === '') {
-    throw new Error('must provide an events definition');
+function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
+  if (!events) {
+    throw new Error('Must provide an events definition');
   }
 
   const queryPath = 'queries';
-  const payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
+  let payload;
+  try {
+    payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
+  } catch (e) {
+    throw new Error(e.message);
+  }
 
-  const results = limitQuery(HTTP_POST, deployment, apiKey, queryPath, limit, offset, payload);
+  let results;
+  try {
+    results = limitQuery(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      limit,
+      offset,
+      payload,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
   console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the array of objects into a flat array
@@ -308,27 +484,27 @@ function MBCUSTOMQUERY(deployment, apiKey, events, groupBy, orderBy, limit, offs
  * @return A two dimensional array that can be used as the starting point for a custom Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
-  let numberOfSelects = numSelects;
-  let numberOfFilters = numFilters;
+function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
+  let numSelects = numberOfSelects;
+  let numFilters = numberOfFilters;
 
   // validate and normalize parameters
-  if (numberOfSelects === undefined || numberOfSelects === '') {
-    numberOfSelects = 1;
-  } else if (!isNaturalNumber(numberOfSelects)) {
-    throw new Error("number of 'select' groups must be a valid positive integer");
+  if (!numSelects) {
+    numSelects = 1;
+  } else if (!isNaturalNumber(numSelects)) {
+    throw new Error("Number of 'select' groups must be a valid positive integer");
   }
-  if (numberOfFilters === undefined || numberOfFilters === '') {
-    numberOfFilters = 1;
-  } else if (!isNaturalNumber(numberOfFilters)) {
-    throw new Error("number of 'filter' groups must be a valid positive integer");
+  if (!numFilters) {
+    numFilters = 1;
+  } else if (!isNaturalNumber(numFilters)) {
+    throw new Error("Number of 'filter' groups must be a valid positive integer");
   }
 
   let header = ['eventName'];
-  for (let i = 0; i < numberOfSelects; i++) {
+  for (let i = 0; i < numSelects; i++) {
     header = header.concat(['alias', 'index', 'aggregator']);
   }
-  for (let i = 0; i < numberOfFilters; i++) {
+  for (let i = 0; i < numFilters; i++) {
     header = header.concat(['rule', 'operator', 'value']);
   }
 
@@ -338,30 +514,34 @@ function MBCUSTOMQUERYTEMPLATE(numSelects, numFilters) {
 /**
  * Retrieve blockchain events. Address must be associated with one or more contracts in MultiBaas.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {limit} limit (Optional) Number of results to return.
  * @param {offset} offset (Optional) Offset from the 0th result to return.
  * @return A two dimensional array of events.
  * @customfunction
  */
-function MBEVENTS(deployment, apiKey, address, limit, offset) {
-  if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+function MBEVENTS(address, limit, offset) {
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
 
   const queryPath = 'events';
-  const results = limitQuery(
-    HTTP_GET,
-    deployment,
-    apiKey,
-    queryPath,
-    limit,
-    offset,
-    undefined,
-    address,
-  );
+  let results;
+  try {
+    results = limitQuery(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      limit,
+      offset,
+      undefined,
+      address,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
   console.log(`Results: ${JSON.stringify(results)}`);
 
   // turn the events structure into a flat array
@@ -372,8 +552,6 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
 /**
  * Retrieve the results of a smart contract function call.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -381,15 +559,15 @@ function MBEVENTS(deployment, apiKey, address, limit, offset) {
  * @return One or more values returned from the function.
  * @customfunction
  */
-function MBGET(deployment, apiKey, address, contract, method, ...args) {
-  if (address === undefined || address === '') {
-    throw new Error('must provide an address or address label');
+function MBGET(address, contract, method, ...args) {
+  if (!address) {
+    throw new Error('Must provide an address or address label');
   }
-  if (contract === undefined || contract === '') {
-    throw new Error('must provide a smart contract label');
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
   }
-  if (method === undefined || method === '') {
-    throw new Error('must provide a method (function) name');
+  if (!method) {
+    throw new Error('Must provide a method (function) name');
   }
 
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
@@ -397,7 +575,19 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
   // build args
   const payload = buildMethodArgs(args);
 
-  const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+  let results;
+  try {
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
   const { output } = results.result;
   console.log(`Results: ${JSON.stringify(output)}`);
 
@@ -407,8 +597,6 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
 /**
  * Compose an unsigned transaction to call a smart contract function.
  *
- * @param {deployment} deployment MultiBaas deployment ID.
- * @param {apiKey} apiKey MultiBaas API Key.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -419,14 +607,25 @@ function MBGET(deployment, apiKey, address, contract, method, ...args) {
  * @return An unsigned transaction, suitable for signing and submitting to the blockchain.
  * @customfunction
  */
-function MBCOMPOSE(deployment, apiKey, address, contract, method, from, signer, value, ...args) {
-  console.log(deployment, apiKey, address, contract, method, from, signer, args);
+function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
   const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
   const payload = buildMethodArgs(args, from, signer, undefined, value);
 
-  const results = query(HTTP_POST, deployment, apiKey, queryPath, payload);
+  let results;
+  try {
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
   const output = JSON.stringify(results.result.tx);
   console.log(`Results: ${output}`);
 
