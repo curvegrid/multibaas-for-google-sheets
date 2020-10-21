@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { google } = require('googleapis');
 const { authenticate } = require('./auth');
+require('dotenv').config({ path: '../.env' });
 
 /**
  * Call the "testRunner" to test function on the deployed script.
@@ -11,9 +12,14 @@ function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
   const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
 
+  const testSheetURL = process.env.TEST_SHEET_URL;
+  if (!testSheetURL) {
+    throw new Error('No test sheet URL');
+  }
+
   const request = {
     function: 'testRunner',
-    parameters: [],
+    parameters: [testSheetURL],
     devMode: true, // Sue always the latest pushed codes
   };
 

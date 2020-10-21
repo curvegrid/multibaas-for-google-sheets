@@ -94,9 +94,8 @@ function run(test, config, testCase) {
  * Called from outside to run tests and return test results
  */
 // eslint-disable-next-line no-unused-vars
-function testRunner() {
+function testRunner(testSheetURL) {
   const test = initTest(loggerAPI);
-  const testSheetURL = 'https://docs.google.com/spreadsheets/d/12jQjyXkqUooDK5wlDyazBa3xZb5NVa-YyixNtTRZIsI/edit#gid=0';
   const ss = SpreadsheetApp.openByUrl(testSheetURL);
   SpreadsheetApp.setActiveSpreadsheet(ss);
 
