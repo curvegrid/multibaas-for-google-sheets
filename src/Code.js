@@ -371,7 +371,7 @@ function MBADDRESS(address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}`;
   let results;
   try {
     results = query(
