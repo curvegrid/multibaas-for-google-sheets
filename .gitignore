@@ -16,3 +16,4 @@ node_modules
 yarn-error.log
 .*.json
 .vscode
+.env
