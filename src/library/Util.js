@@ -65,14 +65,12 @@ function extractSelectFilterCounts(header) {
 function clampBool(value, def) {
   // clamp value to a valid bool with a default
   let final;
-  if (!value) {
+  if (value === undefined || value === null) {
     final = def;
-  } else if (value === true) {
-    final = true;
-  } else if (value === false) {
+  } else if (value === '') {
     final = false;
   } else {
-    final = def;
+    final = value;
   }
 
   return final;
