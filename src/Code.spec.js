@@ -258,6 +258,16 @@ function testRunner(testSheetURL) {
       expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value']],
     },
     {
+      name: 'TestMBCUSTOMQUERYTEMPLATE with No Filter',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERYTEMPLATE,
+      isTemplate: true,
+      args: [2, 0],
+      expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator']],
+    },
+    {
       name: 'TestMBEVENTLIST',
       skip: false,
       only: false,
