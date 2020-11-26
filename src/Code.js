@@ -495,9 +495,10 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
     throw new Error("Number of 'select' groups must be a valid positive integer");
   }
   if (!numFilters) {
-    numFilters = 1;
+    // Default is no filter
+    numFilters = 0;
   } else if (!isNaturalNumber(numFilters)) {
-    throw new Error("Number of 'filter' groups must be a valid positive integer");
+    throw new Error("Number of 'filter' groups must be a valid positive integer or zero");
   }
 
   let header = ['eventName'];
