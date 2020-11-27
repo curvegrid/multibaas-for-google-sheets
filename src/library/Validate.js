@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Curvegrid Inc.
 
 /* eslint-disable no-unused-vars */
-// Refer to https://github.com/curvegrid/multibaas/tree/master/server/app/eth/events/eventqueries
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
 const VALID_BOOLEANS = ['and', 'or'];
 const VALID_OPERATORS = [
