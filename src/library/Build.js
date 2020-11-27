@@ -111,7 +111,7 @@ function buildFilters(items, start, numItems) {
           node = node.children[node.children.length - 1];
         }
 
-        node.rule = rule;
+        node.fieldType = rule;
         node.operator = validateOperator(operator);
         node.value = String(value);
 
