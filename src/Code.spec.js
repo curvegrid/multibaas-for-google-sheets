@@ -332,7 +332,7 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBCUSTOMQUERYTEMPLATE',
+      name: 'TestMBCUSTOMQUERYTEMPLATE with 2 Filters',
       skip: false,
       only: false,
       debug: false,
