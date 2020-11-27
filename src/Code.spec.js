@@ -231,9 +231,71 @@ function testRunner(testSheetURL) {
       func: MBCUSTOMQUERY,
       isTemplate: false,
       args: [
+        // Filters structure
+        // "filter": {
+        //   "rule": "And",
+        //   "children": [
+        //     {
+        //       "operator": "Equal",
+        //       "value": "0x89d048be68575f2b56a999ba24faacabd1b919fb",
+        //       "fieldType": "input",
+        //       "inputIndex": 0
+        //     },
+        //     {
+        //       "operator": "GreaterThan",
+        //       "value": "1",
+        //       "fieldType": "input",
+        //       "inputIndex": 1
+        //     },
+        //     {
+        //       "rule": "And",
+        //       "children": [
+        //         {
+        //           "operator": "GreaterThan",
+        //           "value": "1",
+        //           "fieldType": "block_number"
+        //         }
+        //       ]
+        //     }
+        //   ]
+        // }
         [
-          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value', 'rule', 'operator', 'value'],
-          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, '', 'and:input0', 'equal', '0x89d048be68575f2b56a999ba24faacabd1b919fb', 'and:input1', 'greaterthan', 1, 'and:and:block_number', 'greaterthan', 1],
+          [
+            'eventName',
+            'alias',
+            'index',
+            'aggregator',
+            'alias',
+            'index',
+            'aggregator',
+            'rule',
+            'operator',
+            'value',
+            'rule',
+            'operator',
+            'value',
+            'rule',
+            'operator',
+            'value',
+          ],
+          [
+            'LogDeposited(address,uint256)',
+            'sender',
+            0,
+            '',
+            'amount',
+            1,
+            '',
+            'and:input0',
+            'equal',
+            '0x89d048be68575f2b56a999ba24faacabd1b919fb',
+            'and:input1',
+            'greaterthan',
+            1,
+            'and:and:block_number',
+            'greaterthan',
+            1,
+          ],
         ],
         '',
         '',
