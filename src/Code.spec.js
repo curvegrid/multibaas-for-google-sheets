@@ -224,7 +224,29 @@ function testRunner(testSheetURL) {
       }),
     },
     {
-      name: 'TestMBCUSTOMQUERY',
+      name: 'TestMBCUSTOMQUERY with Filters',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERY,
+      isTemplate: false,
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value', 'rule', 'operator', 'value'],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, '', 'and:input0', 'equal', '0x89d048be68575f2b56a999ba24faacabd1b919fb', 'and:input1', 'greaterthan', 1, 'and:and:block_number', 'greaterthan', 1],
+        ],
+        '',
+        '',
+        3,
+        0,
+      ],
+      expected: [
+        ['amount', 'sender'],
+        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+      ],
+    },
+    {
+      name: 'TestMBCUSTOMQUERY with No Filter',
       skip: false,
       only: false,
       debug: false,
