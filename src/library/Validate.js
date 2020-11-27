@@ -4,8 +4,24 @@
 // Refer to https://github.com/curvegrid/multibaas/tree/master/server/app/eth/events/eventqueries
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
 const VALID_BOOLEANS = ['and', 'or'];
-const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
-const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
+const VALID_OPERATORS = [
+  'equal',
+  'notequal',
+  'lessthan',
+  'greaterthan',
+  'lessthanorequal',
+  'greaterthanorequal',
+];
+const VALID_OPERANDS = [
+  'input',
+  'contract_label',
+  'contract_name',
+  'contract_address',
+  'addresses.address',
+  'contract_address_label',
+  'block_number',
+  'triggered_at',
+];
 
 // eslint-disable-next-line no-useless-escape
 const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
