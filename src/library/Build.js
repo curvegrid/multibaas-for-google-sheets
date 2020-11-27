@@ -53,7 +53,7 @@ function buildFilters(items, start, numItems) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const j in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
-      const ruleParts = RegExp('^([A-Za-z.]+)([0-9]*)$').exec(rulePath[j]);
+      const ruleParts = RegExp('^([A-Za-z._]+)([0-9]*)$').exec(rulePath[j]);
       if (ruleParts === null || ruleParts.length < 2) {
         throw new Error(`Invalid rule '${rulePath[j]}' in '${rules}'`);
       }
