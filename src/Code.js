@@ -506,7 +506,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
     header = header.concat(['alias', 'index', 'aggregator']);
   }
   for (let i = 0; i < numFilters; i++) {
-    header = header.concat(['rule', 'operator', 'value']);
+    header = header.concat(['rule', 'operand', 'operator', 'value']);
   }
 
   return [header];
