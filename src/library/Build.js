@@ -42,18 +42,19 @@ function buildFilters(items, start, numItems) {
       throw new Error(`Value is empty for rule '${rules}'`);
     }
 
-    // split by colons
+    // split by colons for a nested rules
     const rulePath = rules.split(':');
 
     // loop through 'and' and 'or', creating children if they don't exist
     let node = filter;
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const ruleTest in rulePath) {
+    for (const ruleTest of rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
       if (!RegExp('^[A-Za-z._]+$').test(ruleTest)) {
         throw new Error(`Invalid rule '${ruleTest}' in '${rules}'`);
       }
 
+      const rule = ruleTest.toLowerCase();
       // if we're on a children array, search for a child matching this rule
       if (Array.isArray(node)) {
         // find the one that matches this rule
@@ -81,39 +82,38 @@ function buildFilters(items, start, numItems) {
       }
 
       // add a rule or descend to the next level down as appropriate
-      if (VALID_BOOLEANS.includes(rule)) {
-        if (Object.keys(node).length === 0) {
-          // new child node
-          node.rule = rule;
-          node.children = [{}];
-          [node] = node.children;
-        } else {
-          // existing child node
-
-          // node 'object' becomes a 'array'
-          node = node.children;
-        }
+      if (Object.keys(node).length < 1) {
+        // new child node
+        node.rule = validateRule(rule);
+        node.children = [{}];
+        [node] = node.children;
       } else {
-        // at the last level, add the rule
-        // first, ensure we're actually at a leaf node
-        // if not, add us to the children array
-        if (Object.keys(node).length > 0) {
-          node.children.push({});
-          node = node.children[node.children.length - 1];
-        }
+        // existing child node
 
-        node.operator = validateOperator(operator);
-        node.value = String(value);
-
-        // special case for an input
-        const operandParts = RegExp('^(input)([0-9]+)$').exec(rulePath[j]);
-        if (operandParts === null) {
-          node.fieldType = validateOperand(operand);
-        } else {
-          node.fieldType = validateOperand(operandParts[1]);
-          node.inputIndex = parseInt(operandParts[2], 10);
-        }
+        // node 'object' becomes a 'array'
+        node = node.children;
       }
+    }
+
+    // Once (nested) rule pointing is complete create or enter a filter.
+    // At the last level, add the rule
+    // first, ensure we're actually at a leaf node
+    // if not, add us to the children array
+    if (Array.isArray(node)) {
+      node.push({});
+      node = node[node.length - 1];
+    }
+
+    node.operator = validateOperator(operator);
+    node.value = String(value);
+
+    // special case for an input
+    const operandParts = RegExp('^(input)([0-9]+)$').exec(operand);
+    if (operandParts === null) {
+      node.fieldType = validateOperand(operand);
+    } else {
+      node.fieldType = validateOperand(operandParts[1]);
+      node.inputIndex = parseInt(operandParts[2], 10);
     }
   }
 
@@ -153,10 +153,9 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   // build the event query
   for (let i = 1; i < events.length; i++) {
     const event = events[i];
-
     // build selects and filters
     const selects = buildSelects(event, 1, numSelect);
-    const filters = buildFilters(event, 1 + numSelect * 4, numFilter);
+    const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
     const newQuery = {
       eventName: event[0],
       select: selects,
