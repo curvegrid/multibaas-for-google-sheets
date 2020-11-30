@@ -22,11 +22,11 @@ function extractSelectFilterCounts(header) {
   let numFilter = 0;
 
   let selectHalf = true;
-  for (let i = 1; i < header.length; i += 4) {
+  for (let i = 1; i < header.length;) {
     const aliasRule = header[i].toLowerCase();
     const indexOperand = header[i + 1].toLowerCase();
-    const indexOperator = header[i + 2].toLowerCase();
-    const aggregatorValue = header[i + 3].toLowerCase();
+    const aggregatorOperator = header[i + 2].toLowerCase();
+    const value = header[i + 3].toLowerCase();
 
     if (selectHalf) {
       if (aliasRule === 'rule') {
@@ -35,31 +35,33 @@ function extractSelectFilterCounts(header) {
         if (aliasRule !== 'alias') {
           throw new Error(`Expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
-        if (indexOperator !== 'index') {
-          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+        if (indexOperand !== 'index') {
+          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperand}'`);
         }
-        if (aggregatorValue !== 'aggregator') {
-          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+        if (aggregatorOperator !== 'aggregator') {
+          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorOperator}'`);
         }
 
         numSelect++;
+        i += 3;
       }
     }
     if (!selectHalf) {
       if (aliasRule !== 'rule') {
         throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
-      if (aliasRule !== 'operand') {
+      if (indexOperand !== 'operand') {
         throw new Error(`Expecting 'operand' in position ${i + 1}, found '${indexOperand}'`);
       }
-      if (indexOperator !== 'operator') {
-        throw new Error(`Expecting 'operator' in position ${i + 2}, found '${indexOperator}'`);
+      if (aggregatorOperator !== 'operator') {
+        throw new Error(`Expecting 'operator' in position ${i + 2}, found '${aggregatorOperator}'`);
       }
-      if (aggregatorValue !== 'value') {
-        throw new Error(`expecting 'value' in position ${i + 3}, found '${aggregatorValue}'`);
+      if (value !== 'value') {
+        throw new Error(`expecting 'value' in position ${i + 3}, found '${value}'`);
       }
 
       numFilter++;
+      i += 4;
     }
   }
 
