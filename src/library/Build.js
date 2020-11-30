@@ -44,23 +44,14 @@ function buildFilters(items, start, numItems) {
 
     // split by colons
     const rulePath = rules.split(':');
-    if (rulePath.length === 1) {
-      // special case for a single rule
-      rulePath.unshift('And');
-    }
 
     // loop through 'and' and 'or', creating children if they don't exist
     let node = filter;
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const j in rulePath) {
+    for (const ruleTest in rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
-      const ruleParts = RegExp('^([A-Za-z._]+)([0-9]*)$').exec(rulePath[j]);
-      if (ruleParts === null || ruleParts.length < 2) {
-        throw new Error(`Invalid rule '${rulePath[j]}' in '${rules}'`);
-      }
-      const rule = ruleParts[1].toLowerCase();
-      if (rule === '') {
-        throw new Error(`Sub-rule is empty in '${rules}'`);
+      if (!RegExp('^[A-Za-z._]+$').test(ruleTest)) {
+        throw new Error(`Invalid rule '${ruleTest}' in '${rules}'`);
       }
 
       // if we're on a children array, search for a child matching this rule
@@ -111,20 +102,16 @@ function buildFilters(items, start, numItems) {
           node = node.children[node.children.length - 1];
         }
 
-        node.fieldType = validateOperand(operand);
         node.operator = validateOperator(operator);
         node.value = String(value);
 
         // special case for an input
-        if (rule === 'input') {
-          if (ruleParts.length !== 3) {
-            throw new Error("No input index provided, just 'input'");
-          }
-          const inputIndex = ruleParts[2];
-          if (!isNaturalNumber(inputIndex)) {
-            throw new Error(`Invalid input index '${inputIndex}', must be a positive number`);
-          }
-          node.inputIndex = parseInt(inputIndex, 10);
+        const operandParts = RegExp('^(input)([0-9]+)$').exec(rulePath[j]);
+        if (operandParts === null) {
+          node.fieldType = validateOperand(operand);
+        } else {
+          node.fieldType = validateOperand(operandParts[1]);
+          node.inputIndex = parseInt(operandParts[2], 10);
         }
       }
     }
