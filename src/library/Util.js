@@ -26,7 +26,6 @@ function extractSelectFilterCounts(header) {
     const aliasRule = header[i].toLowerCase();
     const indexOperand = header[i + 1].toLowerCase();
     const aggregatorOperator = header[i + 2].toLowerCase();
-    const value = header[i + 3].toLowerCase();
 
     if (selectHalf) {
       if (aliasRule === 'rule') {
@@ -47,6 +46,8 @@ function extractSelectFilterCounts(header) {
       }
     }
     if (!selectHalf) {
+      const value = header[i + 3].toLowerCase();
+
       if (aliasRule !== 'rule') {
         throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
