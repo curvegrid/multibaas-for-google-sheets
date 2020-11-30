@@ -25,6 +25,15 @@ const VALID_OPERANDS = [
 // eslint-disable-next-line no-useless-escape
 const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
 
+function validateOperand(operand) {
+  const operandLower = String(operand).toLowerCase();
+  if (!VALID_OPERANDS.includes(operandLower)) {
+    throw new Error(`'${operandLower}' is not a valid operand, must be one of ${VALID_OPERANDS.join(',')}`);
+  }
+
+  return operandLower;
+}
+
 function validateOperator(operator) {
   const operatorLower = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operatorLower)) {
