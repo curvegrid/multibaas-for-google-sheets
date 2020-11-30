@@ -27,10 +27,11 @@ function buildSelects(items, start, numItems) {
 
 function buildFilters(items, start, numItems) {
   const filter = {};
-  for (let i = start; i < start + numItems * 3; i += 3) {
+  for (let i = start; i < start + numItems * 4; i += 4) {
     const rules = items[i];
-    const operator = items[i + 1];
-    const value = items[i + 2];
+    const operand = items[i + 1];
+    const operator = items[i + 2];
+    const value = items[i + 3];
 
     // not all rows will have the same number of filters
     if (rules === '') {
@@ -101,9 +102,8 @@ function buildFilters(items, start, numItems) {
           // node 'object' becomes a 'array'
           node = node.children;
         }
-      } else if (VALID_OPERANDS.includes(rule)) {
+      } else {
         // at the last level, add the rule
-
         // first, ensure we're actually at a leaf node
         // if not, add us to the children array
         if (Object.keys(node).length > 0) {
@@ -111,7 +111,7 @@ function buildFilters(items, start, numItems) {
           node = node.children[node.children.length - 1];
         }
 
-        node.fieldType = rule;
+        node.fieldType = validateOperand(operand);
         node.operator = validateOperator(operator);
         node.value = String(value);
 
@@ -169,7 +169,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
 
     // build selects and filters
     const selects = buildSelects(event, 1, numSelect);
-    const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
+    const filters = buildFilters(event, 1 + numSelect * 4, numFilter);
     const newQuery = {
       eventName: event[0],
       select: selects,
