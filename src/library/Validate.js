@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
-const VALID_BOOLEANS = ['and', 'or'];
+const VALID_RULES = ['and', 'or'];
 const VALID_OPERATORS = [
   'equal',
   'notequal',
@@ -24,6 +24,15 @@ const VALID_OPERANDS = [
 
 // eslint-disable-next-line no-useless-escape
 const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
+
+function validateRule(rule) {
+  const ruleLower = String(rule).toLowerCase();
+  if (!VALID_RULES.includes(ruleLower)) {
+    throw new Error(`'${ruleLower}' is not a valid rule, must be one of ${VALID_RULES.join(',')}`);
+  }
+
+  return ruleLower;
+}
 
 function validateOperand(operand) {
   const operandLower = String(operand).toLowerCase();
