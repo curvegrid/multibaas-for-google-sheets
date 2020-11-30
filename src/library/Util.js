@@ -22,10 +22,11 @@ function extractSelectFilterCounts(header) {
   let numFilter = 0;
 
   let selectHalf = true;
-  for (let i = 1; i < header.length; i += 3) {
+  for (let i = 1; i < header.length; i += 4) {
     const aliasRule = header[i].toLowerCase();
-    const indexOperator = header[i + 1].toLowerCase();
-    const aggregatorValue = header[i + 2].toLowerCase();
+    const indexOperand = header[i + 1].toLowerCase();
+    const indexOperator = header[i + 2].toLowerCase();
+    const aggregatorValue = header[i + 3].toLowerCase();
 
     if (selectHalf) {
       if (aliasRule === 'rule') {
@@ -48,11 +49,14 @@ function extractSelectFilterCounts(header) {
       if (aliasRule !== 'rule') {
         throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
+      if (aliasRule !== 'operand') {
+        throw new Error(`Expecting 'operand' in position ${i + 1}, found '${indexOperand}'`);
+      }
       if (indexOperator !== 'operator') {
-        throw new Error(`Expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+        throw new Error(`Expecting 'operator' in position ${i + 2}, found '${indexOperator}'`);
       }
       if (aggregatorValue !== 'value') {
-        throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
+        throw new Error(`expecting 'value' in position ${i + 3}, found '${aggregatorValue}'`);
       }
 
       numFilter++;
