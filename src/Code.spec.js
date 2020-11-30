@@ -339,7 +339,7 @@ function testRunner(testSheetURL) {
       func: MBCUSTOMQUERYTEMPLATE,
       isTemplate: true,
       args: [2, 2],
-      expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operator', 'value', 'rule', 'operator', 'value']],
+      expected: [['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', 'rule', 'operand', 'operator', 'value', 'rule', 'operand', 'operator', 'value']],
     },
     {
       name: 'TestMBCUSTOMQUERYTEMPLATE with No Filter',
