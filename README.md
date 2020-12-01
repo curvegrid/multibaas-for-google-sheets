@@ -95,7 +95,7 @@ This is the credential file.
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_secret": "[YOUR GCP PROJECT CLIENT SECRET",
+    "client_secret": "[YOUR GCP PROJECT CLIENT SECRET]",
     "redirect_uris": [
       "urn:ietf:wg:oauth:2.0:oob",
       "http://localhost"
@@ -142,19 +142,3 @@ Just follow the URL and authenticate your account then you can retrieve a code t
 ```sh
 yarn lint
 ```
-
-## Update version
-
-First, run `yarn version` to add tag into git history and update `package.json` file.
-
-```sh
-yarn version
-```
-
-And run `yarn update` to update the version in `src/Code.js`.
-
-```sh
-yarn update
-```
-
-DO NOT commit the version change after running these command above, please use these only for test in your project.
