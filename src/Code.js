@@ -2,9 +2,6 @@
 
 /* eslint-disable no-unused-vars */
 
-// This VERSION should be same with "version" in package.json and git tag
-const VERSION = '1.0.0';
-
 function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
