@@ -1,6 +1,6 @@
 {
   "name": "multibaas-for-google-sheets",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MultiBaas for Google Sheets",
   "repository": "https://github.com/curvegrid/multibaas-for-google-sheets",
   "author": "Curvegrid Inc.",
@@ -11,7 +11,7 @@
     "test": "clasp push && cd test && node mbSheetsAddOn.js",
     "push": "clasp push",
     "preversion": "yarn test",
-    "postversion": "git push --tags && echo \"const VERSION = '$npm_package_version';\" > src/Version.js && echo \"Successfully released version $npm_package_version!\""
+    "postversion": "git push --tags && echo \"const VERSION = '$npm_package_version';\" > src/Version.js && echo \"🤓 Successfully released version $npm_package_version!\""
   },
   "keywords": [
     "multibaas",
