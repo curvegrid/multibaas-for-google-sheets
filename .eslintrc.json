@@ -12,6 +12,8 @@
     "PropertiesService": false,
     // Google spreadsheet test library
     "GasTap": false,
+    // Version.js
+    "VERSION": false,
     // Code.js
     "MBADDRESS": false,
     "MBBLOCK": false,

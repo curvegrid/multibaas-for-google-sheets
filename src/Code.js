@@ -2,8 +2,6 @@
 
 /* eslint-disable no-unused-vars */
 
-const VERSION = '0.1.0';
-
 function setDeploymentId() {
   const ui = SpreadsheetApp.getUi();
   const result = ui.prompt(
