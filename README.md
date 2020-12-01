@@ -142,19 +142,3 @@ Just follow the URL and authenticate your account then you can retrieve a code t
 ```sh
 yarn lint
 ```
-
-## Update version
-
-First, run `yarn version` to add tag into git history and update `package.json` file.
-
-```sh
-yarn version
-```
-
-And run `yarn update` to update the version in `src/Code.js`.
-
-```sh
-yarn update
-```
-
-DO NOT commit the version change after running these command above, please use these only for test in your project.
