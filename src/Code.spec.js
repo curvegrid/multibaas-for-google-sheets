@@ -480,7 +480,7 @@ function testRunner(testSheetURL) {
     {
       name: 'TestMBQUERY without limit (default is 10) and offset',
       skip: false,
-      only: true,
+      only: false,
       debug: false,
       func: MBQUERY,
       args: ['FaucetLogSent'],
@@ -501,7 +501,7 @@ function testRunner(testSheetURL) {
     {
       name: 'TestMBQUERY with limit 5 and offset 3',
       skip: false,
-      only: true,
+      only: false,
       debug: false,
       func: MBQUERY,
       args: ['FaucetLogSent', 5, 3],
@@ -515,12 +515,12 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBQUERY with limit 31',
+      name: 'TestMBQUERY with limit 32',
       skip: false,
-      only: true,
+      only: false,
       debug: false,
       func: MBQUERY,
-      args: ['FaucetLogSent', 31, 0],
+      args: ['FaucetLogSent', 32, 0],
       expected: [
         ['amount', 'receiver'],
         [1000000000000000000, '0x1ca01d74dfb89655c29e3185b12747aaadc5b774'],
@@ -554,12 +554,13 @@ function testRunner(testSheetURL) {
         [1000000000000000000, '0xff6bd443ce15da0aae9fa88b4433505e4df92c93'],
         [1000000000000000000, '0x0cefb3a1740155a7b37c4373ee9e66ef53d9cb5d'],
         [1000000000000000000, '0x0b78f59a375dd8602070c2579346507004db429e'],
+        [1000000000000000000, '0x39b6612fef5add119d653cd1d3582685ed07c99a'],
       ],
     },
     {
       name: 'TestMBQUERY with limit all (infinity)',
       skip: false,
-      only: true,
+      only: false,
       debug: false,
       func: MBQUERY,
       args: ['FaucetLogSent', 'all', 0],
