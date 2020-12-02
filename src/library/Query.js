@@ -2,6 +2,18 @@
 
 /* eslint-disable no-unused-vars */
 
+function checkLimit(limit) {
+  if (!limit) {
+    return 0;
+  }
+
+  if (limit === 'all') {
+    return Infinity;
+  }
+
+  return limit;
+}
+
 function query(httpMethod, deployment, apiKey, qry, payload) {
   // validate and normalize deployment and API key
   const [deploymentNorm, apiKeyNorm] = normalizeCreds(deployment, apiKey);
@@ -33,11 +45,45 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
 }
 
 function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload, address) {
-  // validate and normalize limit and offset
+  const separationLimit = 30;
+  const limitChecked = checkLimit(limit);
+  if (limitChecked > separationLimit) {
+    const results = {
+      status: null,
+      message: null,
+      result: {
+        rows: [],
+      },
+    };
+
+    let offsetNext = offset;
+    while (true) {
+      // validate and normalize limit and offset
+      const queryOptions = buildQueryOptions(separationLimit, offsetNext, address);
+
+      // query
+      const queryResult = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
+      results.status = queryResult.status;
+      results.message = queryResult.message;
+
+      const currentLength = queryResult.result.rows.length;
+      const preLength = results.result.rows.length + queryResult.result.rows.length;
+      if (currentLength < 1) {
+        break;
+      } else if (preLength > limit) {
+        // Get rid of the overflowed if actual data is more than limit
+        results.result.rows.push(...queryResult.result.rows.slice(0, preLength - limit));
+        break;
+      } else {
+        results.result.rows.push(...queryResult.result.rows);
+      }
+
+      offsetNext += separationLimit;
+    }
+
+    return results;
+  }
+
   const queryOptions = buildQueryOptions(limit, offset, address);
-
-  // query
-  const results = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
-
-  return results;
+  return query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
 }
