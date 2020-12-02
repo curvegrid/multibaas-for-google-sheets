@@ -50,8 +50,9 @@ function callAppsScript(auth) {
     } else {
       console.log(resp.data);
       if (resp.data.response) {
-        const { log, failures } = resp.data.response.result;
-        console.log(log);
+        // script.scripts.run prints the result so no need double prints
+        const { /* log, */ failures } = resp.data.response.result;
+        // console.log(log);
         process.exit(failures);
       } else {
         process.exit(1);
