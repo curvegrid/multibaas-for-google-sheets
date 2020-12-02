@@ -333,8 +333,8 @@ function testRunner(testSheetURL) {
       expected: [
         ['amount', 'sender'],
         [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
-        ['1000000000000000000', '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
-        ['1000000000000000000', '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
       ],
     },
     {
@@ -417,7 +417,7 @@ function testRunner(testSheetURL) {
           'LogDeposited',
           'LogDeposited(address sender,uint256) amount',
           '0xA616eEd6aD7A0cF5d2388301a710c273ca955e05',
-          '1000000000000000000',
+          1000000000000000000,
           formatDateTime('1899-12-29T15:00:00.000Z'),
           'multibaasfaucet',
           '0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7',
