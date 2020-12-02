@@ -72,7 +72,8 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
         break;
       } else if (preLength > limit) {
         // Get rid of the overflowed if actual data is more than limit
-        results.result.rows.push(...queryResult.result.rows.slice(0, preLength - limit));
+        const cutOff = currentLength - (preLength - limit);
+        results.result.rows.push(...queryResult.result.rows.slice(0, cutOff));
         break;
       } else {
         results.result.rows.push(...queryResult.result.rows);
