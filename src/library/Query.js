@@ -70,9 +70,9 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
       const preLength = results.result.rows.length + queryResult.result.rows.length;
       if (currentLength < 1) {
         break;
-      } else if (preLength > limit) {
-        // Get rid of the overflowed if actual data is more than limit
-        const cutOff = currentLength - (preLength - limit);
+      } else if (preLength > limitChecked) {
+        // Get rid of the overflowed if actual data is more than limitChecked(limit)
+        const cutOff = currentLength - (preLength - limitChecked);
         results.result.rows.push(...queryResult.result.rows.slice(0, cutOff));
         break;
       } else {
