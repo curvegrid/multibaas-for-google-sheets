@@ -399,7 +399,7 @@ function MBADDRESS(address, headers, code) {
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBQUERY(query, limit, offset) {
+function MBQUERY(query, limit = 10, offset = 0) {
   if (!query) {
     throw new Error('Must provide an Event Query name');
   }
@@ -437,7 +437,7 @@ function MBQUERY(query, limit, offset) {
  * @return A two dimensional array with the results of the Event Query.
  * @customfunction
  */
-function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
+function MBCUSTOMQUERY(events, groupBy, orderBy, limit = 10, offset = 0) {
   if (!events) {
     throw new Error('Must provide an events definition');
   }
@@ -519,7 +519,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
  * @return A two dimensional array of events.
  * @customfunction
  */
-function MBEVENTS(address, limit, offset) {
+function MBEVENTS(address, limit = 10, offset = 0) {
   if (!address) {
     throw new Error('Must provide an address or address label');
   }
