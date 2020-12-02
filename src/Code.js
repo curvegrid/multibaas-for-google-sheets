@@ -225,7 +225,6 @@ function MBEVENTLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -260,7 +259,6 @@ function MBFUNCTIONLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -299,7 +297,6 @@ function MBTX(hash, headers) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -340,7 +337,6 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -379,7 +375,6 @@ function MBADDRESS(address, headers, code) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -416,7 +411,6 @@ function MBQUERY(query, limit = 10, offset = 0) {
       offset,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -462,7 +456,6 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit = 10, offset = 0) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -538,7 +531,6 @@ function MBEVENTS(address, limit = 10, offset = 0) {
       address,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -584,7 +576,6 @@ function MBGET(address, contract, method, ...args) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   const { output } = results.result;
@@ -622,7 +613,6 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   const output = JSON.stringify(results.result.tx);
