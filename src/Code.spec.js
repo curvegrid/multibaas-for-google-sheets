@@ -81,6 +81,8 @@ function run(test, config, testCase) {
       loggerAPI(`Expected Values: ${JSON.stringify(testCase.expected)}`);
     }
 
+    // Actual values which is stored in spreadsheet after API call
+    console.log(`Actual vs. Expected: ${JSON.stringify(actualSheet)} vs. ${JSON.stringify(testCase.expected)}`);
     t.deepEqual(actualSheet, testCase.expected, 'data in the sheet should be same');
 
     // Keep final data in the spreadsheet
