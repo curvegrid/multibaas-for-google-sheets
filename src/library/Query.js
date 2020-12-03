@@ -51,10 +51,10 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
     const results = {
       status: null,
       message: null,
-      result: {
-        rows: [],
-      },
     };
+    // MBQUERY, MBCUSTOMQUERY has rows in result but MBEVENTS has not
+    const hasRows = !/^events$/.test(queryPath);
+    const rows = [];
 
     let offsetNext = offset;
     while (true) {
@@ -66,21 +66,24 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
       results.status = queryResult.status;
       results.message = queryResult.message;
 
-      const currentLength = queryResult.result.rows.length;
-      const preLength = results.result.rows.length + queryResult.result.rows.length;
+      const queryRows = hasRows ? queryResult.result.rows : queryResult.result;
+      const preLength = rows.length + queryRows.length;
+      const currentLength = queryRows.length;
       if (currentLength < 1) {
         break;
       } else if (preLength > limitChecked) {
         // Get rid of the overflowed if actual data is more than limitChecked(limit)
         const cutOff = currentLength - (preLength - limitChecked);
-        results.result.rows.push(...queryResult.result.rows.slice(0, cutOff));
+        rows.push(...queryRows.slice(0, cutOff));
         break;
       } else {
-        results.result.rows.push(...queryResult.result.rows);
+        rows.push(...queryRows);
       }
 
       offsetNext += separationLimit;
     }
+
+    results.result = hasRows ? { rows } : rows;
 
     return results;
   }
