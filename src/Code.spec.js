@@ -499,6 +499,17 @@ function testRunner(testSheetURL) {
       ],
     },
     {
+      name: 'TestMBQUERY with limit 0',
+      skip: false,
+      only: true,
+      debug: false,
+      func: MBQUERY,
+      args: ['FaucetLogSent', 0],
+      expected: [
+        ['No data'],
+      ],
+    },
+    {
       name: 'TestMBQUERY with limit 5 and offset 3',
       skip: false,
       only: false,
