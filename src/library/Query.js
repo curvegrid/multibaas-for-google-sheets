@@ -3,11 +3,11 @@
 /* eslint-disable no-unused-vars */
 
 function checkLimit(limit) {
-  if (!limit) {
+  if (!limit || !Number.isInteger(limit)) {
     return 0;
   }
 
-  if (limit === 'all') {
+  if (limit < 0) {
     return Infinity;
   }
 
