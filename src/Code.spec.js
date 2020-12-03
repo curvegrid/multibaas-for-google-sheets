@@ -576,7 +576,7 @@ function testRunner(testSheetURL) {
       only: false,
       debug: false,
       func: MBQUERY,
-      args: ['FaucetLogSent', 'all', 0],
+      args: ['FaucetLogSent', -1, 0],
       expected: [
         ['amount', 'receiver'],
         [1000000000000000000, '0x1ca01d74dfb89655c29e3185b12747aaadc5b774'],
