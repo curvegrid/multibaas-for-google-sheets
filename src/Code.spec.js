@@ -503,7 +503,7 @@ function testRunner(testSheetURL) {
     {
       name: 'TestMBQUERY with limit 0',
       skip: false,
-      only: true,
+      only: false,
       debug: false,
       func: MBQUERY,
       args: ['FaucetLogSent', 0],
