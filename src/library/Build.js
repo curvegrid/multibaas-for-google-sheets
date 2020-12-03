@@ -218,25 +218,10 @@ function buildQueryOptions(limit, offset, address) {
   }
 
   // generate a clean URL query param
-  let queryOptions = '';
-  if (limit) {
-    queryOptions += `?limit=${limit}`;
-  }
-  if (offset) {
-    if (queryOptions === '') {
-      queryOptions += '?';
-    } else {
-      queryOptions += '&';
-    }
-    queryOptions += `offset=${offset}`;
-  }
+  let queryOptions = `?limit=${limit}&offset=${offset}`;
+
   if (address) {
-    if (queryOptions === '') {
-      queryOptions += '?';
-    } else {
-      queryOptions += '&';
-    }
-    queryOptions += `contract_address=${address}`;
+    queryOptions += `&contract_address=${address}`;
   }
 
   return queryOptions;
