@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { google } = require('googleapis');
 const { authenticate } = require('./auth');
-require('dotenv').config({ path: '../.env' });
 
 /**
  * Call the "testRunner" to test function on the deployed script.
@@ -11,8 +10,8 @@ require('dotenv').config({ path: '../.env' });
 function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
   const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
+  const { url: testSheetURL } = JSON.parse(fs.readFileSync('../.testSheet.json'));
 
-  const testSheetURL = process.env.TEST_SHEET_URL;
   if (!testSheetURL) {
     console.error('error: no TEST_SHEET_URL env variable');
     process.exit(1);
