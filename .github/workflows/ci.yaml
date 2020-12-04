@@ -76,5 +76,9 @@ jobs:
           node generateCredentials.js
           ls -l $HOME/.*.json
           ls .*.json
+          echo "=== .testSheet.json ==="
           cat .testSheet.json
+          echo "\n.=== client-secret.json ==="
+          cat .client-secret.json
+          echo "\n"
           yarn test
