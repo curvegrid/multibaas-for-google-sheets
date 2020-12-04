@@ -6,6 +6,7 @@ const DOT_CLASPRC_FILE = path.join(process.env.HOME, '.clasprc.json');
 const DOT_CLASP_FILE = '.clasp.json';
 const CLIENT_SECRET_FILE = '.client-secret.json';
 const CREDENTIALS_FILE = '.credentials.json';
+const ENV_FILE = '.env';
 
 // CLASP config
 const dotClasprc = {
@@ -60,6 +61,7 @@ function writeJSONFile(filename, content) {
   fs.writeFileSync(filename, JSON.stringify(content, null, 2));
 }
 
+fs.writeFileSync(ENV_FILE, `TEST_SHEET_URL=${process.env.TEST_SHEET_URL}`);
 writeJSONFile(DOT_CLASPRC_FILE, dotClasprc);
 writeJSONFile(DOT_CLASP_FILE, dotClasp);
 writeJSONFile(CLIENT_SECRET_FILE, clientSecret);
