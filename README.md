@@ -79,7 +79,7 @@ You need to create `.client-secret.json`, `.credentials.json`, `.clasp.json`, an
 ![GCP Step 2](./.readme/config-gcp-2.png)
 ![GCP Step 3](./.readme/config-gcp-3.png)
 
-This is the client-secret file.
+You need to replace a file name with `.client-secret.json` after downloading it.
 
 ```json
 {
@@ -110,7 +110,7 @@ This is the client-secret file.
 {"url": "[YOUR SPREADSHEET URL]"}
 ```
 
-Run `yarn test` to retrieve a token for `.credentials.json`.
+Run `yarn test`.
 
 ```sh
 yarn test
