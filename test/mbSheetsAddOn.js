@@ -10,7 +10,10 @@ const { authenticate } = require('./auth');
 function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
   const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
+  const why = JSON.parse(fs.readFileSync('../.testSheet.json'));
   const { url: testSheetURL } = JSON.parse(fs.readFileSync('../.testSheet.json'));
+
+  console.log('WHY: ', JSON.stringify(why));
 
   if (!testSheetURL) {
     console.error('error: no test sheet url');
