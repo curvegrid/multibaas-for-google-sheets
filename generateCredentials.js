@@ -10,7 +10,7 @@ const CREDENTIALS_FILE = '.credentials.json';
 
 // Test Sheet config
 const dotTestSheet = {
-  url: process.env.TEST_SHEET_URL,
+  url: process.env.CLASPRC_ACCESS_TOKEN,
 };
 
 // CLASP config
