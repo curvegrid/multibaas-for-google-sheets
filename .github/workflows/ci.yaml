@@ -76,5 +76,4 @@ jobs:
           node generateCredentials.js
           ls -l $HOME/.*.json
           ls .*.json
-          ls .env
           yarn test
