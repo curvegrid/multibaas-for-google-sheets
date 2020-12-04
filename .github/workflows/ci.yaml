@@ -76,7 +76,7 @@ jobs:
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
           export TEST_SHEET_URL="$TEST_SHEET_URL"
           node generateCredentials.js
-          # ls -l $HOME/.*.json
+          ls -l $HOME/.*.json
           ls .*.json
           cat .testSheet.json
-          # yarn test
+          yarn test

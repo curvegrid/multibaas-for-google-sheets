@@ -8,8 +8,6 @@ const DOT_CLASP_FILE = '.clasp.json';
 const CLIENT_SECRET_FILE = '.client-secret.json';
 const CREDENTIALS_FILE = '.credentials.json';
 
-console.log(process.env);
-
 // Test Sheet config
 const dotTestSheet = {
   url: process.env.TEST_SHEET_URL,
