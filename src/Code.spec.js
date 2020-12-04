@@ -463,19 +463,6 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBEVENTS with limit 0',
-      // TODO: Try after https://github.com/curvegrid/multibaas/issues/2895
-      skip: true,
-      only: false,
-      debug: false,
-      func: MBEVENTS,
-      isTemplate: false,
-      args: ['multibaasfaucet', 0],
-      expected: [
-        ['No data'],
-      ],
-    },
-    {
       name: 'TestMBEVENTS with limit 39 and offset 1',
       skip: false,
       only: false,
@@ -608,17 +595,6 @@ function testRunner(testSheetURL) {
         [1000000000000000000, '0x3f37278403bf4fa7c2b8fa0d21af353c554641a1'],
         [1000000000000000000, '0x5d0af8790f21375c65a75c3822d75fee75bfc649'],
         [1000000000000000000, '0x34a971ca2fd6da2ce2969d716df922f17aaa1db0'],
-      ],
-    },
-    {
-      name: 'TestMBQUERY with limit 0',
-      skip: false,
-      only: false,
-      debug: false,
-      func: MBQUERY,
-      args: ['FaucetLogSent', 0],
-      expected: [
-        ['No data'],
       ],
     },
     {
