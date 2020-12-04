@@ -3,8 +3,8 @@
 /* eslint-disable no-unused-vars */
 
 function checkLimit(limit) {
-  if (!limit || !Number.isInteger(limit)) {
-    return 0;
+  if (!limit) {
+    return 10;
   }
 
   if (limit < 0) {
@@ -88,6 +88,6 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
     return results;
   }
 
-  const queryOptions = buildQueryOptions(limit, offset, address);
+  const queryOptions = buildQueryOptions(limitChecked, offset, address);
   return query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
 }
