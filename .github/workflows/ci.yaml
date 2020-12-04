@@ -73,12 +73,8 @@ jobs:
           export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
           export CLIENT_SCOPE="$CLIENT_SCOPE"
           export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
+          export TEST_SHEET_URL="$TEST_SHEET_URL"
           node generateCredentials.js
-          # ls -l $HOME/.*.json
-          # ls .*.json
-          # echo "=== .testSheet.json ==="
-          # cat .testSheet.json
-          # echo "\n.=== client-secret.json ==="
-          # cat .client-secret.json
-          # echo "\n"
-          # yarn test
+          ls -l $HOME/.*.json
+          ls .*.json
+          yarn test
