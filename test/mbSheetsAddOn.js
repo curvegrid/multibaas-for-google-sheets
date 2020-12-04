@@ -13,7 +13,7 @@ function callAppsScript(auth) {
   const { url: testSheetURL } = JSON.parse(fs.readFileSync('../.testSheet.json'));
 
   if (!testSheetURL) {
-    console.error('error: no TEST_SHEET_URL env variable');
+    console.error('error: no test sheet url');
     process.exit(1);
   }
 
