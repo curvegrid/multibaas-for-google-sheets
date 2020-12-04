@@ -58,23 +58,6 @@ jobs:
         run: |
           yarn global add @google/clasp
           yarn install
-          # export CLASPRC_ACCESS_TOKEN="$CLASPRC_ACCESS_TOKEN"
-          # export CLASPRC_SCOPE="$CLASPRC_SCOPE"
-          # export CLASPRC_ID_TOKEN="$CLASPRC_ID_TOKEN"
-          # export CLASPRC_REFRESH_TOKEN="$CLASPRC_REFRESH_TOKEN"
-          # export CLASPRC_EXPIRY_DATE="$CLASPRC_EXPIRY_DATE"
-          # export CLASPRC_CLIENT_ID="$CLASPRC_CLIENT_ID"
-          # export CLASPRC_CLIENT_SECRET="$CLASPRC_CLIENT_SECRET"
-          # export CLASPRC_REDIRECT_URI="$CLASPRC_REDIRECT_URI"
-          # export SCRIPT_ID="$SCRIPT_ID"
-          # export CLIENT_ID="$CLIENT_ID"
-          # export PROJECT_ID="$PROJECT_ID"
-          # export CLIENT_SECRET="$CLIENT_SECRET"
-          # export CLIENT_ACCESS_TOKEN="$CLIENT_ACCESS_TOKEN"
-          # export CLIENT_REFRESH_TOKEN="$CLIENT_REFRESH_TOKEN"
-          # export CLIENT_SCOPE="$CLIENT_SCOPE"
-          # export CLIENT_EXPIRY_DATE="$CLIENT_EXPIRY_DATE"
-          # export TEST_SHEET_URL="$TEST_SHEET_URL"
           node generateCredentials.js
           ls -l $HOME/.*.json
           ls .*.json
