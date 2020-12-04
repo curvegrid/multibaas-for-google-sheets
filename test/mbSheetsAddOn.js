@@ -14,7 +14,8 @@ function callAppsScript(auth) {
 
   const testSheetURL = process.env.TEST_SHEET_URL;
   if (!testSheetURL) {
-    throw new Error('No test sheet URL');
+    console.error('error: no TEST_SHEET_URL env variable');
+    process.exit(1);
   }
 
   const request = {
@@ -26,7 +27,7 @@ function callAppsScript(auth) {
   script.scripts.run({ auth, scriptId, resource: request }, (err, resp) => {
     if (err) {
       // The API encountered a problem before the script started executing.
-      console.error(`api returned an error: ${err}`);
+      console.error(`error: api returned an error: ${err}`);
       process.exit(1);
     }
     if (resp.data.error) {
@@ -36,8 +37,8 @@ function callAppsScript(auth) {
       // object are the script's 'errorMessage' and 'errorType', and an array
       // of stack trace elements.
       const [errorDetail] = resp.data.error.details;
-      console.error(`script error message: ${errorDetail.errorMessage}`);
-      console.error('script error stacktrace:');
+      console.error(`error: script error message: ${errorDetail.errorMessage}`);
+      console.error('error: script error stacktrace:');
 
       if (errorDetail.scriptStackTraceElements) {
         // There may not be a stacktrace if the script didn't start executing.
