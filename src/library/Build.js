@@ -218,7 +218,11 @@ function buildQueryOptions(limit, offset, address) {
   }
 
   // generate a clean URL query param
-  let queryOptions = `?limit=${limit}&offset=${offset}`;
+  let queryOptions = `?limit=${limit}`;
+
+  if (offset) {
+    queryOptions += `&offset=${offset}`;
+  }
 
   if (address) {
     queryOptions += `&contract_address=${address}`;
