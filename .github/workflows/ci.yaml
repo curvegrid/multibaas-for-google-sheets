@@ -54,6 +54,7 @@ jobs:
           CLIENT_REFRESH_TOKEN: ${{ secrets.CLIENT_REFRESH_TOKEN }}
           CLIENT_SCOPE: ${{ secrets.CLIENT_SCOPE }}
           CLIENT_EXPIRY_DATE: ${{ secrets.CLIENT_EXPIRY_DATE }}
+          TEST_SHEET_URL: ${{secrets.$TEST_SHEET_URL}}
         run: |
           yarn global add @google/clasp
           yarn install
