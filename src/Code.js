@@ -455,7 +455,7 @@ function MBADDRESSATTIME(time, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&time=${time}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&time=${convertDateTimeToUTC(time)}`;
   let results;
   try {
     results = query(
@@ -752,7 +752,7 @@ function MBGETATTIME(time, address, contract, method, ...args) {
     throw new Error('Must provide a method (function) name');
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?time=${time}`;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?time=${convertDateTimeToUTC(time)}`;
 
   // build args
   const payload = buildMethodArgs(args);
