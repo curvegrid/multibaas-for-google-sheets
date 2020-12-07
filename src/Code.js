@@ -393,7 +393,7 @@ function MBADDRESS(address, headers, code) {
 /**
  * Retrieve the details of a blockchain address using a block number.
  *
- * @param {blockNumber} blockNumber Ethereum block number.
+ * @param {block} block Ethereum block number.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
@@ -401,9 +401,9 @@ function MBADDRESS(address, headers, code) {
  * @return Address details.
  * @customfunction
  */
-function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
-  if (!blockNumber) {
-    throw new Error('Must provide a blockNumber');
+function MBADDRESSATBLOCK(block, address, headers, code) {
+  if (!block) {
+    throw new Error('Must provide a block');
   }
   if (!address) {
     throw new Error('Must provide an address or address label');
@@ -412,7 +412,7 @@ function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&block=${blockNumber}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&block=${block}`;
   let results;
   try {
     results = query(
@@ -434,9 +434,9 @@ function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
 }
 
 /**
- * Retrieve the details of a blockchain address using timestamp.
+ * Retrieve the details of a blockchain address using time.
  *
- * @param {timestamp} timestamp Used to retrieve the details at timestamp.
+ * @param {time} time Used to retrieve the details at time.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
@@ -444,9 +444,9 @@ function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
  * @return Address details.
  * @customfunction
  */
-function MBADDRESSATTIME(timestamp, address, headers, code) {
-  if (!timestamp) {
-    throw new Error('Must provide a timestamp');
+function MBADDRESSATTIME(time, address, headers, code) {
+  if (!time) {
+    throw new Error('Must provide a time');
   }
   if (!address) {
     throw new Error('Must provide an address or address label');
@@ -455,7 +455,7 @@ function MBADDRESSATTIME(timestamp, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
 
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&timestamp=${timestamp}`;
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&time=${time}`;
   let results;
   try {
     results = query(
@@ -681,7 +681,7 @@ function MBGET(address, contract, method, ...args) {
 /**
  * Retrieve the results of a smart contract function call.
  *
- * @param {blockNumber} blockNumber Ethereum block number.
+ * @param {block} block Ethereum block number.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -689,9 +689,9 @@ function MBGET(address, contract, method, ...args) {
  * @return One or more values returned from the function.
  * @customfunction
  */
-function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
-  if (!blockNumber) {
-    throw new Error('Must provide a blockNumber');
+function MBGETATBLOCK(block, address, contract, method, ...args) {
+  if (!block) {
+    throw new Error('Must provide a block');
   }
   if (!address) {
     throw new Error('Must provide an address or address label');
@@ -703,7 +703,7 @@ function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
     throw new Error('Must provide a method (function) name');
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?block=${blockNumber}`;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?block=${block}`;
 
   // build args
   const payload = buildMethodArgs(args);
@@ -730,7 +730,7 @@ function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
 /**
  * Retrieve the results of a smart contract function call.
  *
- * @param {timestamp} timestamp  Used to retrieve the results at timestamp.
+ * @param {time} time  Used to retrieve the results at time.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -738,9 +738,9 @@ function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
  * @return One or more values returned from the function.
  * @customfunction
  */
-function MBGETATTIME(timestamp, address, contract, method, ...args) {
-  if (!timestamp) {
-    throw new Error('Must provide a timestamp');
+function MBGETATTIME(time, address, contract, method, ...args) {
+  if (!time) {
+    throw new Error('Must provide a time');
   }
   if (!address) {
     throw new Error('Must provide an address or address label');
@@ -752,7 +752,7 @@ function MBGETATTIME(timestamp, address, contract, method, ...args) {
     throw new Error('Must provide a method (function) name');
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?timestamp=${timestamp}`;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?time=${time}`;
 
   // build args
   const payload = buildMethodArgs(args);
