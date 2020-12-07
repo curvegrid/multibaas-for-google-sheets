@@ -53,6 +53,7 @@
     "objectArrayToArray": false,
     "eventsToArray": false,
     "formatDateTime": false,
+    "convertDateTimeToUTC": false,
     "credentialsExist": false,
     // Validate.js
     "validateBlockTxHash": false,
