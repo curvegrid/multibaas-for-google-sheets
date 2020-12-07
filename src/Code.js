@@ -391,6 +391,36 @@ function MBADDRESS(address, headers, code) {
 }
 
 /**
+ * Retrieve the details of a blockchain address using a block number.
+ *
+ * @param {blockNumber} blockNumber Ethereum block number.
+ * @param {address} address Ethereum address or label.
+ * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
+ * if any. TRUE/FALSE, defaults to FALSE.
+ * @return Address details.
+ * @customfunction
+ */
+function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
+
+}
+
+/**
+ * Retrieve the details of a blockchain address using timestamp.
+ *
+ * @param {timestamp} timestamp Used to retrieve the details at timestamp.
+ * @param {address} address Ethereum address or label.
+ * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
+ * if any. TRUE/FALSE, defaults to FALSE.
+ * @return Address details.
+ * @customfunction
+ */
+function MBADDRESSATTIME(timestamp, address, headers, code) {
+
+}
+
+/**
  * Retrieve the results of a MultiBaas Event Query.
  *
  * @param {query} query Event Query name to return results from.
@@ -590,6 +620,36 @@ function MBGET(address, contract, method, ...args) {
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
+}
+
+/**
+ * Retrieve the results of a smart contract function call.
+ *
+ * @param {blockNumber} blockNumber Ethereum block number.
+ * @param {address} address Ethereum address or label.
+ * @param {contract} contract Smart contract label, must be associated with the address.
+ * @param {method} method Smart contract function name.
+ * @param {args} args (Optional) Arguments to pass to the function.
+ * @return One or more values returned from the function.
+ * @customfunction
+ */
+function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
+
+}
+
+/**
+ * Retrieve the results of a smart contract function call.
+ *
+ * @param {timestamp} timestamp  Used to retrieve the results at timestamp.
+ * @param {address} address Ethereum address or label.
+ * @param {contract} contract Smart contract label, must be associated with the address.
+ * @param {method} method Smart contract function name.
+ * @param {args} args (Optional) Arguments to pass to the function.
+ * @return One or more values returned from the function.
+ * @customfunction
+ */
+function MBGETATTIME(timestamp, address, contract, method, ...args) {
+
 }
 
 /**
