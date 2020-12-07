@@ -402,7 +402,35 @@ function MBADDRESS(address, headers, code) {
  * @customfunction
  */
 function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
+  if (!blockNumber) {
+    throw new Error('Must provide a blockNumber');
+  }
+  if (!address) {
+    throw new Error('Must provide an address or address label');
+  }
 
+  const isHeaders = clampBool(headers, true);
+  const isCode = clampBool(code, false);
+
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&block=${blockNumber}`;
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
+
+  // turn the address structure into a flat array
+  const output = addressToArray(results.result, isHeaders, isCode);
+  console.log(`Results: ${JSON.stringify(output)}`);
+
+  return output;
 }
 
 /**
@@ -417,7 +445,35 @@ function MBADDRESSATBLOCK(blockNumber, address, headers, code) {
  * @customfunction
  */
 function MBADDRESSATTIME(timestamp, address, headers, code) {
+  if (!timestamp) {
+    throw new Error('Must provide a timestamp');
+  }
+  if (!address) {
+    throw new Error('Must provide an address or address label');
+  }
 
+  const isHeaders = clampBool(headers, true);
+  const isCode = clampBool(code, false);
+
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&timestamp=${timestamp}`;
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
+
+  // turn the address structure into a flat array
+  const output = addressToArray(results.result, isHeaders, isCode);
+  console.log(`Results: ${JSON.stringify(output)}`);
+
+  return output;
 }
 
 /**
@@ -634,7 +690,41 @@ function MBGET(address, contract, method, ...args) {
  * @customfunction
  */
 function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
+  if (!blockNumber) {
+    throw new Error('Must provide a blockNumber');
+  }
+  if (!address) {
+    throw new Error('Must provide an address or address label');
+  }
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
+  }
+  if (!method) {
+    throw new Error('Must provide a method (function) name');
+  }
 
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?block=${blockNumber}`;
+
+  // build args
+  const payload = buildMethodArgs(args);
+
+  let results;
+  try {
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
+  const { output } = results.result;
+  console.log(`Results: ${JSON.stringify(output)}`);
+
+  return output;
 }
 
 /**
@@ -649,7 +739,41 @@ function MBGETATBLOCK(blockNumber, address, contract, method, ...args) {
  * @customfunction
  */
 function MBGETATTIME(timestamp, address, contract, method, ...args) {
+  if (!timestamp) {
+    throw new Error('Must provide a timestamp');
+  }
+  if (!address) {
+    throw new Error('Must provide an address or address label');
+  }
+  if (!contract) {
+    throw new Error('Must provide a smart contract label');
+  }
+  if (!method) {
+    throw new Error('Must provide a method (function) name');
+  }
 
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?timestamp=${timestamp}`;
+
+  // build args
+  const payload = buildMethodArgs(args);
+
+  let results;
+  try {
+    results = query(
+      HTTP_POST,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+      payload,
+    );
+  } catch (e) {
+    console.error(e);
+    throw new Error(e.message);
+  }
+  const { output } = results.result;
+  console.log(`Results: ${JSON.stringify(output)}`);
+
+  return output;
 }
 
 /**
