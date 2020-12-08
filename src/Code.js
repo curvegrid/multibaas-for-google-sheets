@@ -603,16 +603,15 @@ function MBEVENTS(address, limit, offset) {
 }
 
 /**
- * Retrieve the results of a smart contract function call.
- *
- * @param {address} address Ethereum address or label.
- * @param {contract} contract Smart contract label, must be associated with the address.
- * @param {method} method Smart contract function name.
- * @param {args} args (Optional) Arguments to pass to the function.
- * @return One or more values returned from the function.
- * @customfunction
+ * A common function for MBGET, MBGETATBLOCK, MBGETATTIME
+ * @param {number} block Ethereum block number.
+ * @param {number} time Used to retrieve the results at time.
+ * @param {string} address Ethereum address or label.
+ * @param {string} contract Smart contract label, must be associated with the address.
+ * @param {string} method Smart contract function name.
+ * @param {...any} args (Optional) Arguments to pass to the function.
  */
-function MBGET(address, contract, method, ...args) {
+function mbget(block, time, address, contract, method, ...args) {
   if (!address) {
     throw new Error('Must provide an address or address label');
   }
@@ -623,7 +622,9 @@ function MBGET(address, contract, method, ...args) {
     throw new Error('Must provide a method (function) name');
   }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
+  const queryBlock = block !== null ? `?block=${block}` : '';
+  const queryTime = time !== null ? `?time=${convertDateTimeToUTC(time)}` : '';
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}${queryBlock}${queryTime}`;
 
   // build args
   const payload = buildMethodArgs(args);
@@ -645,6 +646,20 @@ function MBGET(address, contract, method, ...args) {
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
+}
+
+/**
+ * Retrieve the results of a smart contract function call.
+ *
+ * @param {address} address Ethereum address or label.
+ * @param {contract} contract Smart contract label, must be associated with the address.
+ * @param {method} method Smart contract function name.
+ * @param {args} args (Optional) Arguments to pass to the function.
+ * @return One or more values returned from the function.
+ * @customfunction
+ */
+function MBGET(address, contract, method, ...args) {
+  return mbget(null, null, address, contract, method, ...args);
 }
 
 /**
@@ -662,44 +677,14 @@ function MBGETATBLOCK(block, address, contract, method, ...args) {
   if (!block) {
     throw new Error('Must provide a block');
   }
-  if (!address) {
-    throw new Error('Must provide an address or address label');
-  }
-  if (!contract) {
-    throw new Error('Must provide a smart contract label');
-  }
-  if (!method) {
-    throw new Error('Must provide a method (function) name');
-  }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?block=${block}`;
-
-  // build args
-  const payload = buildMethodArgs(args);
-
-  let results;
-  try {
-    results = query(
-      HTTP_POST,
-      getProperty(PROP_MB_DEPLOYMENT_ID),
-      getProperty(PROP_MB_API_KEY),
-      queryPath,
-      payload,
-    );
-  } catch (e) {
-    console.error(e);
-    throw new Error(e.message);
-  }
-  const { output } = results.result;
-  console.log(`Results: ${JSON.stringify(output)}`);
-
-  return output;
+  return mbget(block, null, address, contract, ...args);
 }
 
 /**
  * Retrieve the results of a smart contract function call.
  *
- * @param {time} time  Used to retrieve the results at time.
+ * @param {time} time Used to retrieve the results at time.
  * @param {address} address Ethereum address or label.
  * @param {contract} contract Smart contract label, must be associated with the address.
  * @param {method} method Smart contract function name.
@@ -711,38 +696,8 @@ function MBGETATTIME(time, address, contract, method, ...args) {
   if (!time) {
     throw new Error('Must provide a time');
   }
-  if (!address) {
-    throw new Error('Must provide an address or address label');
-  }
-  if (!contract) {
-    throw new Error('Must provide a smart contract label');
-  }
-  if (!method) {
-    throw new Error('Must provide a method (function) name');
-  }
 
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}?time=${convertDateTimeToUTC(time)}`;
-
-  // build args
-  const payload = buildMethodArgs(args);
-
-  let results;
-  try {
-    results = query(
-      HTTP_POST,
-      getProperty(PROP_MB_DEPLOYMENT_ID),
-      getProperty(PROP_MB_API_KEY),
-      queryPath,
-      payload,
-    );
-  } catch (e) {
-    console.error(e);
-    throw new Error(e.message);
-  }
-  const { output } = results.result;
-  console.log(`Results: ${JSON.stringify(output)}`);
-
-  return output;
+  return mbget(null, time, address, contract, method, ...args);
 }
 
 /**
