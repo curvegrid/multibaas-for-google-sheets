@@ -426,7 +426,7 @@ function MBQUERY(query, limit, offset) {
  * @param {Array} events Two dimensional array of event names, selectors and filters.
  * @param {string} groupBy (Optional) Field to group by.
  * @param {string} orderBy (Optional) Field to order by.
- * @param {number} limit (Optional) Number of results to return.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
  * @param {number} offset (Optional) Offset from the 0th result to return.
  * @return {Array} A two dimensional array with the results of the Event Query.
  * @customfunction
