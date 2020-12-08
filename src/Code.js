@@ -352,24 +352,27 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
 }
 
 /**
- * Retrieve the details of a blockchain address.
+ * A common function for MBADDRESS, MBADDRESSATBLOCK, MBADDRESSATTIME
  *
- * @param {address} address Ethereum address or label.
- * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
- * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
+ * @param {number} block Ethereum block number.
+ * @param {number} time Used to retrieve the details at time.
+ * @param {string} address Ethereum address or label.
+ * @param {boolean} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @param {boolean} code (Optional) Include the smart contract bytecode deployed at the address,
  * if any. TRUE/FALSE, defaults to FALSE.
- * @return Address details.
- * @customfunction
+ * @return {Array} Address details.
  */
-function MBADDRESS(address, headers, code) {
+function mbaddress(block, time, address, headers, code) {
   if (!address) {
     throw new Error('Must provide an address or address label');
   }
 
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
-
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}`;
+  const queryCode = isCode ? '&include=code' : '';
+  const queryBlock = block !== null ? `&block=${block}` : '';
+  const queryTime = time !== null ? `&time=${convertDateTimeToUTC(time)}` : '';
+  const queryPath = `chains/ethereum/addresses/${address}?include=balance${queryCode}${queryBlock}${queryTime}`;
   let results;
   try {
     results = query(
@@ -388,6 +391,20 @@ function MBADDRESS(address, headers, code) {
   console.log(`Results: ${JSON.stringify(output)}`);
 
   return output;
+}
+
+/**
+ * Retrieve the details of a blockchain address.
+ *
+ * @param {address} address Ethereum address or label.
+ * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
+ * if any. TRUE/FALSE, defaults to FALSE.
+ * @return Address details.
+ * @customfunction
+ */
+function MBADDRESS(address, headers, code) {
+  return mbaddress(null, null, address, headers, code);
 }
 
 /**
@@ -405,32 +422,8 @@ function MBADDRESSATBLOCK(block, address, headers, code) {
   if (!block) {
     throw new Error('Must provide a block');
   }
-  if (!address) {
-    throw new Error('Must provide an address or address label');
-  }
 
-  const isHeaders = clampBool(headers, true);
-  const isCode = clampBool(code, false);
-
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&block=${block}`;
-  let results;
-  try {
-    results = query(
-      HTTP_GET,
-      getProperty(PROP_MB_DEPLOYMENT_ID),
-      getProperty(PROP_MB_API_KEY),
-      queryPath,
-    );
-  } catch (e) {
-    console.error(e);
-    throw new Error(e.message);
-  }
-
-  // turn the address structure into a flat array
-  const output = addressToArray(results.result, isHeaders, isCode);
-  console.log(`Results: ${JSON.stringify(output)}`);
-
-  return output;
+  return mbaddress(block, null, address, headers, code);
 }
 
 /**
@@ -448,32 +441,8 @@ function MBADDRESSATTIME(time, address, headers, code) {
   if (!time) {
     throw new Error('Must provide a time');
   }
-  if (!address) {
-    throw new Error('Must provide an address or address label');
-  }
 
-  const isHeaders = clampBool(headers, true);
-  const isCode = clampBool(code, false);
-
-  const queryPath = `chains/ethereum/addresses/${address}?include=balance${isCode ? '&include=code' : ''}&time=${convertDateTimeToUTC(time)}`;
-  let results;
-  try {
-    results = query(
-      HTTP_GET,
-      getProperty(PROP_MB_DEPLOYMENT_ID),
-      getProperty(PROP_MB_API_KEY),
-      queryPath,
-    );
-  } catch (e) {
-    console.error(e);
-    throw new Error(e.message);
-  }
-
-  // turn the address structure into a flat array
-  const output = addressToArray(results.result, isHeaders, isCode);
-  console.log(`Results: ${JSON.stringify(output)}`);
-
-  return output;
+  return mbaddress(null, time, address, headers, code);
 }
 
 /**
