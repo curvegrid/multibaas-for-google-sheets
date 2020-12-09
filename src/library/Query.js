@@ -14,6 +14,14 @@ function checkLimit(limit) {
   return limit;
 }
 
+function checkOffset(offset) {
+  if (!offset || offset < 0) {
+    return 0;
+  }
+
+  return offset;
+}
+
 function query(httpMethod, deployment, apiKey, qry, payload) {
   // validate and normalize deployment and API key
   const [deploymentNorm, apiKeyNorm] = normalizeCreds(deployment, apiKey);
@@ -47,6 +55,7 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
 function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload, address) {
   const separationLimit = 30;
   const limitChecked = checkLimit(limit);
+  const offsetChecked = checkOffset(offset);
   if (limitChecked > separationLimit) {
     const results = {
       status: null,
@@ -56,7 +65,7 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
     const hasRows = !/^events$/.test(queryPath);
     const rows = [];
 
-    let offsetNext = offset;
+    let offsetNext = offsetChecked;
     while (true) {
       // validate and normalize limit and offset
       const queryOptions = buildQueryOptions(separationLimit, offsetNext, address);
@@ -88,6 +97,6 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
     return results;
   }
 
-  const queryOptions = buildQueryOptions(limitChecked, offset, address);
+  const queryOptions = buildQueryOptions(limitChecked, offsetChecked, address);
   return query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
 }
