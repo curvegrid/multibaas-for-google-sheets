@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint ./*.js src/*.js test/*.js",
     "test": "yarn push && cd test && node mbSheetsAddOn.js",
-    "push": "yarn fileversion && if [ -n \"$(clasp push 2>&1 | grep 'code: 403')\" ]; then echo 'error: Google Apps Script API is disabled'; exit 1; fi",
+    "push": "yarn fileversion && output=\"$(clasp push 2>&1)\"; if [ -n \"$(echo \"{$output}\" | grep 'code: 403')\" ]; then echo \"{$output}\"; exit 1; fi",
     "fileversion": "echo \"const VERSION = '$npm_package_version';\" > src/Version.js",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn fileversion && yarn push && echo \"🤓 Successfully released version $npm_package_version!\""
