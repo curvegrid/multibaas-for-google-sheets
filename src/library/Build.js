@@ -203,12 +203,12 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
 
 function buildQueryOptions(limit, offset, address) {
   // validate limit
-  if (limit && !isNaturalNumber(limit)) {
+  if (!isNaturalNumber(limit)) {
     throw new Error('Invalid limit, must be a positive integer');
   }
 
   // validate offset
-  if (offset && !isNaturalNumber(offset)) {
+  if (!isNaturalNumber(offset)) {
     throw new Error('Invalid offset, must be a positive integer');
   }
 
@@ -218,12 +218,8 @@ function buildQueryOptions(limit, offset, address) {
   }
 
   // generate a clean URL query param
-  // "limit" must be passed in and be a valid whole number (0, 1, 2, ...)
-  let queryOptions = `?limit=${limit}`;
-
-  if (offset) {
-    queryOptions += `&offset=${offset}`;
-  }
+  // "limit" and "offset" must be passed in and be a valid whole number (0, 1, 2, ...)
+  let queryOptions = `?limit=${limit}&offset=${offset}`;
 
   if (address) {
     queryOptions += `&contract_address=${address}`;
