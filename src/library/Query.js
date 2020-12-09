@@ -62,29 +62,32 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
   };
   // MBQUERY, MBCUSTOMQUERY has rows in result but MBEVENTS has not
   const hasRows = !/^events$/.test(queryPath);
-  let rows = [];
+  const rows = [];
   let queryRows = [];
 
   let offsetNext = offsetChecked;
   do {
     // validate and normalize limit and offset
     const queryOptions = buildQueryOptions(separationLimit, offsetNext, address);
+    offsetNext += separationLimit;
 
     // query
     const queryResult = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
     queryRows = hasRows ? queryResult.result.rows : queryResult.result;
-    rows.push(...queryRows);
-    offsetNext += separationLimit;
+    const overflowedLength = (rows.length + queryRows.length) - limitChecked;
+    if (overflowedLength > 0) {
+      // either add the entire array of "queryRows" to "rows", or only up to the total limit
+      // works because if "end" is greater than the length of the array, it only extracts
+      // up to the end of the array
+      rows.push(...queryRows.slice(0, queryRows.length - overflowedLength));
+    } else {
+      rows.push(...queryRows);
+    }
 
     results.status = queryResult.status;
     results.message = queryResult.message;
   } while (queryRows.length > 0 && rows.length < limitChecked);
 
-  const overflowedLength = rows.length - limitChecked;
-  if (overflowedLength > 0) {
-    // Get rid of the overflowed if actual data is more than limitChecked(limit)
-    rows = rows.slice(0, rows.length - overflowedLength);
-  }
   results.result = hasRows ? { rows } : rows;
 
   return results;
