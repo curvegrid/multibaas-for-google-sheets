@@ -218,6 +218,7 @@ function buildQueryOptions(limit, offset, address) {
   }
 
   // generate a clean URL query param
+  // "limit" must be passed in and be a valid whole number (0, 1, 2, ...)
   let queryOptions = `?limit=${limit}`;
 
   if (offset) {
