@@ -399,6 +399,48 @@ function testRunner(testSheetURL) {
       ],
     },
     {
+      name: 'TestMBCUSTOMQUERY without limit (default is 10) and offset (default is 0)',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERY,
+      isTemplate: false,
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, ''],
+        ],
+      ],
+      expected: [
+        ['amount', 'sender'],
+        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+      ],
+    },
+    {
+      name: 'TestMBCUSTOMQUERY without limit 1 and offset 1',
+      skip: false,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERY,
+      isTemplate: false,
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator'],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, ''],
+        ],
+        '',
+        '',
+        1,
+        1,
+      ],
+      expected: [
+        ['amount', 'sender'],
+        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+      ],
+    },
+    {
       name: 'TestMBCUSTOMQUERYTEMPLATE with 2 filters',
       skip: false,
       only: false,
@@ -443,7 +485,7 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBEVENTS without limit (default is 10)',
+      name: 'TestMBEVENTS without limit (default is 10) and offset (default is 0)',
       skip: false,
       only: false,
       debug: false,
@@ -487,7 +529,7 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBEVENTS with limit 1',
+      name: 'TestMBEVENTS with limit 1 and no offset (default is 0)',
       skip: false,
       only: false,
       debug: false,
@@ -645,7 +687,7 @@ function testRunner(testSheetURL) {
       expected: [],
     },
     {
-      name: 'TestMBQUERY without limit (default is 10) and offset',
+      name: 'TestMBQUERY without limit (default is 10) and offset (default is 0)',
       skip: false,
       only: false,
       debug: false,
@@ -682,7 +724,7 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBQUERY with limit 32',
+      name: 'TestMBQUERY with limit 32 and offset 0',
       skip: false,
       only: false,
       debug: false,
@@ -725,7 +767,7 @@ function testRunner(testSheetURL) {
       ],
     },
     {
-      name: 'TestMBQUERY with limit all (infinity)',
+      name: 'TestMBQUERY with limit -1 (infinity) and offset 0',
       skip: false,
       only: false,
       debug: false,
