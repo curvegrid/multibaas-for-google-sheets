@@ -397,10 +397,7 @@ function objectArrayToArray(objArr) {
 
   // header row: just take the keys from the first row
   // If the length of objArr is 0, indicate "No data"
-  let headers = ['No data'];
-  if (Array.isArray(objArr) && objArr.length > 0) {
-    headers = keysFromObj(objArr[0], true);
-  }
+  const headers = keysFromObj(objArr[0], true);
   rows.push(headers);
 
   // body rows
