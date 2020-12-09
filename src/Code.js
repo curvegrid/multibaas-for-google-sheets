@@ -389,7 +389,7 @@ function MBADDRESS(address, headers, code) {
  * Retrieve the results of a MultiBaas Event Query.
  *
  * @param {string} query Event Query name to return results from.
- * @param {number} limit (Optional) Number of results to return.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
  * @param {number} offset (Optional) Offset from the 0th result to return.
  * @return {Array} A two dimensional array with the results of the Event Query.
  * @customfunction
@@ -426,7 +426,7 @@ function MBQUERY(query, limit, offset) {
  * @param {Array} events Two dimensional array of event names, selectors and filters.
  * @param {string} groupBy (Optional) Field to group by.
  * @param {string} orderBy (Optional) Field to order by.
- * @param {number} limit (Optional) Number of results to return.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
  * @param {number} offset (Optional) Offset from the 0th result to return.
  * @return {Array} A two dimensional array with the results of the Event Query.
  * @customfunction
@@ -508,7 +508,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
  * Retrieve blockchain events. Address must be associated with one or more contracts in MultiBaas.
  *
  * @param {string} address Ethereum address or label.
- * @param {number} limit (Optional) Number of results to return.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
  * @param {number} offset (Optional) Offset from the 0th result to return.
  * @return {Array} A two dimensional array of events.
  * @customfunction
