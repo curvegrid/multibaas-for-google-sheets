@@ -469,7 +469,12 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
 
   // turn the array of objects into a flat array
   const objArr = results.result.rows;
-  return objectArrayToArray(objArr);
+  const headersPreset = Array(payload.events[0].select.length);
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const s of payload.events[0].select) {
+    headersPreset[s.inputIndex] = s.alias;
+  }
+  return objectArrayToArray(objArr, headersPreset);
 }
 
 /**
