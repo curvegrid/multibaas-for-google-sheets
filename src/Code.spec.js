@@ -241,10 +241,10 @@ function testRunner(testSheetURL) {
         0,
       ],
       expected: [
-        ['amount', 'sender'],
-        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
-        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
-        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
+        ['sender', 'amount'],
+        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', 1e+27],
+        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', 1000000000000000000],
+        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', 1000000000000000000],
       ],
     },
     {
