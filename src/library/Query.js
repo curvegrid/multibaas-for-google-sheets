@@ -86,7 +86,7 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
 
     results.status = queryResult.status;
     results.message = queryResult.message;
-  } while (queryRows.length > 0 && rows.length < limitChecked);
+  } while (limitChecked !== separationLimit && queryRows.length > 0 && rows.length < limitChecked);
 
   results.result = hasRows ? { rows } : rows;
 
