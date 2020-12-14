@@ -65,28 +65,26 @@ function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, pa
   const rows = [];
   let queryRows = [];
 
+  let limitNext = separationLimit;
   let offsetNext = offsetChecked;
   do {
+    // compute the number of rows to query for
+    limitNext = Math.min(limitChecked - rows.length, separationLimit);
+
     // validate and normalize limit and offset
-    const queryOptions = buildQueryOptions(separationLimit, offsetNext, address);
-    offsetNext += separationLimit;
+    const queryOptions = buildQueryOptions(limitNext, offsetNext, address);
 
     // query
     const queryResult = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
     queryRows = hasRows ? queryResult.result.rows : queryResult.result;
-    const overflowedLength = (rows.length + queryRows.length) - limitChecked;
-    if (overflowedLength > 0) {
-      // either add the entire array of "queryRows" to "rows", or only up to the total limit
-      // works because if "end" is greater than the length of the array, it only extracts
-      // up to the end of the array
-      rows.push(...queryRows.slice(0, queryRows.length - overflowedLength));
-    } else {
-      rows.push(...queryRows);
-    }
+    rows.push(...queryRows);
 
     results.status = queryResult.status;
     results.message = queryResult.message;
-  } while (limitChecked !== separationLimit && queryRows.length > 0 && rows.length < limitChecked);
+
+    // compute the offset for the next query
+    offsetNext += separationLimit;
+  } while (rows.length < limitChecked && queryRows.length == limitNext);
 
   results.result = hasRows ? { rows } : rows;
 
