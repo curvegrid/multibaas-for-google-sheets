@@ -9,8 +9,7 @@ function isNaturalNumber(number) {
 function valuesFromKeys(keys, valueObj) {
   const values = [];
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const i in keys) {
-    const key = keys[i];
+  for (const key of keys) {
     values.push(valueObj[key]);
   }
 
@@ -397,6 +396,7 @@ function objectArrayToArray(objArr) {
   const rows = [];
 
   // header row: just take the keys from the first row
+  // If the length of objArr is 0, indicate "No data"
   const headers = keysFromObj(objArr[0], true);
   rows.push(headers);
 
