@@ -22,9 +22,16 @@ function extractSelectFilterCounts(header) {
 
   let selectHalf = true;
   for (let i = 1; i < header.length;) {
-    const aliasRule = header[i].toLowerCase();
-    const indexOperand = header[i + 1].toLowerCase();
-    const aggregatorOperator = header[i + 2].toLowerCase();
+    let aliasRule;
+    let indexOperand;
+    let aggregatorOperator;
+    try {
+      aliasRule = header[i].toLowerCase();
+      indexOperand = header[i + 1].toLowerCase();
+      aggregatorOperator = header[i + 2].toLowerCase();
+    } catch (e) {
+      throw new Error('Selected header range is wrong or something is undefined');
+    }
 
     if (selectHalf) {
       if (aliasRule === 'rule') {
@@ -45,7 +52,12 @@ function extractSelectFilterCounts(header) {
       }
     }
     if (!selectHalf) {
-      const value = header[i + 3].toLowerCase();
+      let value;
+      try {
+        value = header[i + 3].toLowerCase();
+      } catch (e) {
+        throw new Error('Selected header range is wrong or something is undefined');
+      }
 
       if (aliasRule !== 'rule') {
         throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
