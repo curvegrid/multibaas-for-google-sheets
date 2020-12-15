@@ -140,9 +140,6 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   if (header.length < 4) {
     throw new Error(`Expecting to have at least four columns, found ${header.length} columns total`);
   }
-  if ((header.length - 1) % 3 !== 0) {
-    throw new Error(`Expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
-  }
   if (header[0].toLowerCase() !== 'eventname') {
     throw new Error(`Expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
