@@ -152,7 +152,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
     const event = events[i];
     // build selects and filters
     const selects = buildSelects(event, 1, numSelect);
-    const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
+    const filters = buildFilters(event, 1 + (numSelect * 3), numFilter);
     const newQuery = {
       eventName: event[0],
       select: selects,
