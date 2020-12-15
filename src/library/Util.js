@@ -407,6 +407,10 @@ function eventsToArray(entries) {
 function objectArrayToArray(objArr) {
   const rows = [];
 
+  if (!Array.isArray(objArr) || objArr.length < 1) {
+    return '';
+  }
+
   // header row: just take the keys from the first row
   const headers = keysFromObj(objArr[0], true);
   rows.push(headers);
