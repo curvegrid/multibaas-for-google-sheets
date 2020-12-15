@@ -440,6 +440,26 @@ function testRunner(testSheetURL) {
         [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
       ],
     },
+    // TODO: try after https://github.com/curvegrid/multibaas-for-google-sheets/issues/53
+    {
+      name: 'TestMBCUSTOMQUERY with wrong selected range',
+      skip: true,
+      only: false,
+      debug: false,
+      func: MBCUSTOMQUERY,
+      isTemplate: false,
+      args: [
+        [
+          ['eventName', 'alias', 'index', 'aggregator', 'alias', 'index', 'aggregator', undefined],
+          ['LogDeposited(address,uint256)', 'sender', 0, '', 'amount', 1, '', undefined],
+        ],
+        '',
+        '',
+        1,
+        1,
+      ],
+      expected: ['#ERROR!'],
+    },
     {
       name: 'TestMBCUSTOMQUERYTEMPLATE with 2 filters',
       skip: false,
