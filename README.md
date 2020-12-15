@@ -81,16 +81,10 @@ Link **Apps Script** project to **GCP** project.
 
 **Credentials and Environments Variables**
 
-You need to create `.client-secret.json`, `.clasp.json`, and `.env` files
+You need to create `.client-secret.json`, `.credentials.json`, `.clasp.json`, and `.testSheet.json` files
 
-- .client-secret.json are used in `auth.js`
-- .clasp.json and .env files are used in `mbSheetsAddOn.js`
-
-`.clasp.json` is to set your Apps Script project after you create a new one.
-
-```json
-{"scriptId":"[YOUR APPS SCRIPT ID]"}
-```
+- `.client-secret.json` and `.credentials.json` are used in `auth.js`
+- `.clasp.json` and `.testSheet.json` files are used in `mbSheetsAddOn.js`
 
 `.client-secret.json` is to set your GCP project. You should download form credential settings as follows:
 
@@ -99,7 +93,7 @@ You need to create `.client-secret.json`, `.clasp.json`, and `.env` files
 ![GCP Step 2](./.readme/config-gcp-2.png)
 ![GCP Step 3](./.readme/config-gcp-3.png)
 
-This is the credential file.
+You need to replace a file name with `.client-secret.json` after downloading it.
 
 ```json
 {
@@ -118,13 +112,19 @@ This is the credential file.
 }
 ```
 
-`.env` file in the project root is to set a test sheet URL.
+`.clasp.json` is to set your Apps Script project after you create a new one.
 
-```sh
-TEST_SHEET_URL=[YOUR TEST SHEET URL]
+```json
+{"scriptId": "[YOUR APPS SCRIPT ID]"}
 ```
 
-Run `yarn test` if you are ready.
+`.testSheet.json` file in the project root is to set a test sheet URL.
+
+```json
+{"url": "[YOUR SPREADSHEET URL]"}
+```
+
+Run `yarn test`.
 
 ```sh
 yarn test
@@ -149,7 +149,7 @@ authorize this app by visiting this url: https://accounts.google.com/o/oauth2/v2
 Enter the code from that page here:
 ```
 
-Just follow the URL and authenticate your account then you can retrieve a code to create .credentials.json file.
+Just follow the URL and authenticate your account then you can retrieve a code to create `.credentials.json` file.
 
 ## Linter
 

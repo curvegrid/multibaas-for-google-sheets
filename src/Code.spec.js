@@ -20,7 +20,7 @@ function initTest(customLogger) {
   // GasT Initialization.
   if ((typeof GasTap) === 'undefined') {
     // eslint-disable-next-line no-eval
-    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/zixia/gast/master/src/gas-tap-lib.js').getContentText());
+    eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/huan/gast/93bcc59f1081e1ca3be38b31944ee396d128f5ae/src/gas-tap-lib.js').getContentText());
   }
 
   if (typeof customLogger !== 'function') {
