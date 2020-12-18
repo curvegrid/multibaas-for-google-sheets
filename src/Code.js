@@ -362,7 +362,7 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
  * if any. TRUE/FALSE, defaults to FALSE.
  * @return {Array} Address details.
  */
-function mbaddress(block, time, address, headers, code) {
+function mbaddressCommon(block, time, address, headers, code) {
   if (!address) {
     throw new Error('Must provide an address or address label');
   }
@@ -400,49 +400,49 @@ function mbaddress(block, time, address, headers, code) {
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
  * if any. TRUE/FALSE, defaults to FALSE.
- * @return Address details.
+ * @return {Array} Address details.
  * @customfunction
  */
 function MBADDRESS(address, headers, code) {
-  return mbaddress(null, null, address, headers, code);
+  return mbaddressCommon(null, null, address, headers, code);
 }
 
 /**
- * Retrieve the details of a blockchain address using a block number.
+ * Retrieve the details of a blockchain address at a block number.
  *
  * @param {block} block Ethereum block number.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
  * if any. TRUE/FALSE, defaults to FALSE.
- * @return Address details.
+ * @return {Array} Address details.
  * @customfunction
  */
 function MBADDRESSATBLOCK(block, address, headers, code) {
-  if (!block) {
-    throw new Error('Must provide a block');
+  if (!Number.isInteger(block)) {
+    throw new Error('Must provide a block as integer');
   }
 
-  return mbaddress(block, null, address, headers, code);
+  return mbaddressCommon(block, null, address, headers, code);
 }
 
 /**
- * Retrieve the details of a blockchain address using time.
+ * Retrieve the details of a blockchain address at time.
  *
  * @param {time} time Used to retrieve the details at time.
  * @param {address} address Ethereum address or label.
  * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
  * @param {code} code (Optional) Include the smart contract bytecode deployed at the address,
  * if any. TRUE/FALSE, defaults to FALSE.
- * @return Address details.
+ * @return {Array} Address details.
  * @customfunction
  */
 function MBADDRESSATTIME(time, address, headers, code) {
   if (!time) {
-    throw new Error('Must provide a time');
+    throw new Error('Must provide time');
   }
 
-  return mbaddress(null, time, address, headers, code);
+  return mbaddressCommon(null, time, address, headers, code);
 }
 
 /**
@@ -610,8 +610,9 @@ function MBEVENTS(address, limit, offset) {
  * @param {string} contract Smart contract label, must be associated with the address.
  * @param {string} method Smart contract function name.
  * @param {...any} args (Optional) Arguments to pass to the function.
+ * @return One or more values returned from the function.
  */
-function mbget(block, time, address, contract, method, ...args) {
+function mbgetCommon(block, time, address, contract, method, ...args) {
   if (!address) {
     throw new Error('Must provide an address or address label');
   }
@@ -659,11 +660,11 @@ function mbget(block, time, address, contract, method, ...args) {
  * @customfunction
  */
 function MBGET(address, contract, method, ...args) {
-  return mbget(null, null, address, contract, method, ...args);
+  return mbgetCommon(null, null, address, contract, method, ...args);
 }
 
 /**
- * Retrieve the results of a smart contract function call.
+ * Retrieve the results of a smart contract function call at a block number.
  *
  * @param {block} block Ethereum block number.
  * @param {address} address Ethereum address or label.
@@ -674,15 +675,15 @@ function MBGET(address, contract, method, ...args) {
  * @customfunction
  */
 function MBGETATBLOCK(block, address, contract, method, ...args) {
-  if (!block) {
-    throw new Error('Must provide a block');
+  if (!Number.isInteger(block)) {
+    throw new Error('Must provide a block as integer');
   }
 
-  return mbget(block, null, address, contract, ...args);
+  return mbgetCommon(block, null, address, contract, method, ...args);
 }
 
 /**
- * Retrieve the results of a smart contract function call.
+ * Retrieve the results of a smart contract function call at time.
  *
  * @param {time} time Used to retrieve the results at time.
  * @param {address} address Ethereum address or label.
@@ -694,10 +695,10 @@ function MBGETATBLOCK(block, address, contract, method, ...args) {
  */
 function MBGETATTIME(time, address, contract, method, ...args) {
   if (!time) {
-    throw new Error('Must provide a time');
+    throw new Error('Must provide time');
   }
 
-  return mbget(null, time, address, contract, method, ...args);
+  return mbgetCommon(null, time, address, contract, method, ...args);
 }
 
 /**
