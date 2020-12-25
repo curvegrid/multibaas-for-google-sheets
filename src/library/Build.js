@@ -173,6 +173,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
 function buildMethodArgs(args, from, signer, signAndSubmit, value) {
   const payload = {
     args,
+    formatInts: 'as_numbers',
     contractOverride: true,
   };
 
