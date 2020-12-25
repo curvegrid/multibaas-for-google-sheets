@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint ./*.js src/*.js test/*.js",
     "test": "yarn push && cd test && node mbSheetsAddOn.js",
-    "push": "yarn fileversion && echo && clasp push",
+    "push": "yarn fileversion && output=\"$(clasp push 2>&1)\"; if [ -n \"$(echo \"$output\" | grep 'code: 403')\" ]; then echo \"$output\"; exit 1; else echo \"$output\"; fi",
     "fileversion": "echo \"const VERSION = '$npm_package_version';\" > src/Version.js",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn fileversion && yarn push && echo \"🤓 Successfully released version $npm_package_version!\""
@@ -21,7 +21,6 @@
   ],
   "devDependencies": {},
   "dependencies": {
-    "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-plugin-import": "^2.20.2",

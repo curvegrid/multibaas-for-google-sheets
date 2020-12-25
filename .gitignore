@@ -18,6 +18,6 @@ yarn-error.log
 .vscode
 .env
 
-# Version file: this file will be used only in Apps Script after running clasp comand
-# See package.json
+# Version file: this file will be used only in Apps Script project
+# after running "yarn push" command. See package.json
 /src/Version.js
