@@ -16,7 +16,6 @@ const VALID_OPERANDS = [
   'contract_label',
   'contract_name',
   'contract_address',
-  'addresses.address',
   'contract_address_label',
   'block_number',
   'triggered_at',
