@@ -2,12 +2,45 @@
 
 /* eslint-disable no-unused-vars */
 const VALID_AGGREGATORS = ['subtract', 'add', 'first', 'last', 'max', 'min', ''];
-const VALID_BOOLEANS = ['and', 'or'];
-const VALID_OPERATORS = ['equal', 'notequal', 'lessthan', 'greaterthan'];
-const VALID_OPERANDS = ['input', 'contracts.label', 'contracts.contract_name', 'addresses.address', 'addresses.label'];
+const VALID_RULES = ['and', 'or'];
+const VALID_OPERATORS = [
+  'equal',
+  'notequal',
+  'lessthan',
+  'greaterthan',
+  'lessthanorequal',
+  'greaterthanorequal',
+];
+const VALID_OPERANDS = [
+  'input',
+  'contract_label',
+  'contract_name',
+  'contract_address',
+  'contract_address_label',
+  'block_number',
+  'triggered_at',
+];
 
 // eslint-disable-next-line no-useless-escape
 const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
+
+function validateRule(rule) {
+  const ruleLower = String(rule).toLowerCase();
+  if (!VALID_RULES.includes(ruleLower)) {
+    throw new Error(`'${ruleLower}' is not a valid rule, must be one of ${VALID_RULES.join(',')}`);
+  }
+
+  return ruleLower;
+}
+
+function validateOperand(operand) {
+  const operandLower = String(operand).toLowerCase();
+  if (!VALID_OPERANDS.includes(operandLower)) {
+    throw new Error(`'${operandLower}' is not a valid operand, must be one of ${VALID_OPERANDS.join(',')}`);
+  }
+
+  return operandLower;
+}
 
 function validateOperator(operator) {
   const operatorLower = String(operator).toLowerCase();

@@ -9,8 +9,7 @@ function isNaturalNumber(number) {
 function valuesFromKeys(keys, valueObj) {
   const values = [];
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const i in keys) {
-    const key = keys[i];
+  for (const key of keys) {
     values.push(valueObj[key]);
   }
 
@@ -22,10 +21,17 @@ function extractSelectFilterCounts(header) {
   let numFilter = 0;
 
   let selectHalf = true;
-  for (let i = 1; i < header.length; i += 3) {
-    const aliasRule = header[i].toLowerCase();
-    const indexOperator = header[i + 1].toLowerCase();
-    const aggregatorValue = header[i + 2].toLowerCase();
+  for (let i = 1; i < header.length;) {
+    let aliasRule;
+    let indexOperand;
+    let aggregatorOperator;
+    try {
+      aliasRule = header[i].toLowerCase();
+      indexOperand = header[i + 1].toLowerCase();
+      aggregatorOperator = header[i + 2].toLowerCase();
+    } catch (e) {
+      throw new Error('Selected header range is wrong or something is undefined');
+    }
 
     if (selectHalf) {
       if (aliasRule === 'rule') {
@@ -34,28 +40,40 @@ function extractSelectFilterCounts(header) {
         if (aliasRule !== 'alias') {
           throw new Error(`Expecting 'alias' in position ${i}, found '${aliasRule}'`);
         }
-        if (indexOperator !== 'index') {
-          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperator}'`);
+        if (indexOperand !== 'index') {
+          throw new Error(`Expecting 'index' in position ${i + 1}, found '${indexOperand}'`);
         }
-        if (aggregatorValue !== 'aggregator') {
-          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorValue}'`);
+        if (aggregatorOperator !== 'aggregator') {
+          throw new Error(`Expecting 'aggregator' in position ${i + 2}, found '${aggregatorOperator}'`);
         }
 
         numSelect++;
+        i += 3;
       }
     }
     if (!selectHalf) {
+      let value;
+      try {
+        value = header[i + 3].toLowerCase();
+      } catch (e) {
+        throw new Error('Selected header range is wrong or something is undefined');
+      }
+
       if (aliasRule !== 'rule') {
         throw new Error(`Expecting 'rule' in position ${i}, found '${aliasRule}'`);
       }
-      if (indexOperator !== 'operator') {
-        throw new Error(`Expecting 'operator' in position ${i + 1}, found '${indexOperator}'`);
+      if (indexOperand !== 'operand') {
+        throw new Error(`Expecting 'operand' in position ${i + 1}, found '${indexOperand}'`);
       }
-      if (aggregatorValue !== 'value') {
-        throw new Error(`expecting 'value' in position ${i + 2}, found '${aggregatorValue}'`);
+      if (aggregatorOperator !== 'operator') {
+        throw new Error(`Expecting 'operator' in position ${i + 2}, found '${aggregatorOperator}'`);
+      }
+      if (value !== 'value') {
+        throw new Error(`expecting 'value' in position ${i + 3}, found '${value}'`);
       }
 
       numFilter++;
+      i += 4;
     }
   }
 
@@ -388,6 +406,10 @@ function eventsToArray(entries) {
 
 function objectArrayToArray(objArr, headersPreset) {
   const rows = [];
+
+  if (!Array.isArray(objArr) || objArr.length < 1) {
+    return '';
+  }
 
   // header row: just take the keys from the first row
   let headers;
