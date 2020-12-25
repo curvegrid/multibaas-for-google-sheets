@@ -31,6 +31,16 @@ or if you use `npm`
 npm install @google/clasp -g
 ```
 
+Login using `clasp login`
+
+```sh
+clasp login
+Warning: You seem to already be logged in *globally*. You have a ~/.clasprc.json
+Logging in globally...
+🔑 Authorize clasp by visiting this url:
+https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2...redirect_uri=http%3A%2F%2Flocalhost%3A54929
+```
+
 Install local node.js packages
 
 ```sh
@@ -53,6 +63,10 @@ You need to prepare for a spreadsheet with small configuration.
 ![Sheet Step 1](./.readme/config-sheet-1.png)
 
 **Link Apps Script to GCP**
+
+Before you go, you need to enable Google Apps Script API first from [Apps Script settings](https://script.google.com/home/usersettings).
+
+![](./.readme/config-gas-3.png)
 
 In order to run tests you need to link Apps Script project to GCP project.
 

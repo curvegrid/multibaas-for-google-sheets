@@ -27,10 +27,11 @@ function buildSelects(items, start, numItems) {
 
 function buildFilters(items, start, numItems) {
   const filter = {};
-  for (let i = start; i < start + numItems * 3; i += 3) {
+  for (let i = start; i < start + numItems * 4; i += 4) {
     const rules = items[i];
-    const operator = items[i + 1];
-    const value = items[i + 2];
+    const operand = items[i + 1];
+    const operator = items[i + 2];
+    const value = items[i + 3];
 
     // not all rows will have the same number of filters
     if (rules === '') {
@@ -41,27 +42,19 @@ function buildFilters(items, start, numItems) {
       throw new Error(`Value is empty for rule '${rules}'`);
     }
 
-    // split by colons
+    // split by colons for a nested rules
     const rulePath = rules.split(':');
-    if (rulePath.length === 1) {
-      // special case for a single rule
-      rulePath.unshift('And');
-    }
 
     // loop through 'and' and 'or', creating children if they don't exist
     let node = filter;
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const j in rulePath) {
+    for (const ruleTest of rulePath) {
       // parse out rule and optional numeric portions (e.g., input0)
-      const ruleParts = RegExp('^([A-Za-z._]+)([0-9]*)$').exec(rulePath[j]);
-      if (ruleParts === null || ruleParts.length < 2) {
-        throw new Error(`Invalid rule '${rulePath[j]}' in '${rules}'`);
-      }
-      const rule = ruleParts[1].toLowerCase();
-      if (rule === '') {
-        throw new Error(`Sub-rule is empty in '${rules}'`);
+      if (!RegExp('^[A-Za-z._]+$').test(ruleTest)) {
+        throw new Error(`Invalid rule '${ruleTest}' in '${rules}'`);
       }
 
+      const rule = ruleTest.toLowerCase();
       // if we're on a children array, search for a child matching this rule
       if (Array.isArray(node)) {
         // find the one that matches this rule
@@ -89,44 +82,38 @@ function buildFilters(items, start, numItems) {
       }
 
       // add a rule or descend to the next level down as appropriate
-      if (VALID_BOOLEANS.includes(rule)) {
-        if (Object.keys(node).length === 0) {
-          // new child node
-          node.rule = rule;
-          node.children = [{}];
-          [node] = node.children;
-        } else {
-          // existing child node
+      if (Object.keys(node).length < 1) {
+        // new child node
+        node.rule = validateRule(rule);
+        node.children = [{}];
+        [node] = node.children;
+      } else {
+        // existing child node
 
-          // node 'object' becomes a 'array'
-          node = node.children;
-        }
-      } else if (VALID_OPERANDS.includes(rule)) {
-        // at the last level, add the rule
-
-        // first, ensure we're actually at a leaf node
-        // if not, add us to the children array
-        if (Object.keys(node).length > 0) {
-          node.children.push({});
-          node = node.children[node.children.length - 1];
-        }
-
-        node.fieldType = rule;
-        node.operator = validateOperator(operator);
-        node.value = String(value);
-
-        // special case for an input
-        if (rule === 'input') {
-          if (ruleParts.length !== 3) {
-            throw new Error("No input index provided, just 'input'");
-          }
-          const inputIndex = ruleParts[2];
-          if (!isNaturalNumber(inputIndex)) {
-            throw new Error(`Invalid input index '${inputIndex}', must be a positive number`);
-          }
-          node.inputIndex = parseInt(inputIndex, 10);
-        }
+        // node 'object' becomes a 'array'
+        node = node.children;
       }
+    }
+
+    // Once (nested) rule pointing is complete create or enter a filter.
+    // At the last level, add the rule
+    // first, ensure we're actually at a leaf node
+    // if not, add us to the children array
+    if (Array.isArray(node)) {
+      node.push({});
+      node = node[node.length - 1];
+    }
+
+    node.operator = validateOperator(operator);
+    node.value = String(value);
+
+    // special case for an input
+    const operandParts = RegExp('^(input)([0-9]+)$').exec(operand);
+    if (operandParts === null) {
+      node.fieldType = validateOperand(operand);
+    } else {
+      node.fieldType = validateOperand(operandParts[1]);
+      node.inputIndex = parseInt(operandParts[2], 10);
     }
   }
 
@@ -153,10 +140,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   if (header.length < 4) {
     throw new Error(`Expecting to have at least four columns, found ${header.length} columns total`);
   }
-  if ((header.length - 1) % 3 !== 0) {
-    throw new Error(`Expecting number of columns to be divisible by 3 plus 1, found ${header.length} columns total`);
-  }
-  if (header[0].toLowerCase() !== 'eventname') {
+  if (!header[0] || header[0].toLowerCase() !== 'eventname') {
     throw new Error(`Expecting first column in header row to be 'eventName', found '${header[0]}'`);
   }
 
@@ -166,10 +150,9 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   // build the event query
   for (let i = 1; i < events.length; i++) {
     const event = events[i];
-
     // build selects and filters
     const selects = buildSelects(event, 1, numSelect);
-    const filters = buildFilters(event, 1 + numSelect * 3, numFilter);
+    const filters = buildFilters(event, 1 + (numSelect * 3), numFilter);
     const newQuery = {
       eventName: event[0],
       select: selects,
@@ -217,12 +200,12 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
 
 function buildQueryOptions(limit, offset, address) {
   // validate limit
-  if (limit && !isNaturalNumber(limit)) {
+  if (!isNaturalNumber(limit)) {
     throw new Error('Invalid limit, must be a positive integer');
   }
 
   // validate offset
-  if (offset && !isNaturalNumber(offset)) {
+  if (!isNaturalNumber(offset)) {
     throw new Error('Invalid offset, must be a positive integer');
   }
 
@@ -232,25 +215,11 @@ function buildQueryOptions(limit, offset, address) {
   }
 
   // generate a clean URL query param
-  let queryOptions = '';
-  if (limit) {
-    queryOptions += `?limit=${limit}`;
-  }
-  if (offset) {
-    if (queryOptions === '') {
-      queryOptions += '?';
-    } else {
-      queryOptions += '&';
-    }
-    queryOptions += `offset=${offset}`;
-  }
+  // "limit" and "offset" must be passed in and be a valid whole number (0, 1, 2, ...)
+  let queryOptions = `?limit=${limit}&offset=${offset}`;
+
   if (address) {
-    if (queryOptions === '') {
-      queryOptions += '?';
-    } else {
-      queryOptions += '&';
-    }
-    queryOptions += `contract_address=${address}`;
+    queryOptions += `&contract_address=${address}`;
   }
 
   return queryOptions;
