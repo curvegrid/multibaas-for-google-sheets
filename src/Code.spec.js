@@ -370,8 +370,8 @@ function testRunner(testSheetURL) {
         0,
       ],
       expected: [
-        ['amount', 'sender'],
-        [1e+27, '0x89d048be68575f2b56a999ba24faacabd1b919fb'],
+        ['sender', 'amount'],
+        ['0x89d048be68575f2b56a999ba24faacabd1b919fb', 1e+27],
       ],
     },
     {
@@ -412,12 +412,12 @@ function testRunner(testSheetURL) {
         ],
       ],
       expected: [
-        ['amount', 'sender'],
-        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
-        [1000000000000000000, '0xbac1cd4051c378bf900087ccc445d7e7d02ad745'],
-        [50, '0x0d6c3707a98bce1a56247555c8b74242705b8acf'],
-        [50000000000000000000, '0x0d6c3707a98bce1a56247555c8b74242705b8acf'],
-        [50000000000000000000, '0x005080f78567f8001115f1eee835dd0151bea476'],
+        ['sender', 'amount'],
+        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', 1000000000000000000],
+        ['0xbac1cd4051c378bf900087ccc445d7e7d02ad745', 1000000000000000000],
+        ['0x0d6c3707a98bce1a56247555c8b74242705b8acf', 50],
+        ['0x0d6c3707a98bce1a56247555c8b74242705b8acf', 50000000000000000000],
+        ['0x005080f78567f8001115f1eee835dd0151bea476', 50000000000000000000],
       ],
     },
     {
@@ -438,8 +438,8 @@ function testRunner(testSheetURL) {
         1,
       ],
       expected: [
-        ['amount', 'sender'],
-        [1000000000000000000, '0xa616eed6ad7a0cf5d2388301a710c273ca955e05'],
+        ['sender', 'amount'],
+        ['0xa616eed6ad7a0cf5d2388301a710c273ca955e05', 1000000000000000000],
       ],
     },
     // TODO: try after https://github.com/curvegrid/multibaas-for-google-sheets/issues/53
