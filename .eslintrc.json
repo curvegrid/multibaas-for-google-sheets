@@ -16,6 +16,8 @@
     "VERSION": false,
     // Code.js
     "MBADDRESS": false,
+    "MBADDRESSATBLOCK": false,
+    "MBADDRESSATTIME": false,
     "MBBLOCK": false,
     "MBCOMPOSE": false,
     "MBCUSTOMQUERY": false,
@@ -24,6 +26,8 @@
     "MBEVENTS": false,
     "MBFUNCTIONLIST": false,
     "MBGET": false,
+    "MBGETATBLOCK": false,
+    "MBGETATTIME": false,
     "MBPOSTTEMPLATE": false,
     "MBQUERY": false,
     "MBTX": false,
@@ -49,6 +53,7 @@
     "objectArrayToArray": false,
     "eventsToArray": false,
     "formatDateTime": false,
+    "convertDateTimeToUTC": false,
     "credentialsExist": false,
     // Validate.js
     "validateBlockTxHash": false,

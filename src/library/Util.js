@@ -431,3 +431,7 @@ function objectArrayToArray(objArr) {
 function formatDateTime(dateTime) {
   return new Date(dateTime);
 }
+
+function convertDateTimeToUTC(dateTime) {
+  return Math.round(new Date(dateTime).getTime() / 1000);
+}
