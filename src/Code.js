@@ -366,8 +366,8 @@ function mbaddressCommon(block, time, address, headers, code) {
   const isHeaders = clampBool(headers, true);
   const isCode = clampBool(code, false);
   const queryCode = isCode ? '&include=code' : '';
-  const queryBlock = block !== null ? `&block=${block}` : '';
-  const queryTime = time !== null ? `&time=${convertDateTimeToUTC(time)}` : '';
+  const queryBlock = block !== null ? `&block_number=${block}` : '';
+  const queryTime = time !== null ? `&timestamp=${convertDateTimeToUTC(time)}` : '';
   const queryPath = `chains/ethereum/addresses/${address}?include=balance${queryCode}${queryBlock}${queryTime}`;
   let results;
   try {
@@ -617,12 +617,11 @@ function mbgetCommon(block, time, address, contract, method, ...args) {
     throw new Error('Must provide a method (function) name');
   }
 
-  const queryBlock = block !== null ? `?block=${block}` : '';
-  const queryTime = time !== null ? `?time=${convertDateTimeToUTC(time)}` : '';
-  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}${queryBlock}${queryTime}`;
+  const queryPath = `chains/ethereum/addresses/${address}/contracts/${contract}/methods/${method}`;
 
   // build args
-  const payload = buildMethodArgs(args);
+  const timestamp = time !== null ? convertDateTimeToUTC(time) : null;
+  const payload = buildMethodArgs(args, null, null, null, null, block, timestamp);
 
   let results;
   try {
