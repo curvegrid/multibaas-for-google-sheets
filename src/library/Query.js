@@ -2,6 +2,26 @@
 
 /* eslint-disable no-unused-vars */
 
+function checkLimit(limit) {
+  if (!limit) {
+    return 10;
+  }
+
+  if (limit < 0) {
+    return Infinity;
+  }
+
+  return limit;
+}
+
+function checkOffset(offset) {
+  if (!offset || offset < 0) {
+    return 0;
+  }
+
+  return offset;
+}
+
 function query(httpMethod, deployment, apiKey, qry, payload) {
   // validate and normalize deployment and API key
   const [deploymentNorm, apiKeyNorm] = normalizeCreds(deployment, apiKey);
@@ -33,11 +53,40 @@ function query(httpMethod, deployment, apiKey, qry, payload) {
 }
 
 function limitQuery(httpMethod, deployment, apiKey, queryPath, limit, offset, payload, address) {
-  // validate and normalize limit and offset
-  const queryOptions = buildQueryOptions(limit, offset, address);
+  const separationLimit = 30;
+  const limitChecked = checkLimit(limit);
+  const offsetChecked = checkOffset(offset);
+  const results = {
+    status: null,
+    message: null,
+  };
+  // MBQUERY, MBCUSTOMQUERY has rows in result but MBEVENTS has not
+  const hasRows = !/^events$/.test(queryPath);
+  const rows = [];
+  let queryRows = [];
 
-  // query
-  const results = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
+  let limitNext = separationLimit;
+  let offsetNext = offsetChecked;
+  do {
+    // compute the number of rows to query for
+    limitNext = Math.min(limitChecked - rows.length, separationLimit);
+
+    // validate and normalize limit and offset
+    const queryOptions = buildQueryOptions(limitNext, offsetNext, address);
+
+    // query
+    const queryResult = query(httpMethod, deployment, apiKey, queryPath + queryOptions, payload);
+    queryRows = hasRows ? queryResult.result.rows : queryResult.result;
+    rows.push(...queryRows);
+
+    results.status = queryResult.status;
+    results.message = queryResult.message;
+
+    // compute the offset for the next query
+    offsetNext += separationLimit;
+  } while (rows.length < limitChecked && queryRows.length == limitNext);
+
+  results.result = hasRows ? { rows } : rows;
 
   return results;
 }

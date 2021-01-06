@@ -177,9 +177,9 @@ function onOpen() {
  * Create a template to be used with calling a smart contract method (function)
  * that will write to the blockchain.
  *
- * @param {numberOfArgs} numberOfArgs (Optional) Number of arguments (parameters)
+ * @param {number} numberOfArgs (Optional) Number of arguments (parameters)
  * to pass to the method (function). Default is 0.
- * @return A two dimensional array that can be used as the starting point for calling
+ * @return {Array} A two dimensional array that can be used as the starting point for calling
  * a smart contract method.
  * @customfunction
  */
@@ -205,9 +205,9 @@ function MBPOSTTEMPLATE(numberOfArgs) {
 /**
  * Retrieve a detailed list of a smart contract's events.
  *
- * @param {contract} contract Smart contract label, must be associated with the address.
- * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
- * @return Array of smart contract functions and their inputs and outputs.
+ * @param {string} contract Smart contract label, must be associated with the address.
+ * @param {string} filter (Optional) Regular expression (regex) to filter function names on.
+ * @return {Array} Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
 function MBEVENTLIST(contract, filter) {
@@ -225,7 +225,6 @@ function MBEVENTLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -240,9 +239,9 @@ function MBEVENTLIST(contract, filter) {
 /**
  * Retrieve a detailed list of a smart contract's functions.
  *
- * @param {contract} contract Smart contract label, must be associated with the address.
- * @param {filter} filter (Optional) Regular expression (regex) to filter function names on.
- * @return Array of smart contract functions and their inputs and outputs.
+ * @param {string} contract Smart contract label, must be associated with the address.
+ * @param {string} filter (Optional) Regular expression (regex) to filter function names on.
+ * @return {Array} Array of smart contract functions and their inputs and outputs.
  * @customfunction
  */
 function MBFUNCTIONLIST(contract, filter) {
@@ -260,7 +259,6 @@ function MBFUNCTIONLIST(contract, filter) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -275,9 +273,9 @@ function MBFUNCTIONLIST(contract, filter) {
 /**
  * Retrieve the details of a blockchain transaction.
  *
- * @param {hash} hash Transaction hash.
- * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
- * @return Transaction details.
+ * @param {string} hash Transaction hash.
+ * @param {boolean} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @return {Array} Transaction details.
  * @customfunction
  */
 function MBTX(hash, headers) {
@@ -299,7 +297,6 @@ function MBTX(hash, headers) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -313,11 +310,11 @@ function MBTX(hash, headers) {
 /**
  * Retrieve the details of a block.
  *
- * @param {numberOrHash} numberOrHash Block number or hash.
- * @param {headers} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
- * @param {txHashes} txHashes (Optional) Include the transaction hashes. TRUE/FALSE,
+ * @param {number} numberOrHash Block number or hash.
+ * @param {string} headers (Optional) Include column headers. TRUE/FALSE, defaults to TRUE.
+ * @param {string} txHashes (Optional) Include the transaction hashes. TRUE/FALSE,
  * defaults to TRUE.
- * @return Block details.
+ * @return {Array} Block details.
  * @customfunction
  */
 function MBBLOCK(numberOrHash, headers, txHashes) {
@@ -340,7 +337,6 @@ function MBBLOCK(numberOrHash, headers, txHashes) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -382,7 +378,6 @@ function mbaddressCommon(block, time, address, headers, code) {
       queryPath,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
 
@@ -448,10 +443,10 @@ function MBADDRESSATTIME(time, address, headers, code) {
 /**
  * Retrieve the results of a MultiBaas Event Query.
  *
- * @param {query} query Event Query name to return results from.
- * @param {limit} limit (Optional) Number of results to return.
- * @param {offset} offset (Optional) Offset from the 0th result to return.
- * @return A two dimensional array with the results of the Event Query.
+ * @param {string} query Event Query name to return results from.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
+ * @param {number} offset (Optional) Offset from the 0th result to return.
+ * @return {Array} A two dimensional array with the results of the Event Query.
  * @customfunction
  */
 function MBQUERY(query, limit, offset) {
@@ -471,7 +466,6 @@ function MBQUERY(query, limit, offset) {
       offset,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -484,12 +478,12 @@ function MBQUERY(query, limit, offset) {
 /**
  * Retrieve the results of a custom MultiBaas Event Query.
  *
- * @param {events} events Two dimensional array of event names, selectors and filters.
- * @param {groupBy} groupBy (Optional) Field to group by.
- * @param {orderBy} orderBy (Optional) Field to order by.
- * @param {limit} limit (Optional) Number of results to return.
- * @param {offset} offset (Optional) Offset from the 0th result to return.
- * @return A two dimensional array with the results of the Event Query.
+ * @param {Array} events Two dimensional array of event names, selectors and filters.
+ * @param {string} groupBy (Optional) Field to group by.
+ * @param {string} orderBy (Optional) Field to order by.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
+ * @param {number} offset (Optional) Offset from the 0th result to return.
+ * @return {Array} A two dimensional array with the results of the Event Query.
  * @customfunction
  */
 function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
@@ -517,7 +511,6 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -530,11 +523,12 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
 /**
  * Create a template to be used with a custom MultiBaas Event Query.
  *
- * @param {numberOfSelects} numberOfSelects (Optional) Number of 'select' groups
+ * @param {number} numberOfSelects (Optional) Number of 'select' groups
  * to create. Default is 1.
- * @param {numberOfFilters} numberOfFilters (Optional) Number of 'filter' groups
+ * @param {number} numberOfFilters (Optional) Number of 'filter' groups
  * to create. Default is 1.
- * @return A two dimensional array that can be used as the starting point for a custom Event Query.
+ * @return {Array} A two dimensional array that can be used as the starting point
+ * for a custom Event Query.
  * @customfunction
  */
 function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
@@ -548,9 +542,10 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
     throw new Error("Number of 'select' groups must be a valid positive integer");
   }
   if (!numFilters) {
-    numFilters = 1;
+    // Default is no filter
+    numFilters = 0;
   } else if (!isNaturalNumber(numFilters)) {
-    throw new Error("Number of 'filter' groups must be a valid positive integer");
+    throw new Error("Number of 'filter' groups must be a valid positive integer or zero");
   }
 
   let header = ['eventName'];
@@ -558,7 +553,7 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
     header = header.concat(['alias', 'index', 'aggregator']);
   }
   for (let i = 0; i < numFilters; i++) {
-    header = header.concat(['rule', 'operator', 'value']);
+    header = header.concat(['rule', 'operand', 'operator', 'value']);
   }
 
   return [header];
@@ -567,10 +562,10 @@ function MBCUSTOMQUERYTEMPLATE(numberOfSelects, numberOfFilters) {
 /**
  * Retrieve blockchain events. Address must be associated with one or more contracts in MultiBaas.
  *
- * @param {address} address Ethereum address or label.
- * @param {limit} limit (Optional) Number of results to return.
- * @param {offset} offset (Optional) Offset from the 0th result to return.
- * @return A two dimensional array of events.
+ * @param {string} address Ethereum address or label.
+ * @param {number} limit (Optional) Number of results to return. -1 for all results.
+ * @param {number} offset (Optional) Offset from the 0th result to return.
+ * @return {Array} A two dimensional array of events.
  * @customfunction
  */
 function MBEVENTS(address, limit, offset) {
@@ -592,7 +587,6 @@ function MBEVENTS(address, limit, offset) {
       address,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   console.log(`Results: ${JSON.stringify(results)}`);
@@ -640,7 +634,6 @@ function mbgetCommon(block, time, address, contract, method, ...args) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   const { output } = results.result;
@@ -704,14 +697,14 @@ function MBGETATTIME(time, address, contract, method, ...args) {
 /**
  * Compose an unsigned transaction to call a smart contract function.
  *
- * @param {address} address Ethereum address or label.
- * @param {contract} contract Smart contract label, must be associated with the address.
- * @param {method} method Smart contract function name.
- * @param {from} from From address.
- * @param {signer} signer (Optional) Signer address. Defaults to the 'from' address.
- * @param {value} value (Optional) Value for amount of ETH sent.
- * @param {args} args (Optional) Arguments to pass to the function.
- * @return An unsigned transaction, suitable for signing and submitting to the blockchain.
+ * @param {string} address Ethereum address or label.
+ * @param {string} contract Smart contract label, must be associated with the address.
+ * @param {string} method Smart contract function name.
+ * @param {string} from From address.
+ * @param {string} signer (Optional) Signer address. Defaults to the 'from' address.
+ * @param {number} value (Optional) Value for amount of ETH sent.
+ * @param {...any} args (Optional) Arguments to pass to the function.
+ * @return {Object} An unsigned transaction, suitable for signing and submitting to the blockchain.
  * @customfunction
  */
 function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
@@ -730,7 +723,6 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
       payload,
     );
   } catch (e) {
-    console.error(e);
     throw new Error(e.message);
   }
   const output = JSON.stringify(results.result.tx);

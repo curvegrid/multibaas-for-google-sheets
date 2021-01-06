@@ -1,7 +1,6 @@
 const fs = require('fs');
 const { google } = require('googleapis');
 const { authenticate } = require('./auth');
-require('dotenv').config({ path: '../.env' });
 
 /**
  * Call the "testRunner" to test function on the deployed script.
@@ -11,10 +10,11 @@ require('dotenv').config({ path: '../.env' });
 function callAppsScript(auth) {
   const script = google.script({ version: 'v1' });
   const { scriptId } = JSON.parse(fs.readFileSync('../.clasp.json'));
+  const { url: testSheetURL } = JSON.parse(fs.readFileSync('../.testSheet.json'));
 
-  const testSheetURL = process.env.TEST_SHEET_URL;
   if (!testSheetURL) {
-    throw new Error('No test sheet URL');
+    console.error('error: no test sheet url');
+    process.exit(1);
   }
 
   const request = {
@@ -26,7 +26,7 @@ function callAppsScript(auth) {
   script.scripts.run({ auth, scriptId, resource: request }, (err, resp) => {
     if (err) {
       // The API encountered a problem before the script started executing.
-      console.error(`api returned an error: ${err}`);
+      console.error(`error: api returned an error: ${err}`);
       process.exit(1);
     }
     if (resp.data.error) {
@@ -36,8 +36,8 @@ function callAppsScript(auth) {
       // object are the script's 'errorMessage' and 'errorType', and an array
       // of stack trace elements.
       const [errorDetail] = resp.data.error.details;
-      console.error(`script error message: ${errorDetail.errorMessage}`);
-      console.error('script error stacktrace:');
+      console.error(`error: script error message: ${errorDetail.errorMessage}`);
+      console.error('error: script error stacktrace:');
 
       if (errorDetail.scriptStackTraceElements) {
         // There may not be a stacktrace if the script didn't start executing.
@@ -50,8 +50,9 @@ function callAppsScript(auth) {
     } else {
       console.log(resp.data);
       if (resp.data.response) {
-        const { log, failures } = resp.data.response.result;
-        console.log(log);
+        // script.scripts.run prints the result so no need double prints
+        const { /* log, */ failures } = resp.data.response.result;
+        // console.log(log);
         process.exit(failures);
       } else {
         process.exit(1);
