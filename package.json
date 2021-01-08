@@ -24,7 +24,7 @@
     "eslint": "^7.0.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-plugin-import": "^2.20.2",
-    "googleapis": "^51.0.0",
+    "googleapis": "^67.0.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.4"
   },
