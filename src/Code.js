@@ -516,7 +516,7 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   console.log(`Results: ${JSON.stringify(results)}`);
 
   const headers = [];
-  let numEmptyColumns;
+  let numEmptyColumns = 0;
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (let col = 0; numEmptyColumns < payload.events.length; col++) {
     numEmptyColumns = 0;
