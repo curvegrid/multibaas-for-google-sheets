@@ -17,6 +17,7 @@ yarn-error.log
 .*.json
 .vscode
 .env
+.DS_Store
 
 # Version file: this file will be used only in Apps Script project
 # after running "yarn push" command. See package.json
