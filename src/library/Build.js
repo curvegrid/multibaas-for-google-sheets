@@ -170,7 +170,7 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   return query;
 }
 
-function buildMethodArgs(args, from, signer, signAndSubmit, value) {
+function buildMethodArgs(args, from, signer, signAndSubmit, value, blockNumber, timestamp) {
   const payload = {
     args,
     formatInts: 'as_numbers',
@@ -194,6 +194,13 @@ function buildMethodArgs(args, from, signer, signAndSubmit, value) {
     if (signAndSubmit) {
       payload.signAndSubmit = signAndSubmit;
     }
+  }
+
+  // optional block number or timestamp
+  if (blockNumber) {
+    payload.blockNumber = blockNumber;
+  } else if (timestamp) {
+    payload.timestamp = timestamp;
   }
 
   return payload;
