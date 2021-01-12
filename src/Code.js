@@ -515,14 +515,25 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
-  // turn the array of objects into a flat array
-  const objArr = results.result.rows;
-  const headersPreset = Array(payload.events[0].select.length);
+  const headers = [];
+  let numEmptyColumns;
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const s of payload.events[0].select) {
-    headersPreset[s.inputIndex] = s.alias;
+  for (let col = 0; numEmptyColumns < payload.events.length; col++) {
+    numEmptyColumns = 0;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const event of payload.events) {
+      if (event.select[col]) {
+        headers.push(event.select[col].alias);
+      } else {
+        numEmptyColumns++;
+      }
+    }
   }
-  return objectArrayToArray(objArr, headersPreset);
+
+  const objArr = results.result.rows;
+
+  // turn the array of objects into a flat array
+  return objectArrayToArray(objArr, headers);
 }
 
 /**
