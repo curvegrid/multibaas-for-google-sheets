@@ -731,7 +731,7 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
 }
 
 /**
- * Retrieve all contracts associated
+ * Retrieve all contracts
  *
  * @param {boolean} headers (Optional) Include address associated with contracts. Default is TRUE.
  * @param {boolean} addresses (Optional) Include column headers. Default is FALSE.
