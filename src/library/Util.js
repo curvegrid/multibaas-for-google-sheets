@@ -260,10 +260,15 @@ function contractsToArray(entries, includeHeaders, includeAddresses, filter) {
     }
 
     const bodyBase = [entry.label, entry.contractName];
-    if (includeAddresses && entry.instances.length > 0) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const address of entry.instances) {
-        rows.push([...bodyBase, address.label, address.address]);
+    if (includeAddresses) {
+      if (entry.instances.length > 0) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const address of entry.instances) {
+          rows.push([...bodyBase, address.label, address.address]);
+        }
+      } else {
+        // Set empty values for addresses to avoid test errors
+        rows.push([...bodyBase, '', '']);
       }
     } else {
       rows.push(bodyBase);
