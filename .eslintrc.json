@@ -15,6 +15,7 @@
     // Version.js
     "VERSION": false,
     // Code.js
+    "MBCONTRACTS": false,
     "MBADDRESS": false,
     "MBADDRESSATBLOCK": false,
     "MBADDRESSATTIME": false,
