@@ -239,6 +239,40 @@ function addressToArray(address, headers, code) {
   return rows;
 }
 
+function contractsToArray(entries, includeHeaders, includeAddresses, filter) {
+  const rows = [];
+  const filterRe = new RegExp(filter, 'i');
+  const headers = ['contractLabel', 'contract'];
+
+  if (includeAddresses) {
+    headers.push('addressLabel', 'address');
+  }
+
+  if (includeHeaders) {
+    rows.push(headers);
+  }
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const entry of entries) {
+    if (filter && filter !== '' && !filterRe.test(entry.name)) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    const bodyBase = [entry.label, entry.contractName];
+    if (includeAddresses && entry.instances.length > 0) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const address of entry.instances) {
+        rows.push([...bodyBase, address.label, address.address]);
+      }
+    } else {
+      rows.push(bodyBase);
+    }
+  }
+
+  return rows;
+}
+
 function functionsToArray(entries, entryLabel, filter, includeOutputs) {
   const rows = [];
 

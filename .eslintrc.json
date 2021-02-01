@@ -46,6 +46,7 @@
     // Util.js
     "normalizeCreds": false,
     "isNaturalNumber": false,
+    "contractsToArray": false,
     "functionsToArray": false,
     "clampBool": false,
     "txToArray": false,
