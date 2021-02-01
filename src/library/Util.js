@@ -254,7 +254,7 @@ function contractsToArray(entries, includeHeaders, includeAddresses, filter) {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const entry of entries) {
-    if (filter && filter !== '' && !filterRe.test(entry.name)) {
+    if (filter && filter !== '' && !filterRe.test(entry.contractName)) {
       // eslint-disable-next-line no-continue
       continue;
     }
