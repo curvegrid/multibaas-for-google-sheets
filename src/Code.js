@@ -729,3 +729,35 @@ function MBCOMPOSE(address, contract, method, from, signer, value, ...args) {
 
   return output;
 }
+
+/**
+ * Retrieve all contracts associated
+ *
+ * @param {boolean} headers (Optional) Include address associated with contracts. Default is TRUE.
+ * @param {boolean} addresses (Optional) Include column headers. Default is FALSE.
+ * @param {string} filter (Optional) Regular expression (regex) to filter contract names on.
+ * @return {Array} Contracts.
+ * @customfunction
+ */
+function MBCONTRACTS(headers, addresses, filter) {
+  const includeHeaders = clampBool(headers, true);
+  const includeAddresses = clampBool(addresses, false);
+
+  const queryPath = 'contracts';
+  let results;
+  try {
+    results = query(
+      HTTP_GET,
+      getProperty(PROP_MB_DEPLOYMENT_ID),
+      getProperty(PROP_MB_API_KEY),
+      queryPath,
+    );
+  } catch (e) {
+    throw new Error(e.message);
+  }
+
+  const output = contractsToArray(results.result, includeHeaders, includeAddresses, filter);
+  console.log(`Results: ${JSON.stringify(output)}`);
+
+  return output;
+}
