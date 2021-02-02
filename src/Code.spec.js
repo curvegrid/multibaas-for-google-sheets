@@ -1091,6 +1091,7 @@ function testRunner(testSheetURL) {
         ['eventtesta', 'EventTestA', 'eventtesta', '0x75472cda50D383492FFeED22d6e35fF5EE5e4712'],
         ['eventtestb', 'EventTestB', 'eventtestb2', '0x88758FaAaaD85174CA31f3227727CAcC40939C77'],
         ['eventtestb', 'EventTestB', 'eventtestb', '0x6Beb8f6741B66BC65efD5a941796844EcD14c75a'],
+        ['mltitoken', 'MltiToken', 'histoken', '0x7EC2E119d419640d2Bb0b0850ae3d5b1c0952445'],
         ['mltitoken', 'MltiToken', 'mltitoken', '0x6a2a6c8999Ba9ef1f7278F5aD003e6686799D674'],
         ['mltitoken', 'MltiToken', 'oootoken', '0x229Fbe849b3ba40c4Ef3Af130a7AC24a25dDec9e'],
         ['multibaasfaucet', 'MultiBaasFaucet', 'multibaasfaucet', '0x317570b8c43feCaDb8Ebaf765044Ad9626F4848e'],
@@ -1116,6 +1117,7 @@ function testRunner(testSheetURL) {
       args: [true, true, 'MltiToken'],
       expected: [
         ['contractLabel', 'contract', 'addressLabel', 'address'],
+        ['mltitoken', 'MltiToken', 'histoken', '0x7EC2E119d419640d2Bb0b0850ae3d5b1c0952445'],
         ['mltitoken', 'MltiToken', 'mltitoken', '0x6a2a6c8999Ba9ef1f7278F5aD003e6686799D674'],
         ['mltitoken', 'MltiToken', 'oootoken', '0x229Fbe849b3ba40c4Ef3Af130a7AC24a25dDec9e'],
       ],
@@ -1136,6 +1138,7 @@ function testRunner(testSheetURL) {
         ['eventtesta', 'EventTestA', 'eventtesta', '0x75472cda50D383492FFeED22d6e35fF5EE5e4712'],
         ['eventtestb', 'EventTestB', 'eventtestb2', '0x88758FaAaaD85174CA31f3227727CAcC40939C77'],
         ['eventtestb', 'EventTestB', 'eventtestb', '0x6Beb8f6741B66BC65efD5a941796844EcD14c75a'],
+        ['mltitoken', 'MltiToken', 'histoken', '0x7EC2E119d419640d2Bb0b0850ae3d5b1c0952445'],
         ['mltitoken', 'MltiToken', 'mltitoken', '0x6a2a6c8999Ba9ef1f7278F5aD003e6686799D674'],
         ['mltitoken', 'MltiToken', 'oootoken', '0x229Fbe849b3ba40c4Ef3Af130a7AC24a25dDec9e'],
         ['multibaasfaucet', 'MultiBaasFaucet', 'multibaasfaucet', '0x317570b8c43feCaDb8Ebaf765044Ad9626F4848e'],
@@ -1160,6 +1163,7 @@ function testRunner(testSheetURL) {
       isTemplate: false,
       args: [false, true, 'MltiToken'],
       expected: [
+        ['mltitoken', 'MltiToken', 'histoken', '0x7EC2E119d419640d2Bb0b0850ae3d5b1c0952445'],
         ['mltitoken', 'MltiToken', 'mltitoken', '0x6a2a6c8999Ba9ef1f7278F5aD003e6686799D674'],
         ['mltitoken', 'MltiToken', 'oootoken', '0x229Fbe849b3ba40c4Ef3Af130a7AC24a25dDec9e'],
       ],
