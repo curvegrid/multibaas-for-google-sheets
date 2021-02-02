@@ -322,7 +322,7 @@ function testRunner(testSheetURL) {
         to: '0xe9f2E2B0105B683b436Fd0d7A2895BE25c310Af7',
         value: '100000000000000000',
         gas: 22774,
-        gasPrice: '122000000000',
+        gasPrice: '1',
         data: '0xd0e30db0',
         nonce: 6,
         hash: '0x8bb80aa0ef08ff080eaeb5b06b176acbecb2d8c0136cb91dc2ef0a3f96c9974f',
