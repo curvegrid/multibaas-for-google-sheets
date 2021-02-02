@@ -28,7 +28,7 @@ const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DO
 function validateOrder(order) {
   const orderLower = String(order).toLowerCase();
   if (!VALID_ORDERS.includes(orderLower)) {
-    throw new Error(`'${orderLower}' is not a valid rule, must be one of ${VALID_ORDERS.join(', ')}`);
+    throw new Error(`'${orderLower}' is not a valid order, must be one of ${VALID_ORDERS.join(', ')}`);
   }
 
   return orderLower;
