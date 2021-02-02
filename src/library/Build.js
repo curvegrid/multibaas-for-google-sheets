@@ -120,7 +120,7 @@ function buildFilters(items, start, numItems) {
   return filter;
 }
 
-function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
+function buildCustomQuery(events, groupBy, orderBy) {
   const query = {
     events: [],
   };
