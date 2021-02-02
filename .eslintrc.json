@@ -15,6 +15,7 @@
     // Version.js
     "VERSION": false,
     // Code.js
+    "MBCONTRACTS": false,
     "MBADDRESS": false,
     "MBADDRESSATBLOCK": false,
     "MBADDRESSATTIME": false,
@@ -45,6 +46,7 @@
     // Util.js
     "normalizeCreds": false,
     "isNaturalNumber": false,
+    "contractsToArray": false,
     "functionsToArray": false,
     "clampBool": false,
     "txToArray": false,
