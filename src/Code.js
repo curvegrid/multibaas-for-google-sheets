@@ -494,7 +494,7 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   const queryPath = 'queries';
   let payload;
   try {
-    payload = buildCustomQuery(events, groupBy, orderBy, limit, offset);
+    payload = buildCustomQuery(events, groupBy, orderBy);
   } catch (e) {
     throw new Error(e.message);
   }

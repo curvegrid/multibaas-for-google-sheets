@@ -120,7 +120,21 @@ function buildFilters(items, start, numItems) {
   return filter;
 }
 
-function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
+function buildOrderBy(orderByString) {
+  const [orderBy, order] = orderByString.split(':');
+  const orderBySet = {
+    orderBy,
+    order: 'asc',
+  };
+
+  if (order) {
+    orderBySet.order = validateOrder(order);
+  }
+
+  return orderBySet;
+}
+
+function buildCustomQuery(events, groupBy, orderByString) {
   const query = {
     events: [],
   };
@@ -128,8 +142,10 @@ function buildCustomQuery(events, groupBy, orderBy, limit, offset) {
   if (groupBy && groupBy !== '') {
     query.groupBy = groupBy;
   }
-  if (orderBy && orderBy !== '') {
-    query.orderBy = orderBy;
+  if (orderByString && orderByString !== '') {
+    const orderBySet = buildOrderBy(orderByString);
+    query.orderBy = orderBySet.orderBy;
+    query.order = orderBySet.order;
   }
 
   // parse and validate header row
