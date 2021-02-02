@@ -20,9 +20,19 @@ const VALID_OPERANDS = [
   'block_number',
   'triggered_at',
 ];
+const VALID_ORDERS = ['asc', 'desc'];
 
 // eslint-disable-next-line no-useless-escape
 const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DOMAIN})\/).*`);
+
+function validateOrder(order) {
+  const orderLower = String(order).toLowerCase();
+  if (!VALID_ORDERS.includes(orderLower)) {
+    throw new Error(`'${orderLower}' is not a valid rule, must be one of ${VALID_ORDERS.join(',')}`);
+  }
+
+  return orderLower;
+}
 
 function validateRule(rule) {
   const ruleLower = String(rule).toLowerCase();
