@@ -28,7 +28,7 @@ const deploymentHostRegex = new RegExp(`^(https:\/\/([^\/\ ]+)\.(${DEPLOYMENT_DO
 function validateOrder(order) {
   const orderLower = String(order).toLowerCase();
   if (!VALID_ORDERS.includes(orderLower)) {
-    throw new Error(`'${orderLower}' is not a valid rule, must be one of ${VALID_ORDERS.join(',')}`);
+    throw new Error(`'${orderLower}' is not a valid rule, must be one of ${VALID_ORDERS.join(', ')}`);
   }
 
   return orderLower;
@@ -37,7 +37,7 @@ function validateOrder(order) {
 function validateRule(rule) {
   const ruleLower = String(rule).toLowerCase();
   if (!VALID_RULES.includes(ruleLower)) {
-    throw new Error(`'${ruleLower}' is not a valid rule, must be one of ${VALID_RULES.join(',')}`);
+    throw new Error(`'${ruleLower}' is not a valid rule, must be one of ${VALID_RULES.join(', ')}`);
   }
 
   return ruleLower;
@@ -46,7 +46,7 @@ function validateRule(rule) {
 function validateOperand(operand) {
   const operandLower = String(operand).toLowerCase();
   if (!VALID_OPERANDS.includes(operandLower)) {
-    throw new Error(`'${operandLower}' is not a valid operand, must be one of ${VALID_OPERANDS.join(',')}`);
+    throw new Error(`'${operandLower}' is not a valid operand, must be one of ${VALID_OPERANDS.join(', ')}`);
   }
 
   return operandLower;
@@ -55,7 +55,7 @@ function validateOperand(operand) {
 function validateOperator(operator) {
   const operatorLower = String(operator).toLowerCase();
   if (!VALID_OPERATORS.includes(operatorLower)) {
-    throw new Error(`'${operatorLower}' is not a valid operator, must be one of ${VALID_OPERATORS.join(',')}`);
+    throw new Error(`'${operatorLower}' is not a valid operator, must be one of ${VALID_OPERATORS.join(', ')}`);
   }
 
   return operatorLower;
@@ -64,7 +64,7 @@ function validateOperator(operator) {
 function validateAggregator(aggregator) {
   const aggregatorLower = String(aggregator).toLowerCase();
   if (!VALID_AGGREGATORS.includes(aggregatorLower)) {
-    throw new Error(`'${aggregatorLower}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(',')}`);
+    throw new Error(`'${aggregatorLower}' is not a valid aggregator, must be one of ${VALID_AGGREGATORS.join(', ')}`);
   }
 
   return aggregatorLower;
