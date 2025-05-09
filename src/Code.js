@@ -515,9 +515,25 @@ function MBCUSTOMQUERY(events, groupBy, orderBy, limit, offset) {
   }
   console.log(`Results: ${JSON.stringify(results)}`);
 
-  // turn the array of objects into a flat array
+  const headers = [];
+  let numEmptyColumns = 0;
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (let col = 0; numEmptyColumns < payload.events.length; col++) {
+    numEmptyColumns = 0;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const event of payload.events) {
+      if (event.select[col]) {
+        headers.push(event.select[col].alias);
+      } else {
+        numEmptyColumns++;
+      }
+    }
+  }
+
   const objArr = results.result.rows;
-  return objectArrayToArray(objArr);
+
+  // turn the array of objects into a flat array
+  return objectArrayToArray(objArr, headers);
 }
 
 /**

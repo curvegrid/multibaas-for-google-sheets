@@ -404,7 +404,7 @@ function eventsToArray(entries) {
   return rows;
 }
 
-function objectArrayToArray(objArr) {
+function objectArrayToArray(objArr, headersPreset) {
   const rows = [];
 
   if (!Array.isArray(objArr) || objArr.length < 1) {
@@ -412,7 +412,12 @@ function objectArrayToArray(objArr) {
   }
 
   // header row: just take the keys from the first row
-  const headers = keysFromObj(objArr[0], true);
+  let headers;
+  if (!Array.isArray(headersPreset)) {
+    headers = keysFromObj(objArr[0], false);
+  } else {
+    headers = headersPreset;
+  }
   rows.push(headers);
 
   // body rows
